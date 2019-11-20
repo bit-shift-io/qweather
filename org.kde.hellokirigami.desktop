@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=HelloKirigami
+Comment=My first Plasma Mobile App
+Version=1.0
+Exec=hellokirigami
+MimeType=application/x-hellokirigami;
+Icon=applications-development
+Type=Application
+Terminal=false
+Categories=Qt;KDE;
