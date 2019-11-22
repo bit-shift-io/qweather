@@ -1,17 +1,86 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Launch",
+            "name": "Build & Run Desktop",
             "type": "cppdbg",
             "request": "launch",
-            "program": "enter program name, for example ${workspaceFolder}/a.out",
-            "args": [],
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/build/src/${workspaceFolderBasename}",
+            "args": [
+                "qmljsdebugger=port:29777,block"
+            ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build/src/",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+
+
+        {
+            "name": "Build & Run Mobile",
+            "type": "cppdbg",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "QT_QUICK_CONTROLS_MOBILE=true QT_QUICK_CONTROLS_STYLE=Plasma ${workspaceFolder}/build/src/${workspaceFolderBasename}",
+            "args": [
+                "qmljsdebugger=port:29777,block"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/src/",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+
+        {
+            "name": "Run Desktop",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/src/${workspaceFolderBasename}",
+            "args": [
+                "qmljsdebugger=port:8080,block"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/src/",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+
+
+        {
+            "name": "Run Mobile",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "QT_QUICK_CONTROLS_MOBILE=true QT_QUICK_CONTROLS_STYLE=Plasma ${workspaceFolder}/build/src/${workspaceFolderBasename}",
+            "args": [
+                "qmljsdebugger=port:8080,block"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/src/",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -23,5 +92,7 @@
                 }
             ]
         }
+
+
     ]
 }

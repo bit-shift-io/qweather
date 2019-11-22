@@ -6,8 +6,6 @@ Kirigami.ApplicationWindow {
     id: root
     title: "Weather"
 
-    
-
     // global navigation drawer
     globalDrawer: Kirigami.GlobalDrawer {
         actions: [

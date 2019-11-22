@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 2.8.12)
 set(KF5_MIN_VERSION "5.18.0")
 set(QT_MIN_VERSION "5.5.0")
 
+
 ################# Disallow in-source build #################
 
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
@@ -50,7 +51,6 @@ find_package(PkgConfig)
 
 add_subdirectory(src)
 
-install(PROGRAMS org.kde.hellokirigami.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+install(PROGRAMS bitshift.weather.desktop DESTINATION ${KDE_INSTALL_APPDIR})
 
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)
-

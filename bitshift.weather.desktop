@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Weather
+Comment=Australian Weather
+Version=1.0
+Exec=qweather
+MimeType=application/x-weather;
+Icon=applications-development
+Type=Application
+Terminal=false
+Categories=Qt;KDE;
