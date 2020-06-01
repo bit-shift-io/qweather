@@ -1,23 +1,44 @@
-#include <QApplication>
-#include <QQmlApplicationEngine>
-#include <QtQml>
-#include <QUrl>
+/*
+ *  SPDX-FileCopyrightText: 2017 Marco Martin <mart@kde.org>
+ *
+ *  SPDX-License-Identifier: LGPL-2.0-or-later
+ */
 
-Q_DECL_EXPORT int main(int argc, char *argv[])
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#ifdef Q_OS_ANDROID
+#include "./3rdparty/kirigami/src/kirigamiplugin.h"
+#endif
+
+int main(int argc, char *argv[])
 {
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication app(argc, argv);
-    QCoreApplication::setOrganizationName("bitshift");
-    QCoreApplication::setOrganizationDomain("bitshift.io");
-    QCoreApplication::setApplicationName("Weather");
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication app(argc, argv);
 
     QQmlApplicationEngine engine;
 
-    engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
-    
-    if (engine.rootObjects().isEmpty()) {
+#ifdef Q_OS_ANDROID
+    KirigamiPlugin::getInstance().registerTypes();
+#endif
+
+    // used for settings
+    app.setOrganizationName("bitshift");
+    app.setOrganizationDomain("bitshift");
+    app.setApplicationName("Weather");
+
+    //app.setWindowIcon(QIcon("qrc:/bitshift.alarm.png"));
+
+    // add imports
+    engine.addImportPath(".");
+    engine.addImportPath("./lib");
+    engine.addImportPath("./plugin");
+    engine.addImportPath("./qml");
+    engine.addImportPath("qrc:/qml");
+
+    // load qml
+    engine.load(QUrl(QLatin1String("qrc:/qml/main.qml")));
+    if (engine.rootObjects().isEmpty())
         return -1;
-    }
-    int ret = app.exec();
-    return ret;
+
+    return app.exec();
 }

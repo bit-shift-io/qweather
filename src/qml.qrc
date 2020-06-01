@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>qml/WeatherPage.qml</file>
+        <file>qml/Current.qml</file>
+        <file>qml/Forecast.qml</file>
+        <file>qml/Radar.qml</file>
+    </qresource>
+</RCC>
