@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="96px" height="96px" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60 (88103) - https://sketch.com -->
+    <title>icon / Forecast/Day/Sunny</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icon-/-Forecast/Day/Sunny" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="01-sunny">
+            <rect id="Rectangle" x="0" y="0" width="96" height="96"></rect>
+            <g id="Group" opacity="0.15" transform="translate(1.000000, 1.000000)" fill="#FFE58D" fill-rule="nonzero">
+                <circle id="Oval" cx="42.44" cy="41.81" r="41.51"></circle>
+            </g>
+            <g id="Group" opacity="0.15" transform="translate(1.000000, 22.000000)" fill="#FFEA0D" fill-rule="nonzero">
+                <path d="M78.71,41 C64.7540836,39.1217387 51.6489732,33.2138395 41,24 C30.4230843,14.7757135 18.824112,6.79366114 6.43,0.21 C-1.04621002,13.1351076 -1.00259512,29.0801153 6.54421144,41.9641299 C14.091018,54.8481445 27.9774579,62.6847229 42.9077069,62.4852558 C57.8379559,62.2857887 71.5100846,54.0810298 78.71,41 Z" id="Path"></path>
+            </g>
+            <circle id="Oval" fill="#FFE58D" fill-rule="nonzero" cx="43.44" cy="42.81" r="27.74"></circle>
+            <g id="Group" opacity="0.58" transform="translate(15.000000, 23.000000)" fill="#FFDF64" fill-rule="nonzero">
+                <path d="M0.699934419,19.81 C0.699934419,33.3885011 10.531841,44.969994 23.9303889,47.1733108 C37.3289368,49.3766275 50.3521428,41.5535854 54.7,28.69 C42.82,26.9 30.22,22.25 19.76,12 C16.3,8.63 12.42,4.6 8.43,0.59 C3.45638622,5.75053389 0.684389021,12.6428736 0.699934419,19.81 L0.699934419,19.81 Z" id="Path"></path>
+            </g>
+        </g>
+    </g>
+</svg>

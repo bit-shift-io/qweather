@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="96px" height="96px" viewBox="0 0 96 96" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 60 (88103) - https://sketch.com -->
+    <title>icon / Forecast/Night/Clear night</title>
+    <desc>Created with Sketch.</desc>
+    <g id="icon-/-Forecast/Night/Clear-night" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="02-clear-night" transform="translate(1.000000, 0.000000)">
+            <rect id="Rectangle" x="0" y="0" width="96" height="96"></rect>
+            <g id="Group" opacity="0.02" transform="translate(1.000000, 3.000000)" fill="#000000" fill-rule="nonzero">
+                <path d="M13.0844,13.0509 C24.9571477,1.17814689 42.8128026,-2.37356685 58.3252994,4.05191762 C73.8377961,10.4774021 83.9522133,25.6146953 83.9522133,42.4053 C83.9522133,59.1959047 73.8377961,74.3331979 58.3252994,80.7586824 C42.8128026,87.1841669 24.9571477,83.6324531 13.0844,71.7597 C-3.12758227,55.5477104 -3.12758227,29.2628896 13.0844,13.0509" id="Path"></path>
+            </g>
+            <path d="M23.823,25.79 C34.6565124,14.9566999 52.2209166,14.9568147 63.0542875,25.7902563 C73.8876583,36.6236979 73.8876583,54.1881021 63.0542875,65.0215437 C52.2209166,75.8549853 34.6565124,75.8551001 23.823,65.0218 C12.9895084,54.1882083 12.9895084,36.6235917 23.823,25.79" id="Path" fill="#FFFFFF"></path>
+            <g id="Group" opacity="0.85" transform="translate(35.000000, 17.000000)" fill="#D6D6D6">
+                <path d="M10.7312,0.7738 C-3.21841573,16.7310897 -2.48919626,40.749178 12.4028,55.8308 C26.3663147,53.8273869 36.5972868,41.6553514 36.1691929,27.5553464 C35.7410989,13.4553413 24.7905354,1.92640398 10.7312,0.7738 Z" id="Path"></path>
+            </g>
+        </g>
+    </g>
+</svg>
