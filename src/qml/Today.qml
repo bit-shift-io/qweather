@@ -3,6 +3,7 @@ import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.2
 import org.kde.kirigami 2.4 as Kirigami
 import QtGraphicalEffects 1.0
+import Style 1.0
 
 Item {
     height: 200
@@ -12,7 +13,7 @@ Item {
 
     Rectangle {
         id: background
-        color: "lightblue"
+        color: Style.color_day
         anchors.fill: parent
     }
 

@@ -14,12 +14,13 @@ Item {
         color: "gray"
         radius: 10
         anchors.fill: parent
+        //anchors.margins: 10
     }
 
     DropShadow {
         anchors.fill: background
         horizontalOffset: 0
-        verticalOffset: 0
+        verticalOffset: 2
         radius: 10.0
         samples: 20
         color: "#80000000"
@@ -29,6 +30,7 @@ Item {
     ListView {
         id: forecast
         anchors.fill: parent
+        //anchors.margins: 10 * 2
         model: 7
         //model: ForecastModel {}
         delegate: ForecastDelegate {
@@ -36,7 +38,7 @@ Item {
            // so all our util functions are in the model
            //property variant alarm_model: alarm_list_view.model
         }
-
     }
+
 }
 
