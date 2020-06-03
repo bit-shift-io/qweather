@@ -7,3 +7,4 @@ https://community.kde.org/Plasma/Mobile/DevGuide
 
 # requirements
 Install qt5-charts
+Install qt5-graphicaleffects

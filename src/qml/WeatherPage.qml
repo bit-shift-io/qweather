@@ -1,7 +1,8 @@
-import QtQuick 2.6
-import QtQuick.Controls 2.0 as Controls
+import QtQuick 2.11
+import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.2
 import org.kde.kirigami 2.4 as Kirigami
+import QtGraphicalEffects 1.0
 
 
 Kirigami.ScrollablePage {

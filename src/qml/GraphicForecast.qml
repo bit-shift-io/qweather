@@ -1,20 +1,34 @@
-import QtQuick 2.6
-import QtQuick.Controls 2.0 as Controls
+import QtQuick 2.11
+import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.2
 import org.kde.kirigami 2.4 as Kirigami
-
-import QtQuick 2.0
+import QtGraphicalEffects 1.0
 import QtCharts 2.0
 
 
-Rectangle {
-    width: 500
-    height: 400
-    gradient: Gradient {
-        GradientStop { position: 0.0; color: "lightblue" }
-        GradientStop { position: 1.0; color: "white" }
+Item {
+    height: 200
+    width: parent.width
+    Layout.fillWidth: true
+
+    Rectangle {
+        id: background
+        color: "gray"
+        radius: 10
+        anchors.fill: parent
     }
 
+    DropShadow {
+        anchors.fill: background
+        horizontalOffset: 0
+        verticalOffset: 0
+        radius: 10.0
+        samples: 20
+        color: "#80000000"
+        source: background
+    }
+
+    /*
     //![1]
     ChartView {
         id: chartView
@@ -80,6 +94,7 @@ Rectangle {
         }
     //![2]
     }
+    */
 
     // A timer to refresh the forecast every 5 minutes
     Timer {
