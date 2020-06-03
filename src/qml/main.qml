@@ -1,11 +1,43 @@
-import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick 2.11
+import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
 import org.kde.kirigami 2.4 as Kirigami
 
-Kirigami.ApplicationWindow {
+ApplicationWindow {
+    id: window
+    title: application.name
+    width: 350
+    height: 500
     visible: true
-    title: qsTr("Weather")
+
+
+    ScrollView {
+        id: scroll_view
+        anchors.fill: parent
+
+        ColumnLayout {
+            spacing: 10
+            anchors.fill: parent
+
+            Current {}
+
+            Forecast {}
+
+            //GraphicForecast {}
+
+            Radar {}
+
+        }
+    }
+}
+
+/*
+Kirigami.ApplicationWindow {
+    id: window
+    visible: true
+    title: application.name
+    width: 350
+    height: 500
 
     pageStack.initialPage: Qt.resolvedUrl("WeatherPage.qml")
 
@@ -21,4 +53,6 @@ Kirigami.ApplicationWindow {
             }
             ]
     }
+
 }
+*/

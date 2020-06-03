@@ -1,11 +1,9 @@
-/*
- *  SPDX-FileCopyrightText: 2017 Marco Martin <mart@kde.org>
- *
- *  SPDX-License-Identifier: LGPL-2.0-or-later
- */
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QDirIterator>
+#include <QDebug>
+
 #ifdef Q_OS_ANDROID
 #include "./3rdparty/kirigami/src/kirigamiplugin.h"
 #endif
@@ -39,6 +37,14 @@ int main(int argc, char *argv[])
     engine.load(QUrl(QLatin1String("qrc:/qml/main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
+
+    // debug, print qrc resources
+    if (false) {
+        QDirIterator it(":/", QDirIterator::Subdirectories);
+        while (it.hasNext()) {
+            qDebug() << it.next();
+        }
+    }
 
     return app.exec();
 }

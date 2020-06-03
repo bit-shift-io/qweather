@@ -1,0 +1,43 @@
+<RCC>
+    <qresource prefix="/">
+        <file>bitshift.weather.png</file>
+        <file>bitshift.weather.svg</file>
+        <file>clear-night.svg</file>
+        <file>cloudy-night.svg</file>
+        <file>cloudy.svg</file>
+        <file>cyclone-night.svg</file>
+        <file>cyclone.svg</file>
+        <file>dust-night.svg</file>
+        <file>dust.svg</file>
+        <file>fog-night.svg</file>
+        <file>fog.svg</file>
+        <file>fog-night.svg</file>
+        <file>frost-night.svg</file>
+        <file>frost.svg</file>
+        <file>haze-night.svg</file>
+        <file>haze.svg</file>
+        <file>heavy-showers-night.svg</file>
+        <file>heavy-showers.svg</file>
+        <file>light-rain-night.svg</file>
+        <file>light-rain.svg</file>
+        <file>light-showers-night.svg</file>
+        <file>light-showers.svg</file>
+        <file>missing-night.svg</file>
+        <file>missing.svg</file>
+        <file>mostly-clear-night.svg</file>
+        <file>mostly-sunny.svg</file>
+        <file>partly-cloudy-night.svg</file>
+        <file>partly-cloudy.svg</file>
+        <file>rain-night.svg</file>
+        <file>rain.svg</file>
+        <file>showers-night.svg</file>
+        <file>showers.svg</file>
+        <file>snow-night.svg</file>
+        <file>snow.svg</file>
+        <file>storms-night.svg</file>
+        <file>storms.svg</file>
+        <file>sunny.svg</file>
+        <file>wind-night.svg</file>
+        <file>wind.svg</file>
+    </qresource>
+</RCC> 

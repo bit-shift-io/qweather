@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick
+QT += charts qml quick
 
 android: {
     include(3rdparty/kirigami/kirigami.pri)
@@ -10,7 +10,9 @@ CONFIG += c++11
 
 SOURCES += src/main.cpp
 
-RESOURCES += src/qml.qrc
+RESOURCES += \
+    src/qml.qrc \
+    res/res.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -35,8 +37,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
-    src/ \
-    src/qml/Page1.qml \
-    src/qml/Page1Form.ui.qml \
-    src/qml/main.qml \
-    src/qml/weather.qml
+    src/* \
+    serc/qml/*

@@ -5,5 +5,7 @@
         <file>qml/Current.qml</file>
         <file>qml/Forecast.qml</file>
         <file>qml/Radar.qml</file>
+        <file>qml/GraphicForecast.qml</file>
+        <file>qml/ForecastDelegate.qml</file>
     </qresource>
 </RCC>
