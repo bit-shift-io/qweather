@@ -17,7 +17,7 @@ ItemDelegate {
 
         Label {
             id: day
-            font.pixelSize: Qt.application.font.pixelSize
+            //font.pixelSize: Qt.application.font.pixelSize
             text: "Monday"
             horizontalAlignment: Text.AlignHCenter
             Layout.fillWidth: true
@@ -25,7 +25,7 @@ ItemDelegate {
 
         Label {
             id: temp_high
-            font.pixelSize: Qt.application.font.pixelSize
+            //font.pixelSize: Qt.application.font.pixelSize
             text: "15C"
             horizontalAlignment: Text.AlignHCenter
             Layout.fillWidth: true
@@ -33,7 +33,7 @@ ItemDelegate {
 
         Label {
             id: temp_low
-            font.pixelSize: Qt.application.font.pixelSize
+            //font.pixelSize: Qt.application.font.pixelSize
             text: "10C"
             horizontalAlignment: Text.AlignHCenter
             Layout.fillWidth: true

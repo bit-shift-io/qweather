@@ -99,12 +99,12 @@ Item {
 
     Row {
         id: weatherImageRow
-        anchors.top: chartView.bottom
+        //anchors.top: chartView.bottom
         anchors.topMargin: 5
         anchors.bottom: poweredByText.top
         anchors.bottomMargin: 5
         anchors.horizontalCenter: parent.horizontalCenter
-        height: parent.height - chartView.height - anchors.topMargin
+        //height: parent.height - chartView.height - anchors.topMargin
 
         ListModel {
             id: weatherImageModel

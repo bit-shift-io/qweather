@@ -8,7 +8,9 @@ android: {
 
 CONFIG += c++11
 
-SOURCES += src/main.cpp
+SOURCES += \
+    src/main.cpp \
+    src/weather.cpp
 
 RESOURCES += \
     src/qml.qrc \
@@ -36,6 +38,6 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-DISTFILES += \
-    src/* \
-    serc/qml/*
+HEADERS += \
+    src/weather.h
+

@@ -3,9 +3,9 @@ import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.2
 import org.kde.kirigami 2.4 as Kirigami
 import QtGraphicalEffects 1.0
-import Style 1.0
 import QtQuick.Controls.Material 2.4
 import "util.js" as Util
+import Weather 1.0
 
 ApplicationWindow {
     id: window
@@ -17,12 +17,34 @@ ApplicationWindow {
     // theme
     font.family: Style.font_default_family
     font.pointSize: Style.font_default_size
-    font.capitalization: Style.font_default_capitalization
 
     Material.theme: Style.material_theme
     Material.accent: Style.material_accent
 
 
+    Component.onCompleted: {
+        console.log("app load complete");
+    }
+
+
+    Weather {
+        // weather object
+        id: weather
+        url: "http://api.openweathermap.org/data/2.5/weather?q="
+        onResultFinished: {
+            cityName.text = xResult["name"];
+            discription.text = xResult["weather"][0]["description"];
+            temperature.text = Math.round(xResult["main"]["temp"] - 273.15) + " °C";
+            humidity.text = xResult["main"]["humidity"] + " %";
+            console.log(xResult["name"]);
+        }
+        Component.onCompleted: {
+            console.log("weather complete");
+            //weather.requestWeather("Koblenz,de");
+        }
+    }
+
+    /*
     Timer {
         // Refresh the forecast every 5 minutes
         interval: 300000
@@ -69,12 +91,13 @@ ApplicationWindow {
 
                         }
                     }
-                    */
+                    * /
                 }
             }
             xhr.send();
         }
     }
+    */
 
     function getElementsByNodeName(rootElement, nodeName) {
         var childNodes = rootElement.childNodes;
@@ -100,51 +123,23 @@ ApplicationWindow {
     }
 
 
-    function parseWeatherData(weatherData) {
-        // Clear previous values
-        maxTempSeries.clear();
-        minTempSeries.clear();
-        weatherImageModel.clear();
-
-        //![4]
-        // Loop through the parsed JSON
-        for (var i in weatherData.data.weather) {
-            var weatherObj = weatherData.data.weather[i];
-            //![4]
-
-            //![5]
-            // Store temperature values, rainfall and weather icon.
-            // The temperature values begin from 0.5 instead of 0.0 to make the start from the
-            // middle of the rainfall bars. This makes the temperature lines visually better
-            // synchronized with the rainfall bars.
-            maxTempSeries.append(Number(i) + 0.5, weatherObj.tempMaxC);
-            minTempSeries.append(Number(i) + 0.5, weatherObj.tempMinC);
-            rainfallSet.append(i, weatherObj.precipMM);
-            weatherImageModel.append({"imageSource":weatherObj.weatherIconUrl[0].value});
-            //![5]
-
-            // Update scale of the chart
-            valueAxisY.max = Math.max(chartView.axisY().max,weatherObj.tempMaxC);
-            valueAxisX.min = 0;
-            valueAxisX.max = Number(i) + 1;
-
-            // Set the x-axis labels to the dates of the forecast
-            var xLabels = barCategoriesAxis.categories;
-            xLabels[Number(i)] = weatherObj.date.substring(5, 10);
-            barCategoriesAxis.categories = xLabels;
-            barCategoriesAxis.visible = true;
-            barCategoriesAxis.min = 0;
-            barCategoriesAxis.max = xLabels.length - 1;
-        }
-    }
-
     ScrollView {
+        // main page layout
         id: scroll_view
         anchors.fill: parent
 
         ColumnLayout {
             spacing: 10
             anchors.fill: parent
+
+               /*
+            Button {
+                text: "refresh"
+                onClicked: {
+                    weather.requestWeather("Koblenz,de");
+                }
+
+            }*/
 
             Today {}
 
@@ -156,6 +151,7 @@ ApplicationWindow {
 
         }
     }
+
 }
 
 /*

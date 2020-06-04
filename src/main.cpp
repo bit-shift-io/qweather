@@ -3,6 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QDirIterator>
 #include <QDebug>
+#include "weather.h"
 
 #ifdef Q_OS_ANDROID
 #include "./3rdparty/kirigami/src/kirigamiplugin.h"
@@ -10,6 +11,9 @@
 
 int main(int argc, char *argv[])
 {
+    // register types
+    qmlRegisterType<Weather>("Weather", 1, 0, "Weather");
+
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
 

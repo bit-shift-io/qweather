@@ -23,7 +23,7 @@ Item {
         verticalOffset: 0
         radius: 10.0
         samples: 20
-        color: "#80000000"
+        color: Theme.colors.drop_shadow
         source: background
     }
 
@@ -34,7 +34,7 @@ Item {
 
             Label {
                 id: temp
-                font.pixelSize: Qt.application.font.pixelSize * 2
+                //font.pixelSize: Qt.application.font.pixelSize * 2
                 text: "12C"
                 horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
@@ -42,7 +42,7 @@ Item {
 
             Label {
                 id: feel
-                font.pixelSize: Qt.application.font.pixelSize
+                //font.pixelSize: Qt.application.font.pixelSize
                 text: "Feels like 23C"
                 horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
@@ -50,7 +50,7 @@ Item {
 
             Label {
                 id: description
-                font.pixelSize: Qt.application.font.pixelSize
+                //font.pixelSize: Qt.application.font.pixelSize
                 text: "Sunny"
                 horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
@@ -68,7 +68,7 @@ Item {
 
             Label {
                 id: locale
-                font.pixelSize: Qt.application.font.pixelSize
+                //font.pixelSize: Qt.application.font.pixelSize
                 text: "Adelaide"
                 horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
@@ -78,7 +78,7 @@ Item {
 
                 Label {
                     id: low
-                    font.pixelSize: Qt.application.font.pixelSize
+                    //font.pixelSize: Qt.application.font.pixelSize
                     text: "12C"
                     horizontalAlignment: Text.AlignHCenter
                     Layout.fillWidth: true
@@ -86,7 +86,7 @@ Item {
 
                 Label {
                     id: high
-                    font.pixelSize: Qt.application.font.pixelSize
+                    //font.pixelSize: Qt.application.font.pixelSize
                     text: "24C"
                     horizontalAlignment: Text.AlignHCenter
                     Layout.fillWidth: true
@@ -95,7 +95,7 @@ Item {
 
             Label {
                 id: rain
-                font.pixelSize: Qt.application.font.pixelSize
+                //font.pixelSize: Qt.application.font.pixelSize
                 text: "1mm"
                 horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
@@ -103,15 +103,16 @@ Item {
 
             Label {
                 id: wind
-                font.pixelSize: Qt.application.font.pixelSize
+                //font.pixelSize: Qt.application.font.pixelSize
                 text: "12km/s ssw"
                 horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
             }
 
             Label {
+
                 id: humid
-                font.pixelSize: Qt.application.font.pixelSize
+                //font.pixelSize: Qt.application.font.pixelSize
                 text: "18%"
                 horizontalAlignment: Text.AlignHCenter
                 Layout.fillWidth: true
