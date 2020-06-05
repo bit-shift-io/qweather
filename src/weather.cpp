@@ -3,6 +3,8 @@
 #include <QNetworkAccessManager>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QXmlStreamReader>
+#include <QDebug>
 
 class WeatherPrivate
 {
@@ -39,15 +41,49 @@ void Weather::setUrl(const QString &xUrl)
 
 void Weather::requestWeather(const QString &xSearchString)
 {
-    m->mNetworkAccessManager->get(QNetworkRequest(QUrl(m->mUrl + xSearchString)));
+    QUrl u = QUrl(m->mUrl); // + xSearchString);
+    QNetworkRequest request;
+    request.setUrl(u);
+    request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
+    m->mNetworkAccessManager->get(request);
 }
 
 void Weather::replyFinished(QNetworkReply *xNetworkReply)
 {
     if(xNetworkReply->error() == QNetworkReply::NoError)
     {
-        QJsonObject tJsonObject = QJsonDocument::fromJson(xNetworkReply->readAll()).object();
-        emit resultFinished(tJsonObject);
+        QByteArray data = xNetworkReply->readAll();
+        qDebug() << "XML download size:" << data.size() << "bytes";
+        //qDebug() << QString(data);
+        QXmlStreamReader xml(data);
+
+        //qDebug() << data;
+        //Q_ASSERT(xml.isStartElement());
+
+        QJsonObject result;
+
+
+        while(!xml.atEnd())
+        {
+            if (xml.readNextStartElement()) {
+                if(xml.name()=="station" && !xml.isEndElement())
+                {
+                    QString name = xml.attributes().value("description").toString();
+                    QString wmo_id = xml.attributes().value("wmo-id").toString();
+
+                    // process station
+
+
+
+                    qDebug() << name << " " << wmo_id;
+                }
+            }
+        }
+
+        //QJsonObject tJsonObject = QJsonDocument::fromJson(xNetworkReply->readAll()).object();
+        emit resultFinished(result);
+    } else {
+        qDebug()<<"error";
     }
     delete xNetworkReply;
 }

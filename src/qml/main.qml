@@ -24,17 +24,18 @@ ApplicationWindow {
     Weather {
         // weather object
         id: weather
-        url: "http://api.openweathermap.org/data/2.5/weather?q="
+        url: 'ftp://ftp.bom.gov.au/anon/gen/fwo/IDS60920.xml'
+        /*
         onResultFinished: {
             cityName.text = xResult["name"];
             discription.text = xResult["weather"][0]["description"];
             temperature.text = Math.round(xResult["main"]["temp"] - 273.15) + " °C";
             humidity.text = xResult["main"]["humidity"] + " %";
             console.log(xResult["name"]);
-        }
+        }*/
         Component.onCompleted: {
             console.log("weather complete");
-            //weather.requestWeather("Koblenz,de");
+            weather.requestWeather("Koblenz,de");
         }
     }
 
