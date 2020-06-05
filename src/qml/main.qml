@@ -14,7 +14,7 @@ ApplicationWindow {
     width: 350
     height: 500
     visible: true
-    color: Style.window.color
+    color: Style.app.color
 
     Component.onCompleted: {
         console.log("app load complete");
@@ -142,7 +142,6 @@ ApplicationWindow {
             GraphicForecast {}
 
             Radar {}
-
         }
     }
 

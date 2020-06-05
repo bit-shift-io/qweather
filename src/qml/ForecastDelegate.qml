@@ -3,6 +3,7 @@ import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.2
 //import org.kde.kirigami 2.4 as Kirigami
 import QtGraphicalEffects 1.0
+import  'Style'
 
 ItemDelegate {
     property variant days_of_week : [1,2,3,4,5,6,0] // fixed
@@ -17,24 +18,32 @@ ItemDelegate {
 
         Label {
             id: day
-            //font.pixelSize: Qt.application.font.pixelSize
             text: "Monday"
+            color: Style.panel.font_color
+            horizontalAlignment: Text.AlignHCenter
+            Layout.fillWidth: true
+        }
+
+        Label {
+            id: rain
+            text: "1mm"
+            color: Style.forecast.color_rain
             horizontalAlignment: Text.AlignHCenter
             Layout.fillWidth: true
         }
 
         Label {
             id: temp_high
-            //font.pixelSize: Qt.application.font.pixelSize
             text: "15C"
+            color: Style.forecast.color_temp_high
             horizontalAlignment: Text.AlignHCenter
             Layout.fillWidth: true
         }
 
         Label {
             id: temp_low
-            //font.pixelSize: Qt.application.font.pixelSize
             text: "10C"
+            color: Style.forecast.color_temp_low
             horizontalAlignment: Text.AlignHCenter
             Layout.fillWidth: true
         }

@@ -8,7 +8,6 @@ Item {
     height: 200
     width: parent.width
     Layout.fillWidth: true
-    Layout.margins: Style.today.margin
 
     Rectangle {
         id: background
@@ -28,6 +27,7 @@ Item {
 
     RowLayout {
         anchors.fill: parent
+        anchors.margins: Style.today.margin
 
         ColumnLayout {
             Image {
@@ -40,6 +40,7 @@ Item {
             Label {
                 id: temp
                 font.pointSize: Style.today.font_size_temp
+                color: Style.today.font_color
                 text: "12C"
                 horizontalAlignment: Text.AlignLeft
                 Layout.fillWidth: true
@@ -47,6 +48,7 @@ Item {
 
             Label {
                 id: feel
+                color: Style.today.font_color
                 text: "Feels like 23C"
                 horizontalAlignment: Text.AlignLeft
                 Layout.fillWidth: true
@@ -58,7 +60,8 @@ Item {
             Label {
                 id: place
                 text: "Adelaide"
-                font.pointSize: 10
+                color: Style.today.font_color
+                font.pointSize: Style.today.font_size_place
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
             }
@@ -67,6 +70,7 @@ Item {
             Label {
                 id: wind
                 text: "12km 8kt ssw"
+                color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
             }
@@ -74,6 +78,7 @@ Item {
             Label {
                 id: rain
                 text: "1mm"
+                color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
             }
@@ -82,6 +87,7 @@ Item {
 
                 id: humid
                 text: "18%"
+                color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
             }
@@ -89,6 +95,7 @@ Item {
             Label {
                 id: temp_range
                 text: "12C 24C"
+                color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
             }
@@ -96,6 +103,7 @@ Item {
             Label {
                 id: summary
                 text: "Warm and sunny"
+                color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
             }

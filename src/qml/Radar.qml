@@ -6,9 +6,15 @@ import QtGraphicalEffects 1.0
 import 'Style'
 
 Item {
-    height: 200
-    width: parent.width
+    id: panel
     Layout.fillWidth: true
+    width: parent.width
+    height: 200
+
+    onWidthChanged: {
+        // keep square
+        panel.height = panel.height
+    }
 
     Rectangle {
         id: background
@@ -27,5 +33,12 @@ Item {
         source: background
     }
 
+    Image {
+        id: image
+        source: "qrc:/heavy-showers.svg"
+        //sourceSize.width: Style.today.image_size
+        //sourceSize.height: Style.today.image_size
+        anchors.fill: parent
+    }
 
 }
