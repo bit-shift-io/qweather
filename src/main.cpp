@@ -4,6 +4,7 @@
 #include <QDirIterator>
 #include <QDebug>
 #include "weather.h"
+#include <QQmlDebuggingEnabler>
 
 #ifdef Q_OS_ANDROID
 #include "./3rdparty/kirigami/src/kirigamiplugin.h"
@@ -11,6 +12,8 @@
 
 int main(int argc, char *argv[])
 {
+    QQmlDebuggingEnabler enabler;
+
     // register types
     qmlRegisterType<Weather>("Weather", 1, 0, "Weather");
 
