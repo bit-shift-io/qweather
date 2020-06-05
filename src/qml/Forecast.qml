@@ -3,6 +3,7 @@ import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.2
 //import org.kde.kirigami 2.4 as Kirigami
 import QtGraphicalEffects 1.0
+import 'Style'
 
 Item {
     height: 400
@@ -11,8 +12,8 @@ Item {
 
     Rectangle {
         id: background
-        color: "gray"
-        radius: 10
+        color: Style.panel.color
+        radius: Style.panel.radius
         anchors.fill: parent
         //anchors.margins: 10
     }
@@ -20,10 +21,10 @@ Item {
     DropShadow {
         anchors.fill: background
         horizontalOffset: 0
-        verticalOffset: 2
-        radius: 10.0
-        samples: 20
-        color: "#80000000"
+        verticalOffset: 0
+        radius: Style.shadow.radius
+        samples: Style.shadow.samples
+        color: Style.shadow.color
         source: background
     }
 

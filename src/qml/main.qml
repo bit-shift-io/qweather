@@ -6,6 +6,7 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Material 2.4
 import "util.js" as Util
 import Weather 1.0
+import 'Style'
 
 ApplicationWindow {
     id: window
@@ -13,14 +14,7 @@ ApplicationWindow {
     width: 350
     height: 500
     visible: true
-
-    // theme
-    font.family: Style.font_default_family
-    font.pointSize: Style.font_default_size
-
-    Material.theme: Style.material_theme
-    Material.accent: Style.material_accent
-
+    color: Style.window.color
 
     Component.onCompleted: {
         console.log("app load complete");
