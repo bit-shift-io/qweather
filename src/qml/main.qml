@@ -16,6 +16,9 @@ ApplicationWindow {
     visible: true
     color: Style.app.color
 
+    // todo: store this in settings
+    property var places: []
+
     Component.onCompleted: {
         console.log("app load complete");
     }

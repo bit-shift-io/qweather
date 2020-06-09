@@ -60,7 +60,7 @@ void Weather::replyFinished(QNetworkReply *xNetworkReply)
         //qDebug() << data;
         //Q_ASSERT(xml.isStartElement());
 
-        QJsonObject result;
+        QJsonObject result {};
 
 
         while(!xml.atEnd())
@@ -70,12 +70,16 @@ void Weather::replyFinished(QNetworkReply *xNetworkReply)
                 {
                     QString name = xml.attributes().value("description").toString();
                     QString wmo_id = xml.attributes().value("wmo-id").toString();
+                    qDebug() << name << " " << wmo_id;
 
                     // process station
+                    qDebug() << xml.text().toString();
+                    qDebug() << xml.readElementText();
 
-
-
-                    qDebug() << name << " " << wmo_id;
+                }
+                if(xml.name()=="element" && !xml.isEndElement())
+                {
+                    qDebug() << "yo";
                 }
             }
         }

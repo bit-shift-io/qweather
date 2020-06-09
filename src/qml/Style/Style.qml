@@ -47,7 +47,7 @@ QtObject {
     property QtObject forecast: QtObject {
         property color color_temp_low: '#88ff4d'
         property color color_temp_high: '#cc3300'
-        property color color_temp_rain: '#0066ff'
+        property color color_rain: '#0066ff'
     }
 
 
