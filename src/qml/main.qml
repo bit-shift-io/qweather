@@ -6,6 +6,7 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Material 2.4
 import "util.js" as Util
 import Weather 1.0
+import Places 1.0
 import 'Style'
 
 ApplicationWindow {
@@ -28,14 +29,9 @@ ApplicationWindow {
         // weather object
         id: weather
         url: 'ftp://ftp.bom.gov.au/anon/gen/fwo/IDS60920.xml'
-        /*
         onResultFinished: {
-            cityName.text = xResult["name"];
-            discription.text = xResult["weather"][0]["description"];
-            temperature.text = Math.round(xResult["main"]["temp"] - 273.15) + " °C";
-            humidity.text = xResult["main"]["humidity"] + " %";
-            console.log(xResult["name"]);
-        }*/
+            console.log(xResult);
+        }
         Component.onCompleted: {
             console.log("weather complete");
             weather.requestWeather("Koblenz,de");

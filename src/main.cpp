@@ -3,6 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QDirIterator>
 #include <QDebug>
+#include "places.h"
 #include "weather.h"
 #include <QQmlDebuggingEnabler>
 
@@ -15,6 +16,8 @@ int main(int argc, char *argv[])
     QQmlDebuggingEnabler enabler;
 
     // register types
+    qmlRegisterSingletonType<Places>("Places", 1, 0, "Places", &Places::qmlInstance);
+
     qmlRegisterType<Weather>("Weather", 1, 0, "Weather");
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -52,6 +55,9 @@ int main(int argc, char *argv[])
             qDebug() << it.next();
         }
     }
+
+    // get instance in C++
+    Places *places = Places::instance();
 
     return app.exec();
 }

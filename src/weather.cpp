@@ -3,6 +3,7 @@
 #include <QNetworkAccessManager>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QJsonArray>
 #include <QXmlStreamReader>
 #include <QDebug>
 
@@ -60,34 +61,55 @@ void Weather::replyFinished(QNetworkReply *xNetworkReply)
         //qDebug() << data;
         //Q_ASSERT(xml.isStartElement());
 
-        QJsonObject result {};
 
+        QJsonObject result;
+        QJsonObject cur_station {};
 
         while(!xml.atEnd())
         {
             if (xml.readNextStartElement()) {
                 if(xml.name()=="station" && !xml.isEndElement())
                 {
+
+                    if (!cur_station.isEmpty()) {
+                        // append previous station
+                        result.insert(cur_station.value("id").toString(), cur_station);
+                    }
+
                     QString name = xml.attributes().value("description").toString();
                     QString wmo_id = xml.attributes().value("wmo-id").toString();
-                    qDebug() << name << " " << wmo_id;
+                    //qDebug() << name << " " << wmo_id;
 
-                    // process station
-                    qDebug() << xml.text().toString();
-                    qDebug() << xml.readElementText();
+                    // new station json
+                    cur_station = {
+                        {"id", wmo_id},
+                        {"name", name}
+                    };
 
                 }
                 if(xml.name()=="element" && !xml.isEndElement())
                 {
-                    qDebug() << "yo";
+
+                    // append to current station
+                    QString key = xml.attributes().value("type").toString();
+                    QString value = xml.readElementText();
+                    cur_station.insert(key, value);
+                    //qDebug() << key << " " << value;
+                }
+                if (xml.name()=="station" && xml.isEndElement())
+                {
+                    qDebug() << "end station";
                 }
             }
         }
 
-        //QJsonObject tJsonObject = QJsonDocument::fromJson(xNetworkReply->readAll()).object();
+        // debug
+        //qDebug() << QJsonDocument(result).toJson(QJsonDocument::Compact).toStdString().c_str();
+
         emit resultFinished(result);
     } else {
         qDebug()<<"error";
     }
-    delete xNetworkReply;
+
+    //delete xNetworkReply; // do we need to clean? this crashes
 }
