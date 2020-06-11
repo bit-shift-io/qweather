@@ -27,6 +27,7 @@ def main():
     menu['3'] = ['Run desktop', 'run_desktop']
     menu['4'] = ['Run mobile', 'run_mobile']
     menu['5'] = ['Debug (GDB)', 'debug']
+    menu['p'] = ['Generate places', 'places']
     menu['0'] = ['Requirements', 'requirements']
 
     print('\n********************')
@@ -45,6 +46,68 @@ def main():
         eval(selection)
 
     main()
+    return
+
+
+def places():
+    import requests
+    from bs4 import BeautifulSoup
+    import re
+
+    base_url = ''
+    url_data = [
+        'http://www.bom.gov.au/sa/observations/saall.shtml',
+        'http://reg.bom.gov.au/act/observations/canberra.shtml',
+        'http://www.bom.gov.au/nsw/observations/nswall.shtml',
+        'http://www.bom.gov.au/nt/observations/ntall.shtml',
+        'http://www.bom.gov.au/qld/observations/qldall.shtml',
+        'http://www.bom.gov.au/tas/observations/tasall.shtml',
+        'http://www.bom.gov.au/vic/observations/vicall.shtml',
+        'http://www.bom.gov.au/wa/observations/waall.shtml',
+    ]
+
+    for url in url_data:
+        page = requests.get(url)
+        soup = BeautifulSoup(page.text, 'html.parser')
+
+        # debug
+        #print(soup.prettify())
+        print(url)
+
+        # get all links on page
+        for link in soup.find_all('a'):
+            a = link.get('href')[1:][:-6].split('/') # trim .shtml and first /
+            if (a[0] == 'products' and len(a) == 3):
+                b = str(a[2]).split('.')
+                id_state = b[0]
+                id_wmo = b[1]
+                # for each link, get state and name of station
+                json = requests.get('http://www.bom.gov.au/fwo/{}/{}.{}.json'.format(id_state, id_state, id_wmo)).json()
+                header = json['observations']['header']
+                if (len(header) > 0):
+                    header = header[0]
+                else:
+                    log('no head {}'.format(id_wmo))
+                    continue
+
+                state = header['state_time_zone']
+                name = header['name']
+                data = json['observations']['data']
+
+                if (len(data) > 0): # may have no data
+                    data = data[0]
+                else:
+                    log('no data {}'.format(name))
+                    continue
+                
+                lat = data['lat']
+                lon = data['lon']
+                print('{{"{}", "{}", "{}", "{}", "{}", "{}"}},'.format(id_wmo, id_state, state, name, lat, lon))
+                
+                
+
+
+    
     return
 
 
