@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>stations.json</file>
         <file>bitshift.weather.png</file>
         <file>bitshift.weather.svg</file>
         <file>clear-night.svg</file>

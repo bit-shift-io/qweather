@@ -6,7 +6,7 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Material 2.4
 import "util.js" as Util
 import Weather 1.0
-import Places 1.0
+import Stations 1.0
 import 'Style'
 
 ApplicationWindow {

@@ -10,7 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     src/main.cpp \
-    src/places.cpp \
+    src/stations.cpp \
     src/weather.cpp
 
 RESOURCES += \
@@ -40,6 +40,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    src/places.h \
+    src/stations.h \
     src/weather.h
 

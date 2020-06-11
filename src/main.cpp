@@ -3,7 +3,7 @@
 #include <QQmlApplicationEngine>
 #include <QDirIterator>
 #include <QDebug>
-#include "places.h"
+#include "stations.h"
 #include "weather.h"
 #include <QQmlDebuggingEnabler>
 
@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     QQmlDebuggingEnabler enabler;
 
     // register types
-    qmlRegisterSingletonType<Places>("Places", 1, 0, "Places", &Places::qmlInstance);
+    qmlRegisterSingletonType<Stations>("Stations", 1, 0, "Stations", &Stations::qmlInstance);
 
     qmlRegisterType<Weather>("Weather", 1, 0, "Weather");
 
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     }
 
     // get instance in C++
-    Places *places = Places::instance();
+    Stations *stations = Stations::instance();
 
     return app.exec();
 }
