@@ -13,23 +13,29 @@ Stations* Stations::m_pThis = nullptr;
 
 Stations::Stations(QObject *parent) : QObject(parent)
 {
-    QFile File(":/stations.json");
-    File.open(QIODevice::ReadOnly | QIODevice::Text);
+    QFile file(":/stations.json");
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QByteArray file_data = file.readAll();
+    file.close();
 
     QJsonParseError JsonParseError;
-    QJsonDocument doc = QJsonDocument::fromJson(File.readAll(), &JsonParseError);
-    File.close();
-
+    QJsonDocument doc = QJsonDocument::fromJson(file_data, &JsonParseError);
     QJsonObject obj = doc.object();
-    //QJsonArray stations = obj.begin().toArray();
+    QJsonArray stations = obj["stations"].toArray();
 
     // debug
     QString jsonString = doc.toJson(QJsonDocument::Indented);
-    qDebug() << jsonString;
+    QString strFromObj = QJsonDocument(obj).toJson(QJsonDocument::Compact).toStdString().c_str();
+    qDebug() << strFromObj;
 }
 
 Stations::~Stations()
 {
+}
+
+QJsonObject Stations::byWMO(QString wmo) {
+
+
 }
 
 QJsonObject Stations::byName(QString name) {

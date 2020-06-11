@@ -11,6 +11,8 @@ class QJSEngine;
 // using bom weather
 // sample url http://www.bom.gov.au/fwo/IDQ60801/IDQ60801.94182.json
 // http://www.bom.gov.au/fwo/[state_id]/[state_id].[wmo_id].json
+// data can also be found here:
+// ftp://ftp.bom.gov.au/anon2/home/ncc/metadata/sitelists/stations.zip
 
 class Stations : public QObject
 {
@@ -24,6 +26,7 @@ public:
     Stations(QObject *parent = 0);
     ~Stations();
 
+    QJsonObject byWMO(QString wmo);
     QJsonObject byName(QString name);
     QJsonObject byLatLon(QString lat, QString lon);
     QUrl getUrl(QJsonObject station);
