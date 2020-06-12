@@ -70,81 +70,119 @@ void Weather::replyFinished(QNetworkReply *xNetworkReply)
 {
     if(xNetworkReply->error() == QNetworkReply::NoError)
     {
+        QString url = xNetworkReply->url().toString();
         QByteArray data = xNetworkReply->readAll();
-        //qDebug() << "download " << data.size() << "bytes";
+        QJsonObject weather_data;
+        qDebug() << "download " << data.size() << "bytes";
         //qDebug() << QString(data);
         //qDebug() << mUrl;
 
-        // json version
-        QJsonParseError JsonParseError;
-        QJsonDocument doc = QJsonDocument::fromJson(data, &JsonParseError);
-        QJsonObject obj = doc.object();
+        if (url.endsWith(".json")) {
+            // json version
+            // this is for the observations
+            QJsonParseError JsonParseError;
+            QJsonDocument doc = QJsonDocument::fromJson(data, &JsonParseError);
+            QJsonObject obj = doc.object();
 
-        QJsonObject observations = obj["observations"].toObject();
-        QJsonArray station_data = observations["data"].toArray();
-        if (station_data.size() == 0) {
-            qDebug() << "no data";
-            return;
+            QJsonObject observations = obj["observations"].toObject();
+            QJsonArray station_data = observations["data"].toArray();
+            if (station_data.size() == 0) {
+                qDebug() << "no data";
+                return;
+            }
+
+            // get the current data
+            weather_data = station_data[0].toObject();
+            //qDebug() << weather_data;
         }
 
-        // get the current data
-        QJsonObject weather_data = station_data[0].toObject();
-        //qDebug() << weather_data;
+        if (url.endsWith(".xml")) {
+            // XML version
+            // this is for the forecast
+            QXmlStreamReader xml(data);
+            QJsonObject result;
 
-        /*
-        // XML version
-        QXmlStreamReader xml(data);
+            QString cur_area_name;
+            QString cur_forecast_date;
+            QJsonObject cur_forecast;
+            QJsonObject cur_info;
 
-        //qDebug() << data;
-        //Q_ASSERT(xml.isStartElement());
+            /*
+             * data should look like this...
+            {
+               "Adelaide" : {
+                "lat": xx
+                "lon": xx
+                "forecast": {
+                        "2020-10-02": {}
+                        "2020-10-03": {}
+                        "2020-10-04": {}
+                    }
+               }
+               "Area Name" : {
+               }
+            }*/
+            while(!xml.atEnd())
+            {
+                if (xml.readNextStartElement()) {
 
+                    // qDebug() << xml.name();
 
-        QJsonObject result;
-        QJsonObject cur_station {};
+                    if(xml.name()=="area" && !xml.isEndElement())
+                    {
+                        // new area
+                        QString type = xml.attributes().value("type").toString();
+                        if (type == "location") {
 
-        while(!xml.atEnd())
-        {
-            if (xml.readNextStartElement()) {
-                if(xml.name()=="station" && !xml.isEndElement())
-                {
+                            // previous area
+                            if (cur_forecast.isEmpty()) {
+                                result.insert(cur_area_name, cur_forecast);
+                                // TODO: need to put lon/lat here from database for matching location
+                            }
 
-                    if (!cur_station.isEmpty()) {
-                        // append previous station
-                        result.insert(cur_station.value("id").toString(), cur_station);
+                            QString cur_area_name = xml.attributes().value("description").toString();
+
+                            // reset forecast
+                            cur_forecast = {};
+
+                            //qDebug() << name;
+                        }
+
                     }
 
-                    QString name = xml.attributes().value("description").toString();
-                    QString wmo_id = xml.attributes().value("wmo-id").toString();
-                    //qDebug() << name << " " << wmo_id;
+                    if(xml.name()=="forecast-period" && !xml.isEndElement())
+                    {
+                        // previous forecast
+                        if (!cur_forecast.isEmpty()) {
+                            cur_forecast.insert(cur_forecast_date, cur_info);
+                        }
 
-                    // new station json
-                    cur_station = {
-                        {"id", wmo_id},
-                        {"name", name}
-                    };
+                        // new forecast
+                        QString cur_forecast_date = xml.attributes().value("start-time-local").toString().left(10);
 
-                }
-                if(xml.name()=="element" && !xml.isEndElement())
-                {
+                        // reset info
+                        cur_info = {};
 
-                    // append to current station
-                    QString key = xml.attributes().value("type").toString();
-                    QString value = xml.readElementText();
-                    cur_station.insert(key, value);
-                    //qDebug() << key << " " << value;
-                }
-                if (xml.name()=="station" && xml.isEndElement())
-                {
-                    qDebug() << "end station";
+                        //qDebug() << date;
+                    }
+
+                    if (xml.name()=="element" || xml.name()=="text")
+                    {
+                        // forecast info
+                        QString type = xml.attributes().value("type").toString();
+                        QString value = xml.readElementText();
+                        cur_info.insert(type, value);
+                        //qDebug() << type << " : " << value;
+                    }
                 }
             }
+
         }
+
 
         // debug
         //qDebug() << QJsonDocument(result).toJson(QJsonDocument::Compact).toStdString().c_str();
-        */
-
-        emit resultFinished(weather_data);
+        //emit resultFinished(weather_data);
     } else {
         qDebug() << "network error " << xNetworkReply->error();
     }
