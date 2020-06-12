@@ -1,5 +1,5 @@
 #include "weather.h"
-
+#include "stations.h"
 #include <QNetworkAccessManager>
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -7,46 +7,46 @@
 #include <QXmlStreamReader>
 #include <QDebug>
 
-class WeatherPrivate
-{
-    public:
-        QString mUrl;
-        QNetworkAccessManager *mNetworkAccessManager;
-};
 
 Weather::Weather(QObject *parent) : QObject(parent)
 {
-    m = new WeatherPrivate;
-    m->mNetworkAccessManager = new QNetworkAccessManager(this);
-    connect(m->mNetworkAccessManager, &QNetworkAccessManager::finished, this, &Weather::replyFinished);
+    // setup network manager
+    mNetworkAccessManager = new QNetworkAccessManager(this);
+    connect(mNetworkAccessManager, &QNetworkAccessManager::finished, this, &Weather::replyFinished);
 }
 
 Weather::~Weather()
 {
-    delete m;
+    mNetworkAccessManager->deleteLater();
 }
 
 QString Weather::url() const
 {
-    return m->mUrl;
+    return mUrl;
 }
 
 void Weather::setUrl(const QString &xUrl)
 {
-    if(m->mUrl != xUrl)
+    // get station data
+    Stations *stations = Stations::instance();
+    QString url = stations->getUrlbyWMO(xUrl);
+
+    // assign url
+    if(mUrl != url)
     {
-        m->mUrl = xUrl;
+        mWMO = xUrl;
+        mUrl = url;
         emit urlChanged();
     }
 }
 
-void Weather::requestWeather(const QString &xSearchString)
+void Weather::requestWeather()
 {
-    QUrl u = QUrl(m->mUrl); // + xSearchString);
+    QUrl u = QUrl(mUrl);
     QNetworkRequest request;
     request.setUrl(u);
     request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
-    m->mNetworkAccessManager->get(request);
+    mNetworkAccessManager->get(request);
 }
 
 void Weather::replyFinished(QNetworkReply *xNetworkReply)
@@ -54,8 +54,28 @@ void Weather::replyFinished(QNetworkReply *xNetworkReply)
     if(xNetworkReply->error() == QNetworkReply::NoError)
     {
         QByteArray data = xNetworkReply->readAll();
-        qDebug() << "XML download size:" << data.size() << "bytes";
+        //qDebug() << "download " << data.size() << "bytes";
         //qDebug() << QString(data);
+        //qDebug() << mUrl;
+
+        // json version
+        QJsonParseError JsonParseError;
+        QJsonDocument doc = QJsonDocument::fromJson(data, &JsonParseError);
+        QJsonObject obj = doc.object();
+
+        QJsonObject observations = obj["observations"].toObject();
+        QJsonArray station_data = observations["data"].toArray();
+        if (station_data.size() == 0) {
+            qDebug() << "no data";
+            return;
+        }
+
+        // get the current data
+        QJsonObject weather_data = station_data[0].toObject();
+        //qDebug() << weather_data;
+
+        /*
+        // XML version
         QXmlStreamReader xml(data);
 
         //qDebug() << data;
@@ -105,11 +125,10 @@ void Weather::replyFinished(QNetworkReply *xNetworkReply)
 
         // debug
         //qDebug() << QJsonDocument(result).toJson(QJsonDocument::Compact).toStdString().c_str();
+        */
 
-        emit resultFinished(result);
+        emit resultFinished(weather_data);
     } else {
-        qDebug()<<"error";
+        qDebug() << "network error " << xNetworkReply->error();
     }
-
-    //delete xNetworkReply; // do we need to clean? this crashes
 }

@@ -4,8 +4,6 @@
 #include <QObject>
 #include <QNetworkReply>
 
-class WeatherPrivate;
-
 class Weather : public QObject
 {
     Q_OBJECT
@@ -18,7 +16,7 @@ public:
     void setUrl(const QString &xUrl);
 
 public slots:
-    void requestWeather(const QString &xSearchString);
+    void requestWeather();
 
 signals:
     void urlChanged();
@@ -28,7 +26,9 @@ private slots:
     void replyFinished(QNetworkReply *xNetworkReply);
 
 private:
-    WeatherPrivate *m;
+    QString mWMO;
+    QString mUrl;
+    QNetworkAccessManager *mNetworkAccessManager;
 };
 
 #endif // Weather_H

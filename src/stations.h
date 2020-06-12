@@ -2,8 +2,7 @@
 #define Stations_H
 
 #include <QObject>
-#include <QNetworkReply>
-#include <QMultiHash>
+#include <QJsonArray>
 
 class QQmlEngine;
 class QJSEngine;
@@ -13,6 +12,8 @@ class QJSEngine;
 // http://www.bom.gov.au/fwo/[state_id]/[state_id].[wmo_id].json
 // data can also be found here:
 // ftp://ftp.bom.gov.au/anon2/home/ncc/metadata/sitelists/stations.zip
+// xml can be found here:
+// ftp://ftp.bom.gov.au/anon/gen/fwo/IDS60920.xml
 
 class Stations : public QObject
 {
@@ -26,13 +27,14 @@ public:
     Stations(QObject *parent = 0);
     ~Stations();
 
-    QJsonObject byWMO(QString wmo);
+    QString getUrlbyWMO(QString wmo);
     QJsonObject byName(QString name);
     QJsonObject byLatLon(QString lat, QString lon);
-    QUrl getUrl(QJsonObject station);
+    QString getUrl(QJsonArray station);
 
 private:
     static Stations* m_pThis;
+    QJsonArray station_data;
 
 public slots:
     //void update();

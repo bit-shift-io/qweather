@@ -28,13 +28,12 @@ ApplicationWindow {
     Weather {
         // weather object
         id: weather
-        url: 'ftp://ftp.bom.gov.au/anon/gen/fwo/IDS60920.xml'
+        url: '94672'
         onResultFinished: {
-            console.log(xResult);
+            console.log(xResult['name'])
         }
         Component.onCompleted: {
-            console.log("weather complete");
-            weather.requestWeather("Koblenz,de");
+            weather.requestWeather();
         }
     }
 

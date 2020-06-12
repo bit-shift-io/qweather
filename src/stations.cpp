@@ -13,7 +13,7 @@ Stations* Stations::m_pThis = nullptr;
 
 Stations::Stations(QObject *parent) : QObject(parent)
 {
-    QFile file(":/stations.json");
+    QFile file(":/database.json");
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QByteArray file_data = file.readAll();
     file.close();
@@ -21,21 +21,27 @@ Stations::Stations(QObject *parent) : QObject(parent)
     QJsonParseError JsonParseError;
     QJsonDocument doc = QJsonDocument::fromJson(file_data, &JsonParseError);
     QJsonObject obj = doc.object();
-    QJsonArray stations = obj["stations"].toArray();
+    station_data = obj["stations"].toArray();
 
     // debug
-    QString jsonString = doc.toJson(QJsonDocument::Indented);
-    QString strFromObj = QJsonDocument(obj).toJson(QJsonDocument::Compact).toStdString().c_str();
-    qDebug() << strFromObj;
+    //QString jsonString = doc.toJson(QJsonDocument::Indented);
+    //QString strFromObj = QJsonDocument(obj).toJson(QJsonDocument::Compact).toStdString().c_str();
+    //qDebug() << "stations " << station_data.size();
 }
 
 Stations::~Stations()
 {
 }
 
-QJsonObject Stations::byWMO(QString wmo) {
-
-
+QString Stations::getUrlbyWMO(QString wmo) {
+    foreach (const QJsonValue & value, station_data) {
+        QJsonArray station = value.toArray();
+        QString station_wmo = station[0].toString();
+        //qDebug() << station_wmo;
+        if (station_wmo == wmo) {
+            return getUrl(station);
+        }
+    }
 }
 
 QJsonObject Stations::byName(QString name) {
@@ -48,9 +54,11 @@ QJsonObject Stations::byLatLon(QString lat, QString lon) {
 
 }
 
-QUrl Stations::getUrl(QJsonObject station) {
-
-
+QString Stations::getUrl(QJsonArray station) {
+    QString wmo = station[0].toString();
+    QString state_id = station[1].toString();
+    QString url_string = QString("http://www.bom.gov.au/fwo/%2/%2.%1.json").arg(wmo, state_id);
+    return url_string;
 }
 
 Stations *Stations::instance()
