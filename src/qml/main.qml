@@ -30,14 +30,14 @@ ApplicationWindow {
         id: weather
         url: '94672'
         onResultFinished: {
-            console.log(xResult['name'])
+            today.update(xResult);
         }
         Component.onCompleted: {
             weather.requestWeather();
         }
     }
 
-    /*
+
     Timer {
         // Refresh the forecast every 5 minutes
         interval: 300000
@@ -45,74 +45,8 @@ ApplicationWindow {
         triggeredOnStart: true
         running: true
         onTriggered: {
-            var url = 'http://www.bom.gov.au';
-            var test_url = 'ftp://ftp.bom.gov.au/anon/gen/fwo/IDS60920.xml';
-            var station = '94648';
-            var xhr = new XMLHttpRequest;
-            xhr.open("GET", test_url);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == XMLHttpRequest.DONE) {
-                    var doc = xhr.responseXML.documentElement;
-                    //var result = Util.parse(xhr.responseText);
-                    var o = getElementsByNodeName(doc, 'observations');
-                    console.log(o);
-
-                    /*
-                    //showRequestInfo("xhr length: " + doc.childNodes.length );
-
-                    for (var i = 0; i < doc.childNodes.length; ++i) {
-                        var child = doc.childNodes[i];
-
-                        // get observations
-                        for (var j = 0; j < child.childNodes.length; ++j) {
-                            if ( child.nodeName ===  "observations") {
-
-                                var kid = child.childNodes[j];
-                                var length = kid.childNodes.length;
-
-                                for ( var k = 0; k < length; k ++) {
-                                    var cube = kid.childNodes[k];
-                                    console.log(cube.nodeName);
-                                    if ( cube.nodeName === "station") {
-                                        var len = cube.attributes.length;
-                                        var currency = cube.attributes[0].nodeValue;
-                                        var rate = cube.attributes[1].nodeValue;
-                                        currencies.append({"currency": currency, "rate": parseFloat(rate)})
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-                    * /
-                }
-            }
-            xhr.send();
+            weather.requestWeather();
         }
-    }
-    */
-
-    function getElementsByNodeName(rootElement, nodeName) {
-        var childNodes = rootElement.childNodes;
-        var elements = [];
-        for(var i = 0; i < childNodes.length; i++) {
-            console.log(childNodes[i].nodeName);
-            if(childNodes[i].nodeName === nodeName) {
-                elements.push(childNodes[i]);
-            }
-        }
-        return elements;
-    }
-
-    function getElementsByTagName(rootElement, tagName) {
-        var childNodes = rootElement.childNodes;
-        var elements = [];
-        for(var i = 0; i < childNodes.length; i++) {
-            if(childNodes[i].tagName === tagName) {
-                elements.push(childNodes[i]);
-            }
-        }
-        return elements;
     }
 
 
@@ -125,22 +59,19 @@ ApplicationWindow {
             spacing: 10
             anchors.fill: parent
 
-               /*
-            Button {
-                text: "refresh"
-                onClicked: {
-                    weather.requestWeather("Koblenz,de");
-                }
+            Today {
+                id: today
+            }
 
-            }*/
-
-            Today {}
-
-            Forecast {}
+            Forecast {
+                id:forecast
+            }
 
             GraphicForecast {}
 
-            Radar {}
+            Radar {
+                id: radar
+            }
         }
     }
 

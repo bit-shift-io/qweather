@@ -32,7 +32,7 @@ Item {
         ColumnLayout {
             Image {
                 id: image
-                source: "qrc:/heavy-showers.svg"
+                source: "qrc:/sunny.svg"
                 sourceSize.width: Style.today.image_size
                 sourceSize.height: Style.today.image_size
             }
@@ -84,7 +84,6 @@ Item {
             }
 
             Label {
-
                 id: humid
                 text: "18%"
                 color: Style.today.font_color
@@ -112,6 +111,15 @@ Item {
 
     }
     
+    function update(xData) {
+        place.text = xData['name'];
+        temp.text = xData['air_temp'] + '°C';
+        feel.text = 'Feels like ' + xData['apparent_t'] + '°C';
+        wind.text = xData['wind_spd_kmh'] + 'kmh ' + xData['wind_spd_kmh'] + 'kt ' + xData['wind_dir'];
+        humid.text = xData['rel_hum'] + '%';
+        rain.text = xData['rain_trace'] + 'mm';
+        image.source = 'qrc:/' + xData['cloud'] + '.svg';
+    }
 
 }
 
