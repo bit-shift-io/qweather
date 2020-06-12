@@ -1,9 +1,7 @@
 #include "stations.h"
 
 #include <QNetworkAccessManager>
-#include <QJsonObject>
 #include <QJsonDocument>
-#include <QJsonArray>
 #include <QXmlStreamReader>
 #include <QDebug>
 #include <QQmlEngine>
@@ -20,8 +18,13 @@ Stations::Stations(QObject *parent) : QObject(parent)
 
     QJsonParseError JsonParseError;
     QJsonDocument doc = QJsonDocument::fromJson(file_data, &JsonParseError);
+    if (JsonParseError.error != QJsonParseError::NoError) {
+        qDebug() << JsonParseError.errorString();
+    }
+
     QJsonObject obj = doc.object();
     station_data = obj["stations"].toArray();
+    forecast_data = obj["forecast"].toObject();
 
     // debug
     //QString jsonString = doc.toJson(QJsonDocument::Indented);
@@ -33,30 +36,39 @@ Stations::~Stations()
 {
 }
 
-QString Stations::getUrlbyWMO(QString wmo) {
+QString Stations::WmoToUrl(QString xWmo) {
     foreach (const QJsonValue & value, station_data) {
         QJsonArray station = value.toArray();
         QString station_wmo = station[0].toString();
         //qDebug() << station_wmo;
-        if (station_wmo == wmo) {
-            return getUrl(station);
+        if (station_wmo == xWmo) {
+            return StationToUrl(station);
         }
     }
+    return "";
 }
 
-QJsonObject Stations::byName(QString name) {
-
-
+QString Stations::WmoToState(QString xWmo) {
+    foreach (const QJsonValue & value, station_data) {
+        QJsonArray station = value.toArray();
+        QString station_wmo = station[0].toString();
+        //qDebug() << station_wmo;
+        if (station_wmo == xWmo) {
+            return station[2].toString();
+        }
+    }
+    return "";
 }
 
-QJsonObject Stations::byLatLon(QString lat, QString lon) {
-
-
+QString Stations::WmoToForecastUrl(QString xWmo) {
+    QString state = WmoToState(xWmo);
+    QString url = forecast_data[state].toString();
+    return url;
 }
 
-QString Stations::getUrl(QJsonArray station) {
-    QString wmo = station[0].toString();
-    QString state_id = station[1].toString();
+QString Stations::StationToUrl(QJsonArray xStation) {
+    QString wmo = xStation[0].toString();
+    QString state_id = xStation[1].toString();
     QString url_string = QString("http://www.bom.gov.au/fwo/%2/%2.%1.json").arg(wmo, state_id);
     return url_string;
 }

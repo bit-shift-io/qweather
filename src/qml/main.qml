@@ -32,9 +32,6 @@ ApplicationWindow {
         onResultFinished: {
             today.update(xResult);
         }
-        Component.onCompleted: {
-            weather.requestWeather();
-        }
     }
 
 
@@ -45,7 +42,7 @@ ApplicationWindow {
         triggeredOnStart: true
         running: true
         onTriggered: {
-            weather.requestWeather();
+            weather.update();
         }
     }
 

@@ -1,4 +1,14 @@
 {
+	"forecast" : {
+		"NSW" : "ftp://ftp.bom.gov.au/anon/gen/fwo/IDN11060.xml",
+		"ACT" : "ftp://ftp.bom.gov.au/anon/gen/fwo/IDN11060.xml",
+		"NT" : "ftp://ftp.bom.gov.au/anon/gen/fwo/IDD10207.xml",
+		"QLD" : "ftp://ftp.bom.gov.au/anon/gen/fwo/IDQ11295.xml",
+		"SA" : "ftp://ftp.bom.gov.au/anon/gen/fwo/IDS10044.xml",
+		"TAS" : "ftp://ftp.bom.gov.au/anon/gen/fwo/IDT16710.xml",
+		"VIC" : "ftp://ftp.bom.gov.au/anon/gen/fwo/IDV10753.xml",
+		"WA" : "ftp://ftp.bom.gov.au/anon/gen/fwo/IDW14199.xml"
+	},
     "stations" : [
         ["94648", "IDS60801", "SA", "Adelaide (West Terrace /  ngayirdapira)", "-34.9", "138.6"],
         ["94675", "IDS60801", "SA", "Adelaide (Kent Town)", "-34.9", "138.6"],

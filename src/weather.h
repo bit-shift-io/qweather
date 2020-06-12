@@ -16,7 +16,8 @@ public:
     void setUrl(const QString &xUrl);
 
 public slots:
-    void requestWeather();
+    void update();
+
 
 signals:
     void urlChanged();
@@ -26,8 +27,11 @@ private slots:
     void replyFinished(QNetworkReply *xNetworkReply);
 
 private:
+    void requestForecast();
+    void requestWeather();
     QString mWMO;
     QString mUrl;
+    QString mForecastUrl;
     QNetworkAccessManager *mNetworkAccessManager;
 };
 

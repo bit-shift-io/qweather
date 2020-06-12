@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QJsonArray>
+#include <QJsonObject>
 
 class QQmlEngine;
 class QJSEngine;
@@ -27,14 +28,15 @@ public:
     Stations(QObject *parent = 0);
     ~Stations();
 
-    QString getUrlbyWMO(QString wmo);
-    QJsonObject byName(QString name);
-    QJsonObject byLatLon(QString lat, QString lon);
-    QString getUrl(QJsonArray station);
+    QString WmoToUrl(QString xWmo);
+    QString WmoToState(QString xWmo);
+    QString StationToUrl(QJsonArray xStation);
+    QString WmoToForecastUrl(QString xWmo);
 
 private:
     static Stations* m_pThis;
     QJsonArray station_data;
+    QJsonObject forecast_data;
 
 public slots:
     //void update();

@@ -29,20 +29,37 @@ void Weather::setUrl(const QString &xUrl)
 {
     // get station data
     Stations *stations = Stations::instance();
-    QString url = stations->getUrlbyWMO(xUrl);
+    QString url = stations->WmoToUrl(xUrl);
+    QString forecast_url = stations->WmoToForecastUrl(xUrl);
 
     // assign url
     if(mUrl != url)
     {
         mWMO = xUrl;
         mUrl = url;
+        mForecastUrl = forecast_url;
         emit urlChanged();
     }
+}
+
+void Weather::update() {
+    // TODO: forecast only needs to be updated once per day
+    requestForecast();
+    //requestWeather();
 }
 
 void Weather::requestWeather()
 {
     QUrl u = QUrl(mUrl);
+    QNetworkRequest request;
+    request.setUrl(u);
+    request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
+    mNetworkAccessManager->get(request);
+}
+
+void Weather::requestForecast()
+{
+    QUrl u = QUrl(mForecastUrl);
     QNetworkRequest request;
     request.setUrl(u);
     request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
