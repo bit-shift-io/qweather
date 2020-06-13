@@ -27,7 +27,7 @@ def main():
     menu['3'] = ['Run desktop', 'run_desktop']
     menu['4'] = ['Run mobile', 'run_mobile']
     menu['5'] = ['Debug (GDB)', 'debug']
-    menu['p'] = ['Generate places', 'places']
+    menu['d'] = ['Generate database', 'database']
     menu['0'] = ['Requirements', 'requirements']
 
     print('\n********************')
@@ -49,13 +49,16 @@ def main():
     return
 
 
-def places():
+def database():
+    import json
     import requests
     from bs4 import BeautifulSoup
     import re
 
-    base_url = ''
-    url_data = [
+    import urllib
+    import dbf
+
+    observation_data = [
         'http://www.bom.gov.au/sa/observations/saall.shtml',
         'http://reg.bom.gov.au/act/observations/canberra.shtml',
         'http://www.bom.gov.au/nsw/observations/nswall.shtml',
@@ -66,13 +69,79 @@ def places():
         'http://www.bom.gov.au/wa/observations/waall.shtml',
     ]
 
-    for url in url_data:
+    area_data = [
+        'ftp://ftp.bom.gov.au/anon/home/adfd/spatial/IDM00013.dbf'
+    ]
+
+    # http://www.bom.gov.au/catalogue/data-feeds.shtml#forecasts
+    forecast_data = [
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDN11060.xml',
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDN11100.xml',
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDN11050.xml',
+
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDD10207.xml',
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDD10208.xml',
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDD10198.xml',
+        
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDQ11295.xml',
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDQ11296.xml',
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDQ10605.xml',
+
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDS10044.xml',
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDS11039.xml',
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDS10037.xml',
+
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDT16710.xml',
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDT13515.xml',
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDT13630.xml',
+
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDV10753.xml',
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDV10752.xml',
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDV10751.xml',
+
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDW14199.xml',
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDW14100.xml',
+        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDW12400.xml',
+    ]
+
+    result = {
+        'areas': [],
+        'forecasts' : [],
+        'stations' : []
+    }
+    
+
+
+    # print area code data
+    db = urllib.request.urlretrieve(area_data[0], 'database.dbf')
+    #db = requests.get(area_data[0])
+    table = dbf.Table(db[0])  # table is closed
+    table.open()
+    for item in table:
+        array = [item['aac'].strip(), item['pt_name'].strip(), item['state_code'].strip(), item['lat'], item['lon']]
+        info = '["{}", "{}", "{}", "{}", "{}"],'.format(item['aac'].strip(), item['pt_name'].strip(), item['state_code'].strip(), item['lat'], item['lon'])
+        result['areas'].append(array)
+        print(info)
+
+    # write json
+    with open('database.json', 'w', encoding='utf-8') as f:
+        json.dump(result, f, ensure_ascii=False, indent=4)
+ 
+    # print forecast area data
+    '''
+    for url in forecast_data:
         page = requests.get(url)
         soup = BeautifulSoup(page.text, 'html.parser')
-
-        # debug
-        #print(soup.prettify())
         print(url)
+        #print(soup.prettify())
+    '''
+
+    # print observation station data
+    for url in observation_data:
+        page = requests.get(url)
+        soup = BeautifulSoup(page.text, 'html.parser')
+        print(url)
+        #print(soup.prettify())
 
         # get all links on page
         for link in soup.find_all('a'):
@@ -102,12 +171,15 @@ def places():
                 
                 lat = data['lat']
                 lon = data['lon']
-                print('{{"{}", "{}", "{}", "{}", "{}", "{}"}},'.format(id_wmo, id_state, state, name, lat, lon))
-                
-                
+                array = [id_wmo, id_state, state, name, lat, lon]
+                info = '["{}", "{}", "{}", "{}", "{}", "{}"],'.format(id_wmo, id_state, state, name, lat, lon)
+                result['stations'].append(array)
+                print(info)
 
+    # write json
+    with open('database.json', 'w', encoding='utf-8') as f:
+        json.dump(result, f, ensure_ascii=False, indent=4)
 
-    
     return
 
 
