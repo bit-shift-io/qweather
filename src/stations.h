@@ -32,11 +32,17 @@ public:
     QString WmoToState(QString xWmo);
     QString StationToUrl(QJsonArray xStation);
     QString WmoToForecastUrl(QString xWmo);
+    QPointF WmoToLonLat(QString xWmo);
+    QString LonLatToAreaCode(QPointF xLonLat);
+    float getDistance(QPointF xLonLatA, QPointF xLonLatB);
+    QString AreaCodeToForecastUrl(QString xWmo);
 
 private:
     static Stations* m_pThis;
     QJsonArray station_data;
-    QJsonObject forecast_data;
+    QJsonArray area_data;
+    QJsonArray forecast_data;
+
 
 public slots:
     //void update();

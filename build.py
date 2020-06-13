@@ -50,11 +50,13 @@ def main():
 
 
 def database():
+    # pip install bs4
+    # pip install lxml
+    # pip install dbf
     import json
     import requests
     from bs4 import BeautifulSoup
     import re
-
     import urllib
     import dbf
 
@@ -107,10 +109,22 @@ def database():
     result = {
         'areas': [],
         'forecasts' : [],
-        'stations' : []
     }
     
 
+    # print forecast area data
+    for url in forecast_data:
+        source = urllib.request.urlretrieve(url, 'xml.xml')
+        page = open(source[0],'r')
+        soup = BeautifulSoup(page.read(), 'xml')
+        print(url)
+        #print(soup.prettify())
+        for area in soup.find_all('area'):
+            if ('aac' in area.attrs and 'type' in area.attrs):
+                if (area.attrs['type'] == 'metropolitan' or area.attrs['type'] == 'location'):
+                    array = [area.attrs['aac'], area.attrs['description'], url]
+                    print(array)
+                    result['forecasts'].append(array)
 
     # print area code data
     db = urllib.request.urlretrieve(area_data[0], 'database.dbf')
@@ -119,22 +133,17 @@ def database():
     table.open()
     for item in table:
         array = [item['aac'].strip(), item['pt_name'].strip(), item['state_code'].strip(), item['lat'], item['lon']]
-        info = '["{}", "{}", "{}", "{}", "{}"],'.format(item['aac'].strip(), item['pt_name'].strip(), item['state_code'].strip(), item['lat'], item['lon'])
         result['areas'].append(array)
-        print(info)
+        print(array)
 
     # write json
-    with open('database.json', 'w', encoding='utf-8') as f:
+    with open('areas.json', 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False, indent=4)
  
-    # print forecast area data
-    '''
-    for url in forecast_data:
-        page = requests.get(url)
-        soup = BeautifulSoup(page.text, 'html.parser')
-        print(url)
-        #print(soup.prettify())
-    '''
+
+    result = {
+        'stations' : []
+    }
 
     # print observation station data
     for url in observation_data:
@@ -172,12 +181,12 @@ def database():
                 lat = data['lat']
                 lon = data['lon']
                 array = [id_wmo, id_state, state, name, lat, lon]
-                info = '["{}", "{}", "{}", "{}", "{}", "{}"],'.format(id_wmo, id_state, state, name, lat, lon)
                 result['stations'].append(array)
-                print(info)
+                print(array)
 
     # write json
-    with open('database.json', 'w', encoding='utf-8') as f:
+    # TODO: some crash here due to size being to large??!
+    with open('stations.json', 'w', encoding='utf-8') as f:
         json.dump(result, f, ensure_ascii=False, indent=4)
 
     return

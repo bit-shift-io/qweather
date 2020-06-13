@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QQmlEngine>
 #include <QFile>
+#include <QPointF>
+#include <QLineF>
 
 Stations* Stations::m_pThis = nullptr;
 
@@ -24,7 +26,8 @@ Stations::Stations(QObject *parent) : QObject(parent)
 
     QJsonObject obj = doc.object();
     station_data = obj["stations"].toArray();
-    forecast_data = obj["forecast"].toObject();
+    area_data = obj["areas"].toArray();
+    forecast_data = obj["forecasts"].toArray();
 
     // debug
     //QString jsonString = doc.toJson(QJsonDocument::Indented);
@@ -60,9 +63,60 @@ QString Stations::WmoToState(QString xWmo) {
     return "";
 }
 
+QPointF Stations::WmoToLonLat(QString xWmo) {
+    QPoint result;
+    foreach (const QJsonValue & value, station_data) {
+        QJsonArray station = value.toArray();
+        QString station_wmo = station[0].toString();
+        //qDebug() << station_wmo;
+        if (station_wmo == xWmo) {
+            return QPointF(station[4].toDouble(),station[5].toDouble());
+        }
+    }
+    return result;
+}
+
+float Stations::getDistance(QPointF xLonLatA, QPointF xLonLatB) {
+    QLineF l(xLonLatA, xLonLatB);
+    return l.length();
+}
+
+QString Stations::LonLatToAreaCode(QPointF xLonLat) {
+    int closest_distance = 9999999; // TODO: int.max
+    QString closest_area_code;
+
+    foreach (const QJsonValue & value, area_data) {
+        QJsonArray item = value.toArray();
+        QString station_wmo = item[0].toString();
+        //qDebug() << station_wmo;
+        QPointF area_lon_lat = QPointF(item[3].toDouble(), item[4].toDouble());
+        float d = getDistance(area_lon_lat, xLonLat);
+        if (d < closest_distance) {
+            closest_distance = d;
+            closest_area_code = item[0].toString();
+        }
+
+    }
+    return closest_area_code;
+}
+
+QString Stations::AreaCodeToForecastUrl(QString xAreaCode) {
+    foreach (const QJsonValue & value, forecast_data) {
+        QJsonArray item = value.toArray();
+        QString forecast = item[0].toString();
+        //qDebug() << station_wmo;
+        if (forecast == xAreaCode) {
+            return item[2].toString();
+        }
+    }
+    return "";
+}
+
 QString Stations::WmoToForecastUrl(QString xWmo) {
-    QString state = WmoToState(xWmo);
-    QString url = forecast_data[state].toString();
+    // find the wmo station -> get lon/lat -> seatch areas by lon/lat -> get aac are code -> find forecast by aac
+    QPointF lon_lat = WmoToLonLat(xWmo);
+    QString area_code = LonLatToAreaCode(lon_lat);
+    QString url = AreaCodeToForecastUrl(area_code);
     return url;
 }
 

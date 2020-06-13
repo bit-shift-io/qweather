@@ -184,6 +184,6 @@ void Weather::replyFinished(QNetworkReply *xNetworkReply)
         //qDebug() << QJsonDocument(result).toJson(QJsonDocument::Compact).toStdString().c_str();
         //emit resultFinished(weather_data);
     } else {
-        qDebug() << "network error " << xNetworkReply->error();
+        qDebug() << "network error " << xNetworkReply->error() << " " << xNetworkReply->url().toString();
     }
 }
