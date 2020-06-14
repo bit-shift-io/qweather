@@ -16,8 +16,8 @@ public:
     void setStation(const QString &xUrl);
 
 public slots:
-    void update();
-
+    void requestForecast();
+    void requestObservation();
 
 signals:
     void stationChanged();
@@ -29,8 +29,6 @@ private slots:
     void replyObservationFinished(QNetworkReply *xNetworkReply);
 
 private:
-    void requestForecast();
-    void requestObservation();
     QString mWMO;
     QString mObservationUrl;
     QString mAreaCode;

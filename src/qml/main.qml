@@ -10,7 +10,7 @@ import Stations 1.0
 import 'Style'
 
 ApplicationWindow {
-    id: window
+    id: root
     title: Qt.application.name
     width: 350
     height: 500
@@ -34,18 +34,20 @@ ApplicationWindow {
         }
         onResultForecastFinished: {
             today.updateForecast(xResult);
+            forecast.updateForecast(xResult);
         }
     }
 
 
     Timer {
-        // Refresh the forecast every 5 minutes
+        // Refresh the observations every 5 minutes
         interval: 300000
         repeat: true
         triggeredOnStart: true
         running: true
         onTriggered: {
-            weather.update();
+            weather.requestObservation();
+            weather.requestForecast();
         }
     }
 

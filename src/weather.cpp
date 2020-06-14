@@ -41,10 +41,6 @@ void Weather::setStation(const QString &xUrl)
     }
 }
 
-void Weather::update() {
-    requestForecast();
-    //requestObservation();
-}
 
 void Weather::requestObservation()
 {
@@ -82,7 +78,7 @@ void Weather::replyObservationFinished(QNetworkReply *xNetworkReply)
     QByteArray data = xNetworkReply->readAll();
     xNetworkReply->deleteLater();
     QJsonObject weather_data;
-    qDebug() << "download " << data.size() << "bytes";
+    //qDebug() << "download " << data.size() << "bytes";
     //qDebug() << QString(data);
     //qDebug() << mUrl;
 

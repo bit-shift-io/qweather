@@ -41,7 +41,7 @@ Item {
                 id: temp
                 font.pointSize: Style.today.font_size_temp
                 color: Style.today.font_color
-                text: "12C"
+                text: ""
                 horizontalAlignment: Text.AlignLeft
                 Layout.fillWidth: true
             }
@@ -49,7 +49,7 @@ Item {
             Label {
                 id: feel
                 color: Style.today.font_color
-                text: "Feels like 23C"
+                text: ""
                 horizontalAlignment: Text.AlignLeft
                 Layout.fillWidth: true
             }
@@ -59,7 +59,7 @@ Item {
 
             Label {
                 id: place
-                text: "Adelaide"
+                text: ""
                 color: Style.today.font_color
                 font.pointSize: Style.today.font_size_place
                 horizontalAlignment: Text.AlignRight
@@ -69,7 +69,7 @@ Item {
 
             Label {
                 id: wind
-                text: "12km 8kt ssw"
+                text: ""
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
@@ -77,7 +77,7 @@ Item {
 
             Label {
                 id: rain
-                text: "1mm"
+                text: ""
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
@@ -85,23 +85,44 @@ Item {
 
             Label {
                 id: humid
-                text: "18%"
+                text: ""
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
             }
 
-            Label {
-                id: temp_range
-                text: "12C 24C"
-                color: Style.today.font_color
-                horizontalAlignment: Text.AlignRight
-                Layout.fillWidth: true
+            RowLayout {
+                //SizeBox{}
+
+                Label {
+
+                    id: temp_min
+                    text: ""
+                    color: Style.today.font_color
+                    horizontalAlignment: Text.AlignRight
+                    Layout.fillWidth: true
+                }
+
+                Label {
+                    id: space
+                    text: " "
+                    color: Style.today.font_color
+                    horizontalAlignment: Text.AlignRight
+                    Layout.fillWidth: true
+                }
+
+                Label {
+                    id: temp_max
+                    text: ""
+                    color: Style.today.font_color
+                    horizontalAlignment: Text.AlignRight
+                    Layout.fillWidth: true
+                }
             }
 
             Label {
                 id: summary
-                text: "Warm and sunny"
+                text: ""
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
@@ -118,11 +139,14 @@ Item {
         wind.text = xData['wind_spd_kmh'] + 'kmh ' + xData['wind_spd_kmh'] + 'kt ' + xData['wind_dir'];
         humid.text = xData['rel_hum'] + '%';
         rain.text = xData['rain_trace'] + 'mm';
-        image.source = 'qrc:/' + xData['cloud'] + '.svg';
+        //image.source = 'qrc:/' + xData['cloud'] + '.svg';
     }
 
     function updateForecast(xData) {
-        console.log(xData['forecast'][0]['date'])
+        var today = xData['forecast'][0];
+        //image.source = today['forecast_icon_code'];
+        temp_max.text = today['air_temperature_maximum'] + '°C';
+        summary.text = today['precis'];
     }
 
 }

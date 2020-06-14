@@ -54,7 +54,12 @@ Item {
                 }
             }
         }
+    }
 
+    function updateForecast(xData) {
+        var today = xData['forecast'][0];
 
     }
 }
+
+
