@@ -111,7 +111,7 @@ Item {
 
     }
     
-    function update(xData) {
+    function updateObservation(xData) {
         place.text = xData['name'];
         temp.text = xData['air_temp'] + '°C';
         feel.text = 'Feels like ' + xData['apparent_t'] + '°C';

@@ -28,20 +28,15 @@ public:
     Stations(QObject *parent = 0);
     ~Stations();
 
-    QString WmoToUrl(QString xWmo);
-    QString WmoToState(QString xWmo);
-    QString StationToUrl(QJsonArray xStation);
-    QString WmoToForecastUrl(QString xWmo);
-    QPointF WmoToLonLat(QString xWmo);
-    QString LonLatToAreaCode(QPointF xLonLat);
+    QJsonArray getStationByWmo(QString xWmo);
+    QString getObservationUrl(QString xWmo);
+    QString getForecastUrl(QString xWmo);
+    QString getAreaCode(QString xWmo);
     float getDistance(QPointF xLonLatA, QPointF xLonLatB);
-    QString AreaCodeToForecastUrl(QString xWmo);
 
 private:
     static Stations* m_pThis;
     QJsonArray station_data;
-    QJsonArray area_data;
-    QJsonArray forecast_data;
 
 
 public slots:

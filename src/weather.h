@@ -7,32 +7,35 @@
 class Weather : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString url READ url WRITE setUrl NOTIFY urlChanged)
+    Q_PROPERTY(QString station READ station WRITE setStation NOTIFY stationChanged)
 public:
     Weather(QObject *parent = 0);
     ~Weather();
 
-    QString url() const;
-    void setUrl(const QString &xUrl);
+    QString station() const;
+    void setStation(const QString &xUrl);
 
 public slots:
     void update();
 
 
 signals:
-    void urlChanged();
-    void resultFinished(const QJsonObject &xResult);
+    void stationChanged();
+    void resultObservationFinished(const QJsonObject &xResult);
+    void resultForecastFinished(const QJsonObject &xResult);
 
 private slots:
-    void replyFinished(QNetworkReply *xNetworkReply);
+    void replyForecastFinished(QNetworkReply *xNetworkReply);
+    void replyObservationFinished(QNetworkReply *xNetworkReply);
 
 private:
     void requestForecast();
-    void requestWeather();
+    void requestObservation();
     QString mWMO;
-    QString mUrl;
+    QString mObservationUrl;
+    QString mAreaCode;
     QString mForecastUrl;
-    QNetworkAccessManager *mNetworkAccessManager;
+    //QNetworkAccessManager *mNetworkAccessManager;
 };
 
 #endif // Weather_H

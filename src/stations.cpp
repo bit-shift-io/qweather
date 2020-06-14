@@ -26,8 +26,6 @@ Stations::Stations(QObject *parent) : QObject(parent)
 
     QJsonObject obj = doc.object();
     station_data = obj["stations"].toArray();
-    area_data = obj["areas"].toArray();
-    forecast_data = obj["forecasts"].toArray();
 
     // debug
     //QString jsonString = doc.toJson(QJsonDocument::Indented);
@@ -39,91 +37,39 @@ Stations::~Stations()
 {
 }
 
-QString Stations::WmoToUrl(QString xWmo) {
-    foreach (const QJsonValue & value, station_data) {
-        QJsonArray station = value.toArray();
-        QString station_wmo = station[0].toString();
-        //qDebug() << station_wmo;
-        if (station_wmo == xWmo) {
-            return StationToUrl(station);
-        }
-    }
-    return "";
+QString Stations::getObservationUrl(QString xWmo) {
+    QJsonArray station = getStationByWmo(xWmo);
+    QString state_id = station[1].toString();
+    QString url_string = QString("http://www.bom.gov.au/fwo/%2/%2.%1.json").arg(xWmo, state_id);
+    return url_string;
 }
 
-QString Stations::WmoToState(QString xWmo) {
-    foreach (const QJsonValue & value, station_data) {
-        QJsonArray station = value.toArray();
-        QString station_wmo = station[0].toString();
-        //qDebug() << station_wmo;
-        if (station_wmo == xWmo) {
-            return station[2].toString();
-        }
-    }
-    return "";
-}
-
-QPointF Stations::WmoToLonLat(QString xWmo) {
-    QPoint result;
-    foreach (const QJsonValue & value, station_data) {
-        QJsonArray station = value.toArray();
-        QString station_wmo = station[0].toString();
-        //qDebug() << station_wmo;
-        if (station_wmo == xWmo) {
-            return QPointF(station[4].toDouble(),station[5].toDouble());
-        }
-    }
-    return result;
-}
 
 float Stations::getDistance(QPointF xLonLatA, QPointF xLonLatB) {
     QLineF l(xLonLatA, xLonLatB);
     return l.length();
 }
 
-QString Stations::LonLatToAreaCode(QPointF xLonLat) {
-    int closest_distance = 9999999; // TODO: int.max
-    QString closest_area_code;
-
-    foreach (const QJsonValue & value, area_data) {
-        QJsonArray item = value.toArray();
-        QString station_wmo = item[0].toString();
-        //qDebug() << station_wmo;
-        QPointF area_lon_lat = QPointF(item[3].toDouble(), item[4].toDouble());
-        float d = getDistance(area_lon_lat, xLonLat);
-        if (d < closest_distance) {
-            closest_distance = d;
-            closest_area_code = item[0].toString();
-        }
-
-    }
-    return closest_area_code;
-}
-
-QString Stations::AreaCodeToForecastUrl(QString xAreaCode) {
-    foreach (const QJsonValue & value, forecast_data) {
-        QJsonArray item = value.toArray();
-        QString forecast = item[0].toString();
-        //qDebug() << station_wmo;
-        if (forecast == xAreaCode) {
-            return item[2].toString();
+QJsonArray Stations::getStationByWmo(QString xWmo) {
+    foreach (const QJsonValue & value, station_data) {
+        QJsonArray station = value.toArray();
+        QString station_wmo = station[0].toString();
+        if (station_wmo == xWmo) {
+            return station;
         }
     }
-    return "";
+    return QJsonArray();
 }
 
-QString Stations::WmoToForecastUrl(QString xWmo) {
-    // find the wmo station -> get lon/lat -> seatch areas by lon/lat -> get aac are code -> find forecast by aac
-    QPointF lon_lat = WmoToLonLat(xWmo);
-    QString area_code = LonLatToAreaCode(lon_lat);
-    QString url = AreaCodeToForecastUrl(area_code);
-    return url;
+QString Stations::getAreaCode(QString xWmo) {
+    return getStationByWmo(xWmo)[3].toString();
 }
 
-QString Stations::StationToUrl(QJsonArray xStation) {
-    QString wmo = xStation[0].toString();
-    QString state_id = xStation[1].toString();
-    QString url_string = QString("http://www.bom.gov.au/fwo/%2/%2.%1.json").arg(wmo, state_id);
+
+QString Stations::getForecastUrl(QString xWmo) {
+    QJsonArray station = getStationByWmo(xWmo);
+    QString forecast_url = station[2].toString();
+    QString url_string = QString("ftp://ftp.bom.gov.au/anon/gen/fwo/%1.xml").arg(forecast_url);
     return url_string;
 }
 

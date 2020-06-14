@@ -28,9 +28,13 @@ ApplicationWindow {
     Weather {
         // weather object
         id: weather
-        url: '94672'
-        onResultFinished: {
-            today.update(xResult);
+        station: '94672'
+        onResultObservationFinished: {
+            today.updateObservation(xResult);
+        }
+        onResultForecastFinished: {
+            console.log(xResult);
+            //today.update(xResult);
         }
     }
 
