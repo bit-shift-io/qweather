@@ -59,6 +59,7 @@ def database():
     import re
     import urllib
     import dbf
+    import math
 
     observation_data = [
         'http://www.bom.gov.au/sa/observations/saall.shtml',
@@ -76,6 +77,19 @@ def database():
     ]
 
     # http://www.bom.gov.au/catalogue/data-feeds.shtml#forecasts
+    # we only need the precis short form data
+    # ftp://ftp.bom.gov.au/anon/gen/fwo/[id].xml
+    forecast_data = [
+        'IDN11060',
+        'IDD10207',
+        'IDQ11295',
+        'IDS10044',
+        'IDT16710',
+        'IDV10753',
+        'IDW14199',
+    ]
+
+    '''
     forecast_data = [
         'ftp://ftp.bom.gov.au/anon/gen/fwo/IDN11060.xml',
         'ftp://ftp.bom.gov.au/anon/gen/fwo/IDN11100.xml',
@@ -105,16 +119,34 @@ def database():
         'ftp://ftp.bom.gov.au/anon/gen/fwo/IDW14100.xml',
         'ftp://ftp.bom.gov.au/anon/gen/fwo/IDW12400.xml',
     ]
+    '''
 
-    result = {
-        'areas': [],
-        'forecasts' : [],
-    }
-    
 
-    # print forecast area data
+
+    # function to get distance between lat_lon
+    def get_distance(ax, ay, bx, by):
+        distance = math.sqrt( ((ax-bx)**2)+((ay-by)**2) )
+        return distance
+
+
+    # area code data
+    area_code_data = []
+    db = urllib.request.urlretrieve(area_data[0], 'database.dbf')
+    #db = requests.get(area_data[0])
+    table = dbf.Table(db[0])  # table is closed
+    table.open()
+    for item in table:
+        array = [item['aac'].strip(), item['pt_name'].strip(), item['state_code'].strip(), item['lat'], item['lon']]
+        area_code_data.append(array)
+        #print(array)
+
+
+    # forecast area data
+    # add forecast url to the area code data
+    forecast_area_data = []
     for url in forecast_data:
-        source = urllib.request.urlretrieve(url, 'xml.xml')
+        new_url = 'ftp://ftp.bom.gov.au/anon/gen/fwo/{}.xml'.format(url)
+        source = urllib.request.urlretrieve(new_url, 'xml.xml')
         page = open(source[0],'r')
         soup = BeautifulSoup(page.read(), 'xml')
         print(url)
@@ -122,30 +154,21 @@ def database():
         for area in soup.find_all('area'):
             if ('aac' in area.attrs and 'type' in area.attrs):
                 if (area.attrs['type'] == 'metropolitan' or area.attrs['type'] == 'location'):
-                    array = [area.attrs['aac'], area.attrs['description'], url]
-                    print(array)
-                    result['forecasts'].append(array)
+                    # convert aac -> lat_lon
+                    aac = area.attrs['aac']
+                    for item in area_code_data:
+                        item_aac = item[0]
+                        if (item_aac == aac):
+                            item.append(url)
+                            forecast_area_data.append(item)
+                            print(item)
 
-    # print area code data
-    db = urllib.request.urlretrieve(area_data[0], 'database.dbf')
-    #db = requests.get(area_data[0])
-    table = dbf.Table(db[0])  # table is closed
-    table.open()
-    for item in table:
-        array = [item['aac'].strip(), item['pt_name'].strip(), item['state_code'].strip(), item['lat'], item['lon']]
-        result['areas'].append(array)
-        print(array)
+    print('areas found: {}'.format(len(area_code_data)))
+    print('forecast found: {}'.format(len(forecast_area_data)))
+    
 
-    # write json
-    with open('areas.json', 'w', encoding='utf-8') as f:
-        json.dump(result, f, ensure_ascii=False, indent=4)
- 
-
-    result = {
-        'stations' : []
-    }
-
-    # print observation station data
+    # observation station data
+    station_data = []
     for url in observation_data:
         page = requests.get(url)
         soup = BeautifulSoup(page.text, 'html.parser')
@@ -180,14 +203,33 @@ def database():
                 
                 lat = data['lat']
                 lon = data['lon']
-                array = [id_wmo, id_state, state, name, lat, lon]
-                result['stations'].append(array)
+
+                # find the closest forecast station
+                smallest_distance = 999999
+                closest_forecast_station = []
+                for item in forecast_area_data:
+                    d = get_distance(lat, lon, item[3], item[4])
+                    if (d < smallest_distance):
+                        smallest_distance = d
+                        closest_forecast_station = item
+
+                forecast_url = closest_forecast_station[5]
+                aac = closest_forecast_station[0]
+
+                array = [id_wmo, id_state, forecast_url, aac, lat, lon, state, name]
+                station_data.append(array)
                 print(array)
 
     # write json
-    # TODO: some crash here due to size being to large??!
-    with open('stations.json', 'w', encoding='utf-8') as f:
-        json.dump(result, f, ensure_ascii=False, indent=4)
+    with open('database.json', 'w', encoding='utf-8') as f:
+        f.writelines('{\n')
+        f.writelines('  "stations" : [\n')
+        for item in station_data:
+            f.writelines('      ["{}", "{}", "{}", "{}", {}, {}, "{}", "{}"],\n'.format(item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7]))
+        f.writelines('  ]\n')
+        f.writelines('}\n')
+        # to big to use json dump
+        #json.dump(station_data, f, ensure_ascii=False, indent=4)
 
     return
 
