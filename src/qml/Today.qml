@@ -121,5 +121,9 @@ Item {
         image.source = 'qrc:/' + xData['cloud'] + '.svg';
     }
 
+    function updateForecast(xData) {
+        console.log(xData['forecast'][0]['date'])
+    }
+
 }
 

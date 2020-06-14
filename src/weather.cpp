@@ -43,7 +43,7 @@ void Weather::setStation(const QString &xUrl)
 
 void Weather::update() {
     requestForecast();
-    requestObservation();
+    //requestObservation();
 }
 
 void Weather::requestObservation()
@@ -121,92 +121,95 @@ void Weather::replyForecastFinished(QNetworkReply *xNetworkReply)
     QByteArray data = xNetworkReply->readAll();
     xNetworkReply->deleteLater();
     QJsonObject weather_data;
-    qDebug() << "download " << data.size() << "bytes";
+    //qDebug() << "download " << data.size() << "bytes";
     //qDebug() << QString(data);
-    //qDebug() << mUrl;
+    //qDebug() << url;
 
 
     // XML version
     // this is for the forecast
     QXmlStreamReader xml(data);
-    QJsonObject result;
 
-    QString cur_area_name;
-    QString cur_forecast_date;
-    QJsonObject cur_forecast;
-    QJsonObject cur_info;
+    QJsonObject result;
+    QJsonArray forecast;
+    QJsonObject forecast_info;
 
     /*
      * data should look like this...
     {
-       "Adelaide" : {
-        "lat": xx
-        "lon": xx
-        "forecast": {
-                "2020-10-02": {}
-                "2020-10-03": {}
-                "2020-10-04": {}
-            }
-       }
-       "Area Name" : {
-       }
-    }*/
+        "forecast": [
+            [{"date":"2020-10-02", ....}],
+            [{"date":"2020-10-03", ...}],
+            [{"date":"2020-10-04", ...}],
+        ]
+    }
+    */
+    bool area_found = false;
+
     while(!xml.atEnd())
     {
-        if (xml.readNextStartElement()) {
+        QXmlStreamReader::TokenType token = xml.readNext();
+        if(token == QXmlStreamReader::StartDocument) {
+            continue;
+        }
 
-            // qDebug() << xml.name();
+        if(token == QXmlStreamReader::StartElement) {
+            if (!area_found) {
+                // search for area code
 
-            if(xml.name()=="area" && !xml.isEndElement())
-            {
-                // new area
-                QString type = xml.attributes().value("type").toString();
-                if (type == "location") {
-
-                    // previous area
-                    if (cur_forecast.isEmpty()) {
-                        result.insert(cur_area_name, cur_forecast);
-                        // TODO: need to put lon/lat here from database for matching location
+                if (xml.name()=="area") {
+                    QString type = xml.attributes().value("type").toString();
+                    QString area_code = xml.attributes().value("aac").toString();
+                    if (type == "location" and area_code == mAreaCode) {
+                        area_found = true;
+                        //qDebug() << xml.attributes().value("description").toString();
                     }
+                }
+            }
+            else {
+                // area is now found, lets get teh data
 
-                    QString cur_area_name = xml.attributes().value("description").toString();
-
-                    // reset forecast
-                    cur_forecast = {};
-
-                    //qDebug() << name;
+                if(xml.name()=="forecast-period")
+                {
+                    forecast_info = QJsonObject();
+                    QString cur_forecast_date = xml.attributes().value("start-time-local").toString().left(10);
+                    forecast_info.insert("date", cur_forecast_date);
+                    //qDebug() << cur_forecast_date;
                 }
 
-            }
-
-            if(xml.name()=="forecast-period" && !xml.isEndElement())
-            {
-                // previous forecast
-                if (!cur_forecast.isEmpty()) {
-                    cur_forecast.insert(cur_forecast_date, cur_info);
+                if (xml.name()=="element" || xml.name()=="text")
+                {
+                    // forecast info
+                    QString type = xml.attributes().value("type").toString();
+                    QString value = xml.readElementText();
+                    forecast_info.insert(type, value);
+                    //qDebug() << type << " : " << value;
                 }
-
-                // new forecast
-                QString cur_forecast_date = xml.attributes().value("start-time-local").toString().left(10);
-
-                // reset info
-                cur_info = {};
-
-                //qDebug() << date;
-            }
-
-            if (xml.name()=="element" || xml.name()=="text")
-            {
-                // forecast info
-                QString type = xml.attributes().value("type").toString();
-                QString value = xml.readElementText();
-                cur_info.insert(type, value);
-                //qDebug() << type << " : " << value;
             }
         }
+
+        if(token == QXmlStreamReader::EndElement) {
+            if (area_found) {
+                // area is found, now we care about the end tags
+
+                if(xml.name()=="forecast-period") {
+                    forecast.append(forecast_info);
+                }
+
+                if (xml.name()=="area") {
+                    // close the area
+                    xml.clear();
+                    result.insert("forecast", forecast);
+
+                    // debug
+                    //qDebug() << QJsonDocument(result).toJson(QJsonDocument::Compact).toStdString().c_str();
+                    emit resultForecastFinished(result);
+                    return;
+                }
+            }
+        }
+
+
     }
 
-    // debug
-    //qDebug() << QJsonDocument(result).toJson(QJsonDocument::Compact).toStdString().c_str();
-    //emit resultFinished(weather_data);
 }

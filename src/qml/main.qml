@@ -33,8 +33,7 @@ ApplicationWindow {
             today.updateObservation(xResult);
         }
         onResultForecastFinished: {
-            console.log(xResult);
-            //today.update(xResult);
+            today.updateForecast(xResult);
         }
     }
 
