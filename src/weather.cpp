@@ -1,6 +1,7 @@
 #include "weather.h"
 #include "stations.h"
 #include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
@@ -102,6 +103,7 @@ void Weather::replyObservationFinished(QNetworkReply *xNetworkReply)
 
     // debug
     //qDebug() << QJsonDocument(result).toJson(QJsonDocument::Compact).toStdString().c_str();
+    mObservationData = weather_data;
     emit resultObservationFinished(weather_data);
 }
 
@@ -178,6 +180,16 @@ void Weather::replyForecastFinished(QNetworkReply *xNetworkReply)
                     // forecast info
                     QString type = xml.attributes().value("type").toString();
                     QString value = xml.readElementText();
+
+                    if (type == "precipitation_range")
+                        value.replace(" mm", "").replace(" to ", "-");
+
+                    if (type == "probability_of_precipitation")
+                        value.replace("%", "");
+
+                    if (type == "precis")
+                        value.replace(".", "");
+
                     forecast_info.insert(type, value);
                     //qDebug() << type << " : " << value;
                 }
@@ -199,6 +211,7 @@ void Weather::replyForecastFinished(QNetworkReply *xNetworkReply)
 
                     // debug
                     //qDebug() << QJsonDocument(result).toJson(QJsonDocument::Compact).toStdString().c_str();
+                    mForecastData = result;
                     emit resultForecastFinished(result);
                     return;
                 }

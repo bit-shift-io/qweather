@@ -27,14 +27,13 @@ ApplicationWindow {
 
     Weather {
         // weather object
-        id: weather
+        id: weather_item
         station: '94672'
         onResultObservationFinished: {
             today.updateObservation(xResult);
         }
         onResultForecastFinished: {
             today.updateForecast(xResult);
-            forecast.updateForecast(xResult);
         }
     }
 
@@ -46,34 +45,46 @@ ApplicationWindow {
         triggeredOnStart: true
         running: true
         onTriggered: {
-            weather.requestObservation();
-            weather.requestForecast();
+            weather_item.requestObservation();
+            weather_item.requestForecast();
         }
     }
-
 
     ScrollView {
         // main page layout
         id: scroll_view
         anchors.fill: parent
 
+
         ColumnLayout {
-            spacing: 10
+            spacing: 0
             anchors.fill: parent
+            width: Math.max(implicitWidth, scroll_view.availableWidth)
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.fillWidth: true
 
             Today {
                 id: today
             }
 
+            Divider {}
+
             Forecast {
                 id:forecast
+                property variant weather_station: weather_item
             }
 
+            Divider {}
+
             GraphicForecast {}
+
+            Divider {}
 
             Radar {
                 id: radar
             }
+
         }
     }
 

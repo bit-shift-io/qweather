@@ -2,7 +2,10 @@
 #define Weather_H
 
 #include <QObject>
-#include <QNetworkReply>
+#include <QJsonObject>
+
+class QNetworkReply;
+
 
 class Weather : public QObject
 {
@@ -14,6 +17,9 @@ public:
 
     QString station() const;
     void setStation(const QString &xUrl);
+
+    QJsonObject mForecastData;
+    QJsonObject mObservationData;
 
 public slots:
     void requestForecast();
@@ -33,7 +39,6 @@ private:
     QString mObservationUrl;
     QString mAreaCode;
     QString mForecastUrl;
-    //QNetworkAccessManager *mNetworkAccessManager;
 };
 
 #endif // Weather_H

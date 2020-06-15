@@ -9,6 +9,7 @@ android: {
 CONFIG += c++11
 
 SOURCES += \
+    src/forecastmodel.cpp \
     src/main.cpp \
     src/stations.cpp \
     src/weather.cpp
@@ -40,6 +41,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    src/forecastmodel.h \
     src/stations.h \
     src/weather.h
 

@@ -5,9 +5,13 @@ import QtGraphicalEffects 1.0
 import "Style"
 
 Item {
-    height: 200
-    width: parent.width
+    //height: 200
+    Layout.preferredHeight: 200
+    Layout.preferredWidth: parent.width
+    //width: parent.width
     Layout.fillWidth: true
+    Layout.alignment: Qt.AlignCenter
+
 
     Rectangle {
         id: background

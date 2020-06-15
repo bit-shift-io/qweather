@@ -6,47 +6,76 @@ import QtGraphicalEffects 1.0
 import  'Style'
 
 ItemDelegate {
-    property variant days_of_week : [1,2,3,4,5,6,0] // fixed
     id: forecast_delegate
     width: parent.width
-    checkable: true
-    onClicked: ListView.view.currentIndex = index
+    Layout.preferredWidth: parent.width
+    Layout.fillWidth: true
+    Layout.alignment: Qt.AlignCenter
 
     RowLayout {
-        id: forecast_component
+        width: parent.width
         Layout.fillWidth: true
 
-        Label {
-            id: day
-            text: "Monday"
-            color: Style.panel.font_color
-            horizontalAlignment: Text.AlignHCenter
-            Layout.fillWidth: true
+        ColumnLayout {
+            Layout.alignment: Qt.AlignLeft
+            Layout.fillWidth: false
+
+            Label {
+                id: day
+                text: model.day
+                color: Style.panel.font_color
+                font.pointSize: Style.forecast.font_size_day
+                horizontalAlignment: Text.AlignLeft
+                Layout.fillWidth: true
+            }
         }
 
-        Label {
-            id: rain
-            text: "1mm"
-            color: Style.forecast.color_rain
-            horizontalAlignment: Text.AlignHCenter
-            Layout.fillWidth: true
+        ColumnLayout {
+            Layout.alignment: Qt.AlignRight
+            Layout.fillWidth: false
+
+            RowLayout {
+                Layout.alignment: Qt.AlignRight
+
+                ColumnLayout {
+                    Label {
+                        id: description
+                        text: model.description
+                        color: Style.forecast.color_description
+                        horizontalAlignment: Text.AlignRight
+                        Layout.fillWidth: true
+                    }
+
+                    Label {
+                        id: rain
+                        text: model.rainProbability + "% chance of " + model.rainRange + "mm"
+                        color: Style.forecast.color_rain
+                        horizontalAlignment: Text.AlignLeft
+                        Layout.fillWidth: true
+                    }
+                }
+
+                Label {
+                    id: temp_low
+                    text: model.temperatureMinimum
+                    color: Style.forecast.color_temp_low
+                    font.pointSize: Style.forecast.font_size_temp
+                    horizontalAlignment: Text.AlignRight
+                    Layout.fillWidth: false
+                }
+
+                Label {
+                    id: temp_high
+                    text: model.temperatureMaximum
+                    color: Style.forecast.color_temp_high
+                    font.pointSize: Style.forecast.font_size_temp
+                    horizontalAlignment: Text.AlignRight
+                    Layout.fillWidth: false
+                }
+            }
+
         }
 
-        Label {
-            id: temp_high
-            text: "15C"
-            color: Style.forecast.color_temp_high
-            horizontalAlignment: Text.AlignHCenter
-            Layout.fillWidth: true
-        }
-
-        Label {
-            id: temp_low
-            text: "10C"
-            color: Style.forecast.color_temp_low
-            horizontalAlignment: Text.AlignHCenter
-            Layout.fillWidth: true
-        }
     }
 }
 

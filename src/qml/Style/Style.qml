@@ -33,6 +33,11 @@ QtObject {
         property int margin_internal: 4
     }
 
+    property QtObject divider: QtObject {
+        property color color: '#333333'
+        property int radius: 2
+        property int margin: 4
+    }
 
     property QtObject today: QtObject {
         property color color_day: '#1ab2ff'
@@ -47,7 +52,10 @@ QtObject {
     property QtObject forecast: QtObject {
         property color color_temp_low: '#88ff4d'
         property color color_temp_high: '#cc3300'
-        property color color_rain: '#0066ff'
+        property color color_rain: app.font_color
+        property color color_description: app.font_color
+        property int font_size_temp: app.font_size * 1.2
+        property int font_size_day: app.font_size * 1.2
     }
 
 
