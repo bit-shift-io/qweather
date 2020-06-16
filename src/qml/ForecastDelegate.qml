@@ -12,21 +12,41 @@ ItemDelegate {
     Layout.fillWidth: true
     Layout.alignment: Qt.AlignCenter
 
+    Rectangle {
+        id: background
+        color: Style.forecast.color_background
+        radius: Style.forecast.radius_background
+        anchors.fill: parent
+    }
+
+
     RowLayout {
-        width: parent.width
-        Layout.fillWidth: true
+        id: forecast_row
+        anchors.fill: parent
+        anchors.margins: 4
+        Layout.preferredWidth: parent.width
 
         ColumnLayout {
+            id: day_column
             Layout.alignment: Qt.AlignLeft
             Layout.fillWidth: false
 
-            Label {
-                id: day
-                text: model.day
-                color: Style.panel.font_color
-                font.pointSize: Style.forecast.font_size_day
-                horizontalAlignment: Text.AlignLeft
-                Layout.fillWidth: true
+            RowLayout {
+                Image {
+                    id: image
+                    source: 'qrc:/' + model.icon
+                    sourceSize.width: forecast_row.height
+                    sourceSize.height: forecast_row.height
+                }
+
+                Label {
+                    id: day
+                    text: model.day
+                    color: Style.panel.font_color
+                    font.pointSize: Style.forecast.font_size_day
+                    horizontalAlignment: Text.AlignLeft
+                    Layout.fillWidth: true
+                }
             }
         }
 
@@ -37,38 +57,40 @@ ItemDelegate {
             RowLayout {
                 Layout.alignment: Qt.AlignRight
 
-                ColumnLayout {
-                    Label {
-                        id: description
-                        text: model.description
-                        color: Style.forecast.color_description
-                        horizontalAlignment: Text.AlignRight
-                        Layout.fillWidth: true
-                    }
-
-                    Label {
-                        id: rain
-                        text: model.rainProbability + "% chance of " + model.rainRange + "mm"
-                        color: Style.forecast.color_rain
-                        horizontalAlignment: Text.AlignLeft
-                        Layout.fillWidth: true
-                    }
+                Label {
+                    id: rain
+                    text: model.rainProbability + "% chance " + model.rainRange + "mm "
+                    visible: (model.rainRange !== "")
+                    color: Style.forecast.color_rain
+                    horizontalAlignment: Text.AlignRight
+                    Layout.fillWidth: true
                 }
+
+                /*
+                Label {
+                    id: description
+                    text: model.description
+                    color: Style.forecast.color_description
+                    horizontalAlignment: Text.AlignRight
+                    Layout.fillWidth: true
+                }*/
 
                 Label {
                     id: temp_low
-                    text: model.temperatureMinimum
+                    text: model.temperatureMinimum + '°C'
                     color: Style.forecast.color_temp_low
                     font.pointSize: Style.forecast.font_size_temp
+                    font.bold: true
                     horizontalAlignment: Text.AlignRight
                     Layout.fillWidth: false
                 }
 
                 Label {
                     id: temp_high
-                    text: model.temperatureMaximum
+                    text: model.temperatureMaximum + '°C'
                     color: Style.forecast.color_temp_high
                     font.pointSize: Style.forecast.font_size_temp
+                    font.bold: true
                     horizontalAlignment: Text.AlignRight
                     Layout.fillWidth: false
                 }

@@ -2,43 +2,42 @@ import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.2
 //import org.kde.kirigami 2.4 as Kirigami
-import QtGraphicalEffects 1.0
 import 'Style'
+import RadarImage 1.0
 
 Item {
     id: panel
+    Layout.preferredHeight: 300
+    Layout.preferredWidth: parent.width
     Layout.fillWidth: true
-    width: parent.width
-    height: 200
+    Layout.alignment: Qt.AlignCenter
 
     onWidthChanged: {
         // keep square
-        panel.height = panel.height
+        panel.height = panel.width
     }
 
-    Rectangle {
-        id: background
-        color: Style.panel.color
-        radius: Style.panel.radius
+    Item {
+        Layout.preferredWidth: parent.width
+        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignCenter
         anchors.fill: parent
-    }
+        anchors.margins: Style.panel.margin
 
-    DropShadow {
-        anchors.fill: background
-        horizontalOffset: 0
-        verticalOffset: 0
-        radius: Style.shadow.radius
-        samples: Style.shadow.samples
-        color: Style.shadow.color
-        source: background
-    }
+        Rectangle {
+            id: background
+            color: Style.panel.color
+            radius: Style.panel.radius
+            anchors.fill: parent
+        }
 
-    Image {
-        id: image
-        source: "qrc:/heavy-showers.svg"
-        //sourceSize.width: Style.today.image_size
-        //sourceSize.height: Style.today.image_size
-        anchors.fill: parent
+        RadarImage {
+            id: image
+            //fillMode: Image.PreserveAspectFit
+            anchors.fill: parent
+            anchors.margins: Style.today.margin
+            weather: weather_item
+        }
     }
 
 }

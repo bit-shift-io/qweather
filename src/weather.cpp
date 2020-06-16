@@ -1,5 +1,5 @@
 #include "weather.h"
-#include "stations.h"
+#include "database.h"
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QJsonObject>
@@ -7,6 +7,7 @@
 #include <QJsonArray>
 #include <QXmlStreamReader>
 #include <QDebug>
+#include <QImage>
 
 
 Weather::Weather(QObject *parent) : QObject(parent)
@@ -26,10 +27,11 @@ QString Weather::station() const
 void Weather::setStation(const QString &xUrl)
 {
     // get station data
-    Stations *stations = Stations::instance();
-    QString url = stations->getObservationUrl(xUrl);
-    QString forecast_url = stations->getForecastUrl(xUrl);
-    QString area_code = stations->getAreaCode(xUrl);
+    Database *database = Database::instance();
+    QString url = database->getObservationUrl(xUrl);
+    QString forecast_url = database->getForecastUrl(xUrl);
+    QString area_code = database->getAreaCode(xUrl);
+    QString radar_url = database->getRadarUrl(xUrl);
 
     // assign url
     if(mObservationUrl != url)
@@ -38,6 +40,7 @@ void Weather::setStation(const QString &xUrl)
         mObservationUrl = url;
         mAreaCode = area_code;
         mForecastUrl = forecast_url;
+        mRadarUrl = radar_url;
         emit stationChanged();
     }
 }
@@ -52,6 +55,18 @@ void Weather::requestObservation()
 
     QNetworkAccessManager *net = new QNetworkAccessManager(this);
     connect(net, &QNetworkAccessManager::finished, this, &Weather::replyObservationFinished);
+    net->get(request);
+}
+
+void Weather::requestRadar()
+{
+    QUrl u = QUrl(mRadarUrl + "background.png");
+    QNetworkRequest request;
+    request.setUrl(u);
+    request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
+
+    QNetworkAccessManager *net = new QNetworkAccessManager(this);
+    connect(net, &QNetworkAccessManager::finished, this, &Weather::replyRadarFinished);
     net->get(request);
 }
 
@@ -107,6 +122,21 @@ void Weather::replyObservationFinished(QNetworkReply *xNetworkReply)
     emit resultObservationFinished(weather_data);
 }
 
+void Weather::replyRadarFinished(QNetworkReply *xNetworkReply)
+{
+    if(xNetworkReply->error() != QNetworkReply::NoError) {
+        qDebug() << "network error " << xNetworkReply->error() << " " << xNetworkReply->url().toString();
+        xNetworkReply->deleteLater();
+        return;
+    }
+
+    QByteArray data = xNetworkReply->readAll();
+    xNetworkReply->deleteLater();
+    QImage *img = new QImage(data);
+    emit resultRadarFinished(*img);
+    return;
+}
+
 void Weather::replyForecastFinished(QNetworkReply *xNetworkReply)
 {
     if(xNetworkReply->error() != QNetworkReply::NoError) {
@@ -123,6 +153,8 @@ void Weather::replyForecastFinished(QNetworkReply *xNetworkReply)
     //qDebug() << QString(data);
     //qDebug() << url;
 
+    // get database instance
+    Database *database = Database::instance();
 
     // XML version
     // this is for the forecast
@@ -201,6 +233,14 @@ void Weather::replyForecastFinished(QNetworkReply *xNetworkReply)
                 // area is found, now we care about the end tags
 
                 if(xml.name()=="forecast-period") {
+                    // replace icon code with actual icon
+                    int icon_code = forecast_info["forecast_icon_code"].toString().toInt(); // some bug, need to goto string first
+                    QString description = forecast_info["precis"].toString();
+                    forecast_info.insert("forecast_icon", database->getIcon(icon_code, description));
+                    //qDebug() << icon_code << " " << description;
+                    //qDebug() << database->getIcon(icon_code, description);
+
+                    // append json
                     forecast.append(forecast_info);
                 }
 

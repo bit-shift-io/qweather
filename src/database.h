@@ -1,5 +1,5 @@
-#ifndef Stations_H
-#define Stations_H
+#ifndef Database_H
+#define Database_H
 
 #include <QObject>
 #include <QJsonArray>
@@ -16,28 +16,44 @@ class QJSEngine;
 // xml can be found here:
 // ftp://ftp.bom.gov.au/anon/gen/fwo/IDS60920.xml
 
-class Stations : public QObject
+class Database : public QObject
 {
     Q_OBJECT
     //Q_PROPERTY(QString url READ url WRITE setUrl NOTIFY urlChanged)
 
 public:
-    static Stations *instance();
+    // used to access station data array
+    enum station {
+        WMO = 0,
+        STATE_ID,
+        FORECAST_ID,
+        AREA_CODE,
+        RADAR_ID,
+        LATITUDE,
+        LONGDITUDE,
+        STATE,
+        NAME,
+        STATE_SIZE,
+    };
+
+    static Database *instance();
     static QObject *qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine);
 
-    Stations(QObject *parent = 0);
-    ~Stations();
+    Database(QObject *parent = 0);
+    ~Database();
 
     QJsonArray getStationByWmo(QString xWmo);
     QString getObservationUrl(QString xWmo);
     QString getForecastUrl(QString xWmo);
+    QString getRadarUrl(QString xWmo);
     QString getAreaCode(QString xWmo);
+    QString getIcon(int xIconCode, QString xDescription);
     float getDistance(QPointF xLonLatA, QPointF xLonLatB);
 
 private:
-    static Stations* m_pThis;
+    static Database* m_pThis;
     QJsonArray station_data;
-
+    QJsonArray icon_data;
 
 public slots:
     //void update();
@@ -50,4 +66,4 @@ private slots:
 
 };
 
-#endif // Stations_H
+#endif // Database_H

@@ -41,7 +41,7 @@ QVariant ForecastModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case IconRole:
-        return QVariant(item["forecast_icon_code"].toString());
+        return QVariant(item["forecast_icon"].toString());
     case DayRole: {
         QDate date = QDate().fromString(item["date"].toString(), "yyyy-MM-dd");
         return QVariant(date.toString("dddd"));

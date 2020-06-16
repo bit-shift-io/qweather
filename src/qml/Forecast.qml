@@ -7,23 +7,22 @@ import 'Style'
 import Forecast 1.0 // forecast model
 
 Item {
-    Layout.preferredHeight: 250
+    Layout.preferredHeight: 310
     Layout.preferredWidth: parent.width
     Layout.fillWidth: true
     Layout.alignment: Qt.AlignCenter
 
     ListView {
+        id: forecast
         Layout.preferredWidth: parent.width
         Layout.fillWidth: true
         Layout.alignment: Qt.AlignCenter
-
-        // disable input
-        interactive: false
-        //clip: true
-
-        id: forecast
         anchors.fill: parent
         anchors.margins: Style.panel.margin
+
+        spacing: Style.forecast.list_spacing
+        interactive: false
+        //clip: true
 
         model: ForecastModel {
             id: forecast_model

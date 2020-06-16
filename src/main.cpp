@@ -5,9 +5,10 @@
 #include <QDebug>
 #include <QQmlDebuggingEnabler>
 
-#include "stations.h"
+#include "database.h"
 #include "weather.h"
 #include "forecastmodel.h"
+#include "radarimage.h"
 
 #ifdef Q_OS_ANDROID
 #include "./3rdparty/kirigami/src/kirigamiplugin.h"
@@ -18,9 +19,10 @@ int main(int argc, char *argv[])
     QQmlDebuggingEnabler enabler;
 
     // register types
-    qmlRegisterSingletonType<Stations>("Stations", 1, 0, "Stations", &Stations::qmlInstance);
+    qmlRegisterSingletonType<Database>("Database", 1, 0, "Database", &Database::qmlInstance);
     qmlRegisterType<Weather>("Weather", 1, 0, "Weather");
     qmlRegisterType<ForecastModel>("Forecast", 1, 0, "ForecastModel");
+    qmlRegisterType<RadarImage>("RadarImage", 1, 0, "RadarImage");
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
@@ -59,7 +61,7 @@ int main(int argc, char *argv[])
     }
 
     // get instance in C++
-    Stations *stations = Stations::instance();
+    Database *database = Database::instance();
 
     return app.exec();
 }

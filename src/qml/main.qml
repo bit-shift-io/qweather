@@ -6,7 +6,7 @@ import QtGraphicalEffects 1.0
 import QtQuick.Controls.Material 2.4
 import "util.js" as Util
 import Weather 1.0
-import Stations 1.0
+import Database 1.0
 import 'Style'
 
 ApplicationWindow {
@@ -21,7 +21,7 @@ ApplicationWindow {
     property var places: []
 
     Component.onCompleted: {
-        console.log("app load complete");
+        //console.log("app load complete");
     }
 
 
@@ -35,6 +35,8 @@ ApplicationWindow {
         onResultForecastFinished: {
             today.updateForecast(xResult);
         }
+        onResultRadarFinished: {
+        }
     }
 
 
@@ -47,6 +49,7 @@ ApplicationWindow {
         onTriggered: {
             weather_item.requestObservation();
             weather_item.requestForecast();
+            weather_item.requestRadar();
         }
     }
 
@@ -68,21 +71,16 @@ ApplicationWindow {
                 id: today
             }
 
-            Divider {}
-
             Forecast {
                 id:forecast
                 property variant weather_station: weather_item
             }
 
-            Divider {}
-
-            GraphicForecast {}
-
-            Divider {}
+            //GraphicForecast {}
 
             Radar {
                 id: radar
+                property variant weather_station: weather_item
             }
 
         }

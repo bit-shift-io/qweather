@@ -1,4 +1,4 @@
-#include "stations.h"
+#include "database.h"
 
 #include <QNetworkAccessManager>
 #include <QJsonDocument>
@@ -9,9 +9,9 @@
 #include <QPointF>
 #include <QLineF>
 
-Stations* Stations::m_pThis = nullptr;
+Database* Database::m_pThis = nullptr;
 
-Stations::Stations(QObject *parent) : QObject(parent)
+Database::Database(QObject *parent) : QObject(parent)
 {
     QFile file(":/database.json");
     file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -26,6 +26,7 @@ Stations::Stations(QObject *parent) : QObject(parent)
 
     QJsonObject obj = doc.object();
     station_data = obj["stations"].toArray();
+    icon_data = obj["icons"].toArray();
 
     // debug
     //QString jsonString = doc.toJson(QJsonDocument::Indented);
@@ -33,27 +34,27 @@ Stations::Stations(QObject *parent) : QObject(parent)
     //qDebug() << "stations " << station_data.size();
 }
 
-Stations::~Stations()
+Database::~Database()
 {
 }
 
-QString Stations::getObservationUrl(QString xWmo) {
+QString Database::getObservationUrl(QString xWmo) {
     QJsonArray station = getStationByWmo(xWmo);
-    QString state_id = station[1].toString();
+    QString state_id = station[STATE_ID].toString();
     QString url_string = QString("http://www.bom.gov.au/fwo/%2/%2.%1.json").arg(xWmo, state_id);
     return url_string;
 }
 
 
-float Stations::getDistance(QPointF xLonLatA, QPointF xLonLatB) {
+float Database::getDistance(QPointF xLonLatA, QPointF xLonLatB) {
     QLineF l(xLonLatA, xLonLatB);
     return l.length();
 }
 
-QJsonArray Stations::getStationByWmo(QString xWmo) {
+QJsonArray Database::getStationByWmo(QString xWmo) {
     foreach (const QJsonValue & value, station_data) {
         QJsonArray station = value.toArray();
-        QString station_wmo = station[0].toString();
+        QString station_wmo = station[WMO].toString();
         if (station_wmo == xWmo) {
             return station;
         }
@@ -61,28 +62,50 @@ QJsonArray Stations::getStationByWmo(QString xWmo) {
     return QJsonArray();
 }
 
-QString Stations::getAreaCode(QString xWmo) {
-    return getStationByWmo(xWmo)[3].toString();
+QString Database::getAreaCode(QString xWmo) {
+    return getStationByWmo(xWmo)[AREA_CODE].toString();
+}
+
+QString Database::getIcon(int xIconCode, QString xDescription)
+{
+    QString result = icon_data[0].toString(); // init missing.svg
+    if (!xIconCode)
+        return result;
+
+    // special case for partly-cloud/mostly-sunny
+    if (xIconCode == 3 && xDescription.toLower().contains("partly"))
+        xIconCode = 20;
+
+    result = icon_data[xIconCode].toString();
+    return result;
 }
 
 
-QString Stations::getForecastUrl(QString xWmo) {
+QString Database::getForecastUrl(QString xWmo) {
     QJsonArray station = getStationByWmo(xWmo);
-    QString forecast_url = station[2].toString();
+    QString forecast_url = station[FORECAST_ID].toString();
     QString url_string = QString("ftp://ftp.bom.gov.au/anon/gen/fwo/%1.xml").arg(forecast_url);
     return url_string;
 }
 
-Stations *Stations::instance()
+QString Database::getRadarUrl(QString xWmo)
+{
+    QJsonArray station = getStationByWmo(xWmo);
+    QString radar_url = station[RADAR_ID].toString();
+    QString url_string = QString("http://www.bom.gov.au/products/radar_transparencies/%1.").arg(radar_url);
+    return url_string;
+}
+
+Database *Database::instance()
 {
     if (m_pThis == nullptr) // avoid creation of new instances
-        m_pThis = new Stations;
+        m_pThis = new Database;
     return m_pThis;
 }
 
-QObject *Stations::qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine) {
+QObject *Database::qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine) {
     Q_UNUSED(engine);
     Q_UNUSED(scriptEngine);
     // C++ and QML instance they are the same instance
-    return Stations::instance();
+    return Database::instance();
 }

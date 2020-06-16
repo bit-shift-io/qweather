@@ -19,6 +19,7 @@ Item {
         anchors.fill: parent
     }
 
+    /*
     DropShadow {
         anchors.fill: background
         horizontalOffset: 0
@@ -27,18 +28,38 @@ Item {
         samples: Style.shadow.samples
         color: Style.shadow.color
         source: background
-    }
+    }*/
+
 
     RowLayout {
         anchors.fill: parent
         anchors.margins: Style.today.margin
 
         ColumnLayout {
-            Image {
-                id: image
-                source: "qrc:/sunny.svg"
-                sourceSize.width: Style.today.image_size
-                sourceSize.height: Style.today.image_size
+            id: left_column
+            Layout.alignment: Qt.AlignTop
+
+            Item {
+                Layout.alignment: Qt.AlignHCenter
+                width: Style.today.image_size
+                height: Style.today.image_size
+
+                Image {
+                    id: image
+                    source: "qrc:/sunny.svg"
+                    sourceSize.width: Style.today.image_size
+                    sourceSize.height: Style.today.image_size
+                }
+
+                DropShadow {
+                    anchors.fill: image
+                    horizontalOffset: 4
+                    verticalOffset: 4
+                    radius: 10
+                    samples: 10
+                    color: Style.today.color_shadow
+                    source: image
+                }
             }
 
             Label {
@@ -47,7 +68,7 @@ Item {
                 color: Style.today.font_color
                 text: ""
                 horizontalAlignment: Text.AlignLeft
-                Layout.fillWidth: true
+                //Layout.fillWidth: true
             }
 
             Label {
@@ -55,11 +76,14 @@ Item {
                 color: Style.today.font_color
                 text: ""
                 horizontalAlignment: Text.AlignLeft
-                Layout.fillWidth: true
+                //Layout.fillWidth: true
             }
         }
 
         ColumnLayout {
+            id: right_column
+            Layout.alignment: Qt.AlignTop | Qt.AlignRight
+            Layout.fillHeight: true
 
             Label {
                 id: place
@@ -68,6 +92,7 @@ Item {
                 font.pointSize: Style.today.font_size_place
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
+                Layout.fillHeight: true
             }
 
 
@@ -77,6 +102,7 @@ Item {
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
+                Layout.fillHeight: true
             }
 
             Label {
@@ -85,6 +111,7 @@ Item {
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
+                Layout.fillHeight: true
             }
 
             Label {
@@ -93,35 +120,15 @@ Item {
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
+                Layout.fillHeight: true
             }
 
-            RowLayout {
-                //SizeBox{}
-
-                Label {
-
-                    id: temp_min
-                    text: ""
-                    color: Style.today.font_color
-                    horizontalAlignment: Text.AlignRight
-                    Layout.fillWidth: true
-                }
-
-                Label {
-                    id: space
-                    text: " "
-                    color: Style.today.font_color
-                    horizontalAlignment: Text.AlignRight
-                    Layout.fillWidth: true
-                }
-
-                Label {
-                    id: temp_max
-                    text: ""
-                    color: Style.today.font_color
-                    horizontalAlignment: Text.AlignRight
-                    Layout.fillWidth: true
-                }
+            Label {
+                id: temperature
+                text: ""
+                color: Style.today.font_color
+                horizontalAlignment: Text.AlignRight
+                Layout.fillWidth: true
             }
 
             Label {
@@ -130,6 +137,7 @@ Item {
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
+                Layout.fillHeight: true
             }
 
         }
@@ -141,16 +149,19 @@ Item {
         temp.text = xData['air_temp'] + '°C';
         feel.text = 'Feels like ' + xData['apparent_t'] + '°C';
         wind.text = xData['wind_spd_kmh'] + 'kmh ' + xData['wind_spd_kmh'] + 'kt ' + xData['wind_dir'];
-        humid.text = xData['rel_hum'] + '%';
-        rain.text = xData['rain_trace'] + 'mm';
+        humid.text = xData['rel_hum'] + '% Humidity';
+        rain.text = xData['rain_trace'] + 'mm Rain';
         //image.source = 'qrc:/' + xData['cloud'] + '.svg';
     }
 
     function updateForecast(xData) {
-        var today = xData['forecast'][0];
-        //image.source = today['forecast_icon_code'];
-        temp_max.text = today['air_temperature_maximum'] + '°C';
-        summary.text = today['precis'];
+        var forecast = xData['forecast'][0];
+        image.source = 'qrc:/' + forecast['forecast_icon'];
+        summary.text = forecast['precis'];
+        if (forecast['air_temperature_minimum'])
+            temperature.text = forecast['air_temperature_minimum'] + ' ' + forecast['air_temperature_maximum'] + '°C Max';
+        else
+            temperature.text = forecast['air_temperature_maximum'] + '°C Max';
     }
 
 }

@@ -76,6 +76,17 @@ def database():
         'ftp://ftp.bom.gov.au/anon/home/adfd/spatial/IDM00013.dbf'
     ]
 
+    # http://www.bom.gov.au/australia/radar/about/radar_site_info.shtml
+    radar_data = [
+        'http://www.bom.gov.au/australia/radar/info/nsw_info.shtml',
+        'http://www.bom.gov.au/australia/radar/info/vic_info.shtml',
+        'http://www.bom.gov.au/australia/radar/info/qld_info.shtml',
+        'http://www.bom.gov.au/australia/radar/info/wa_info.shtml',
+        'http://www.bom.gov.au/australia/radar/info/sa_info.shtml',
+        'http://www.bom.gov.au/australia/radar/info/tas_info.shtml',
+        'http://www.bom.gov.au/australia/radar/info/nt_info.shtml',
+    ]
+
     # http://www.bom.gov.au/catalogue/data-feeds.shtml#forecasts
     # we only need the precis short form data
     # ftp://ftp.bom.gov.au/anon/gen/fwo/[id].xml
@@ -89,44 +100,40 @@ def database():
         'IDW14199',
     ]
 
-    '''
-    forecast_data = [
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDN11060.xml',
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDN11100.xml',
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDN11050.xml',
-
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDD10207.xml',
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDD10208.xml',
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDD10198.xml',
-        
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDQ11295.xml',
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDQ11296.xml',
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDQ10605.xml',
-
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDS10044.xml',
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDS11039.xml',
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDS10037.xml',
-
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDT16710.xml',
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDT13515.xml',
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDT13630.xml',
-
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDV10753.xml',
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDV10752.xml',
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDV10751.xml',
-
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDW14199.xml',
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDW14100.xml',
-        'ftp://ftp.bom.gov.au/anon/gen/fwo/IDW12400.xml',
-    ]
-    '''
-
-
 
     # function to get distance between lat_lon
     def get_distance(ax, ay, bx, by):
         distance = math.sqrt( ((ax-bx)**2)+((ay-by)**2) )
         return distance
+
+
+    # radar site data
+    radar_site_data = []
+    lat_lon_pattern = re.compile("([0-9]{1,3}[.][0-9]{1,3})")
+    for url in radar_data:
+        page = requests.get(url)
+        soup = BeautifulSoup(page.text, 'html.parser')
+        print(url)
+        #print(soup.prettify())
+        for site in soup.find_all("div", {"class": "site-info"}):
+            site_info = []
+            for item in site.find_all("li"):
+                text = item.get_text().lower()
+
+                if (text.startswith('location')):
+                    match = lat_lon_pattern.findall(text)
+                    site_info.append(float('-' + match[0])) # south is negative
+                    site_info.append(float(match[1]))
+
+                if (text.startswith('link')):
+                    link = str(item)
+                    id_start = link.find('/products/') + 10
+                    id_end = link.find('.loop.')
+                    radar_id = link[id_start: id_end]
+                    site_info.append(radar_id)
+
+            print(site_info)
+            radar_site_data.append(site_info)
 
 
     # area code data
@@ -165,7 +172,6 @@ def database():
 
     print('areas found: {}'.format(len(area_code_data)))
     print('forecast found: {}'.format(len(forecast_area_data)))
-    
 
     # observation station data
     station_data = []
@@ -216,7 +222,19 @@ def database():
                 forecast_url = closest_forecast_station[5]
                 aac = closest_forecast_station[0]
 
-                array = [id_wmo, id_state, forecast_url, aac, lat, lon, state, name]
+                # find the closest radar station
+                smallest_distance = 999999
+                closest_radar_station = []
+                for item in radar_site_data:
+                    d = get_distance(lat, lon, item[0], item[1])
+                    if (d < smallest_distance):
+                        smallest_distance = d
+                        closest_radar_station = item
+
+                radar_station = closest_radar_station[2]
+
+
+                array = [id_wmo, id_state, forecast_url, aac, radar_station, lat, lon, state, name]
                 station_data.append(array)
                 print(array)
 
@@ -225,7 +243,7 @@ def database():
         f.writelines('{\n')
         f.writelines('  "stations" : [\n')
         for item in station_data:
-            f.writelines('      ["{}", "{}", "{}", "{}", {}, {}, "{}", "{}"],\n'.format(item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7]))
+            f.writelines('      ["{}", "{}", "{}", "{}", "{}", {}, {}, "{}", "{}"],\n'.format(item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8]))
         f.writelines('  ]\n')
         f.writelines('}\n')
         # to big to use json dump
