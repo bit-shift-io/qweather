@@ -8,6 +8,7 @@
 #include <QXmlStreamReader>
 #include <QDebug>
 #include <QImage>
+#include <QEventLoop>
 
 
 Weather::Weather(QObject *parent) : QObject(parent)
@@ -60,14 +61,33 @@ void Weather::requestObservation()
 
 void Weather::requestRadar()
 {
+    QNetworkAccessManager *net = new QNetworkAccessManager(this);
     QUrl u = QUrl(mRadarUrl + "background.png");
     QNetworkRequest request;
     request.setUrl(u);
     request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
 
-    QNetworkAccessManager *net = new QNetworkAccessManager(this);
+    // async method
     connect(net, &QNetworkAccessManager::finished, this, &Weather::replyRadarFinished);
     net->get(request);
+
+    /*
+    // synchronous method!
+    QNetworkReply* reply = net->get(request);
+    QEventLoop eventLoop;
+    connect(net,SIGNAL(finished()),&eventLoop,SLOT(quit()));
+    eventLoop.exec();
+
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        QImageReader imageReader(reply);
+        imageReader.setAutoDetectImageFormat (false);
+        QImage pic = imageReader.read();
+        emit resultRadarFinished(pic);
+        //ui->label_2->setPixmap(QPixmap::fromImage(pic));
+
+     }
+     */
 }
 
 void Weather::requestForecast()
@@ -130,9 +150,12 @@ void Weather::replyRadarFinished(QNetworkReply *xNetworkReply)
         return;
     }
 
+    QString url = xNetworkReply->url().toString();
     QByteArray data = xNetworkReply->readAll();
+    QImage *img = new QImage();
+    img->loadFromData(data);
+
     xNetworkReply->deleteLater();
-    QImage *img = new QImage(data);
     emit resultRadarFinished(*img);
     return;
 }

@@ -10,6 +10,9 @@ RadarImage::RadarImage()
 
 void RadarImage::paint(QPainter *painter)
 {
+    if (mImage.isNull())
+        return;
+
     QImage scaled = mImage.scaled(width(), height());
     painter->drawImage(0,0, scaled);
 }
@@ -31,7 +34,8 @@ Weather *RadarImage::weather() const
 void RadarImage::setWeather(Weather *weather)
 {
     if (mWeather) {
-        mWeather->disconnect(this);
+        // TODO: crash on windows?
+        //mWeather->disconnect(this);
     }
 
     mWeather = weather;

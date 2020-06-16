@@ -66,14 +66,14 @@ ItemDelegate {
                     Layout.fillWidth: true
                 }
 
-                /*
                 Label {
                     id: description
-                    text: model.description
+                    text: model.description + " "
+                    visible: (model.rainRange === "") // when rain is visible, hide this
                     color: Style.forecast.color_description
                     horizontalAlignment: Text.AlignRight
                     Layout.fillWidth: true
-                }*/
+                }
 
                 Label {
                     id: temp_low
