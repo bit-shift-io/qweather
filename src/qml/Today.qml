@@ -69,6 +69,7 @@ Item {
                 text: ""
                 horizontalAlignment: Text.AlignLeft
                 //Layout.fillWidth: true
+                Layout.fillHeight: true
             }
 
             Label {
@@ -77,6 +78,7 @@ Item {
                 text: ""
                 horizontalAlignment: Text.AlignLeft
                 //Layout.fillWidth: true
+                Layout.fillHeight: true
             }
         }
 
@@ -129,6 +131,7 @@ Item {
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
+                Layout.fillHeight: true
             }
 
             Label {
