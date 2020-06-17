@@ -1,7 +1,7 @@
 #include <QPainter>
 #include <QNetworkReply>
 
-#include "src/qftp/qftp.h"
+
 #include "radarimage.h"
 #include "weather.h"
 
@@ -51,54 +51,52 @@ void RadarImage::setWeather(Weather *xWeather)
 
 void RadarImage::updateRadar()
 {
-    qDebug() << "radar cpp";
+    mFileList = new QVector<QString>;
 
-    QString background_url = QString("http://www.bom.gov.au/products/radar_transparencies/%1.background.png").arg(mWeather->getRadarId());
-
-    QNetworkAccessManager *net = new QNetworkAccessManager(this);
-    QNetworkRequest request;
-    request.setUrl(background_url);
-    request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
-
-    // async method
-    connect(net, &QNetworkAccessManager::finished, this, &RadarImage::replyImageFinished);
-    net->get(request);
-
-    // ftp test
-    QFtp *ftp = new QFtp(this);
-
-    connect(ftp, SIGNAL(listInfo(QUrlInfo)), this, SLOT(ftpAddToList(QUrlInfo)));
-    connect(ftp, SIGNAL(commandFinished(int, bool)), this, SLOT(ftpCommandFinished(int, bool)));
+    // ftp listing
+    mFtp = new QFtp(this);
+    connect(mFtp, SIGNAL(listInfo(QUrlInfo)), this, SLOT(ftpAddToList(QUrlInfo)));
+    connect(mFtp, SIGNAL(commandFinished(int, bool)), this, SLOT(ftpCommandFinished(int, bool)));
 
     // TODO: fix qftp
     //string[0] is depreciated
-    ftp->connectToHost("ftp.bom.gov.au");
-    ftp->login();
-    ftp->cd("/anon/gen/radar/");
-    ftp->list(); // this is async
-    //ftp->get();
-    //ftp->close();
-    //ftp->deleteLater();
+    mFtp->connectToHost("ftp.bom.gov.au");
+    mFtp->login();
+    mFtp->cd("/anon/gen/radar/");
+    mFtp->list(); // this is async
+}
 
-    /*
-    // synchronous method!
-    QNetworkReply* reply = net->get(request);
-    QEventLoop eventLoop;
-    connect(net,SIGNAL(finished()),&eventLoop,SLOT(quit()));
-    eventLoop.exec();
+void RadarImage::requestImages()
+{
+    QNetworkAccessManager *net = new QNetworkAccessManager(this);
+    connect(net, &QNetworkAccessManager::finished, this, &RadarImage::replyImageFinished);
 
-    if (reply->error() == QNetworkReply::NoError)
-    {
-        QImageReader imageReader(reply);
-        imageReader.setAutoDetectImageFormat (false);
-        QImage pic = imageReader.read();
-        emit resultRadarFinished(pic);
-        //ui->label_2->setPixmap(QPixmap::fromImage(pic));
+    // one off images
+    if (mBackgroundUrlList == nullptr) {
+        QString radar = mWeather->getRadarId();
+        // ordered list
+        mBackgroundUrlList = new QVector<QString>;
+        mBackgroundUrlList->append(QString("http://www.bom.gov.au/products/radar_transparencies/%1.background.png").arg(radar));
+        mBackgroundUrlList->append(QString("http://www.bom.gov.au/products/radar_transparencies/%1.topography.png").arg(radar));
+        mBackgroundUrlList->append(QString("http://www.bom.gov.au/products/radar_transparencies/%1.locations.png").arg(radar));
 
-     }
-     */
+        for (QString &url : *mBackgroundUrlList) {
+            QNetworkRequest request;
+            request.setUrl(url);
+            request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
+            net->get(request);
+        }
+    }
 
 
+    // get ftp images
+    for (QString &item : *mFileList) {
+        QString u = QString("ftp://ftp.bom.gov.au/anon/gen/radar/%1").arg(item);
+        QNetworkRequest request;
+        request.setUrl(u);
+        request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
+        net->get(request);
+    }
 }
 
 
@@ -111,11 +109,29 @@ void RadarImage::replyImageFinished(QNetworkReply *xNetworkReply)
     }
 
     QString url = xNetworkReply->url().toString();
-    QByteArray data = xNetworkReply->readAll();
+    QString file_name = QUrl(url).fileName();
+    qDebug() << file_name;
 
+    QByteArray data = xNetworkReply->readAll();
     xNetworkReply->deleteLater();
-    mBackgroundImage.loadFromData(data);
-    setImage(mBackgroundImage);
+
+    // image from data
+    // TODO: should these be pointers? I think so!
+    QImage img;
+    img.loadFromData(data);
+
+    if (url.contains("radar_transparencies")) {
+        // background images
+        mBackgroundImages.append(img);
+    }
+
+    if (url.contains("ftp.bom.gov.au")) {
+        // animation images
+        mAnimationImages.insert(file_name, img);
+    }
+
+
+    //setImage(mBackgroundImage);
     return;
 }
 
@@ -123,29 +139,17 @@ void RadarImage::ftpAddToList(const QUrlInfo &xUrlInfo)
 {
     QString radar_id = mWeather->getRadarId();
     if (xUrlInfo.name().startsWith(radar_id) && xUrlInfo.name().endsWith(".png")) {
-        qDebug() << xUrlInfo.name() << " - " << xUrlInfo.size() << " bytes";
+        //qDebug() << xUrlInfo.name() << " - " << xUrlInfo.size() << " bytes";
+        mFileList->append(xUrlInfo.name());
     }
 }
 
 void RadarImage::ftpCommandFinished(int commandId, bool error)
 {
-    qDebug() << "ftp completed";
-    /*
-    if (ftp->currentCommand() == QFtp::ConnectToHost) {
-        if (error) {
-            QMessageBox::information(this, tr("FTP"),
-                                     tr("Unable to connect to the FTP server "
-                                        "at %1. Please check that the host "
-                                        "name is correct.")
-                                     .arg(ftpServerLineEdit->text()));
-            connectOrDisconnect();
-            return;
-        }
-        statusLabel->setText(tr("Logged onto %1.")
-                             .arg(ftpServerLineEdit->text()));
-        fileList->setFocus();
-        downloadButton->setDefault(true);
-        connectButton->setEnabled(true);
+    if (mFtp->currentCommand() == QFtp::List) {
+        mFtp->close();
+        mFtp->deleteLater();
+        requestImages();
         return;
-    }*/
+    }
 }

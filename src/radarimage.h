@@ -4,9 +4,9 @@
 #include <QObject>
 #include <QQuickPaintedItem>
 #include <QImage>
-#include <QVector>
+#include <QMap>
 #include <QNetworkReply>
-
+#include "src/qftp/qftp.h"
 
 class Weather;
 class QUrlInfo;
@@ -27,13 +27,14 @@ public:
     Weather *weather() const;
     void setWeather(Weather *xWeather);
     void updateRadar();
-    void replyRadarFinished(QNetworkReply *xNetworkReply);
+    void requestImages();
 
 signals:
     void imageChanged();
 
 private slots:
     void replyImageFinished(QNetworkReply *xNetworkReply);
+    //void replyRadarFinished(QNetworkReply *xNetworkReply);
 
     // ftp commands
     void ftpAddToList(const QUrlInfo &xUrlInfo);
@@ -41,11 +42,12 @@ private slots:
 
 private:
     QImage mImage;
-    QImage mBackgroundImage;
-    QImage mTopographyImage;
-    QImage mLocationImage;
-    QVector<QImage> mAnimationImages;
+    QVector<QString> *mFileList;
+    QVector<QString> *mBackgroundUrlList;
+    QVector<QImage> mBackgroundImages; // we want these in the custom order
+    QMap<QString, QImage> mAnimationImages; // use qmap over qvector, as it is sorted for us
     Weather *mWeather;
+    QFtp *mFtp;
 };
 
 #endif // RADARIMAGE_H

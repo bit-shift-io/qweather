@@ -40,7 +40,7 @@ public:
 
     Weather *weather() const;
     void setWeather(Weather *weather);
-    void updateForecast(QJsonObject xResult);
+    void updateForecast(const QJsonObject &xResult);
 
 private:
     Weather *mWeather;

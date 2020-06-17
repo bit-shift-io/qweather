@@ -42,13 +42,13 @@ public:
     Database(QObject *parent = 0);
     ~Database();
 
-    QJsonArray getStationByWmo(QString xWmo);
-    QString getObservationUrl(QString xWmo);
-    QString getForecastUrl(QString xWmo);
-    QString getRadarId(QString xWmo);
-    QString getAreaCode(QString xWmo);
-    QString getIcon(int xIconCode, QString xDescription);
-    float getDistance(QPointF xLonLatA, QPointF xLonLatB);
+    QJsonArray getStationByWmo(const QString &xWmo);
+    QString getObservationUrl(const QString &xWmo);
+    QString getForecastUrl(const QString &xWmo);
+    QString getRadarId(const QString &xWmo);
+    QString getAreaCode(const QString &xWmo);
+    QString getIcon(int xIconCode, const QString &xDescription);
+    float getDistance(const QPointF &xLonLatA, const QPointF &xLonLatB);
 
 private:
     static Database* m_pThis;

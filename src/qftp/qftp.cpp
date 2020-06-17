@@ -941,11 +941,20 @@ void QFtpPI::readyRead()
                 }
             }
         }
-        QString endOfMultiLine;
+
+        /*
+         * // BM: old depreciated code
+        QString endOfMultiLine; //TODO:
         endOfMultiLine[0] = '0' + replyCode[0];
         endOfMultiLine[1] = '0' + replyCode[1];
         endOfMultiLine[2] = '0' + replyCode[2];
         endOfMultiLine[3] = QLatin1Char(' ');
+        */
+
+        // BM: fix QCharRef depreciation
+        int replyCodeInt = 100*replyCode[0] + 10*replyCode[1] + replyCode[2];
+        QString endOfMultiLine = QString::number(replyCodeInt) + QLatin1Char(' ');
+
         QString lineCont(endOfMultiLine);
         lineCont[3] = QLatin1Char('-');
         QString lineLeft4 = line.left(4);

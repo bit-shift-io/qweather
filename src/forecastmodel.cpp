@@ -97,7 +97,7 @@ void ForecastModel::setWeather(Weather *weather)
     endResetModel();
 }
 
-void ForecastModel::updateForecast(QJsonObject xResult)
+void ForecastModel::updateForecast(const QJsonObject &xResult)
 {
     // force update
     beginResetModel();

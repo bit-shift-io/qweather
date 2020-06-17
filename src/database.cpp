@@ -38,7 +38,7 @@ Database::~Database()
 {
 }
 
-QString Database::getObservationUrl(QString xWmo) {
+QString Database::getObservationUrl(const QString &xWmo) {
     QJsonArray station = getStationByWmo(xWmo);
     QString state_id = station[STATE_ID].toString();
     QString url_string = QString("http://www.bom.gov.au/fwo/%2/%2.%1.json").arg(xWmo, state_id);
@@ -46,12 +46,12 @@ QString Database::getObservationUrl(QString xWmo) {
 }
 
 
-float Database::getDistance(QPointF xLonLatA, QPointF xLonLatB) {
+float Database::getDistance(const QPointF &xLonLatA, const QPointF &xLonLatB) {
     QLineF l(xLonLatA, xLonLatB);
     return l.length();
 }
 
-QJsonArray Database::getStationByWmo(QString xWmo) {
+QJsonArray Database::getStationByWmo(const QString &xWmo) {
     foreach (const QJsonValue & value, station_data) {
         QJsonArray station = value.toArray();
         QString station_wmo = station[WMO].toString();
@@ -62,11 +62,11 @@ QJsonArray Database::getStationByWmo(QString xWmo) {
     return QJsonArray();
 }
 
-QString Database::getAreaCode(QString xWmo) {
+QString Database::getAreaCode(const QString &xWmo) {
     return getStationByWmo(xWmo)[AREA_CODE].toString();
 }
 
-QString Database::getIcon(int xIconCode, QString xDescription)
+QString Database::getIcon(int xIconCode, const QString &xDescription)
 {
     QString result = icon_data[0].toString(); // init missing.svg
     if (!xIconCode)
@@ -81,14 +81,14 @@ QString Database::getIcon(int xIconCode, QString xDescription)
 }
 
 
-QString Database::getForecastUrl(QString xWmo) {
+QString Database::getForecastUrl(const QString &xWmo) {
     QJsonArray station = getStationByWmo(xWmo);
     QString forecast_url = station[FORECAST_ID].toString();
     QString url_string = QString("ftp://ftp.bom.gov.au/anon/gen/fwo/%1.xml").arg(forecast_url);
     return url_string;
 }
 
-QString Database::getRadarId(QString xWmo)
+QString Database::getRadarId(const QString &xWmo)
 {
     QJsonArray station = getStationByWmo(xWmo);
     return station[RADAR_ID].toString();
