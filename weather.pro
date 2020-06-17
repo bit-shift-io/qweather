@@ -12,6 +12,8 @@ SOURCES += \
     src/database.cpp \
     src/forecastmodel.cpp \
     src/main.cpp \
+    src/qftp/qftp.cpp \
+    src/qftp/qurlinfo.cpp \
     src/radarimage.cpp \
     src/weather.cpp
 
@@ -44,6 +46,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     src/database.h \
     src/forecastmodel.h \
+    src/qftp/qftp.h \
+    src/qftp/qurlinfo.h \
     src/radarimage.h \
     src/weather.h
+
+SUBDIRS += \
+    src/qftp/qftp.pro
 

@@ -1,5 +1,3 @@
-#include "weather.h"
-#include "database.h"
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QJsonObject>
@@ -9,7 +7,10 @@
 #include <QDebug>
 #include <QImage>
 #include <QEventLoop>
-#include <QFtp>
+
+#include "src/qftp/qftp.h"
+#include "weather.h"
+#include "database.h"
 
 
 Weather::Weather(QObject *parent) : QObject(parent)
@@ -71,6 +72,17 @@ void Weather::requestRadar()
     // async method
     connect(net, &QNetworkAccessManager::finished, this, &Weather::replyRadarFinished);
     net->get(request);
+
+    // ftp test
+    QFtp *ftp = new QFtp(this);
+    connect(ftp, SIGNAL(listInfo(const QUrlInfo &)), this, SLOT(addToList(const QUrlInfo &)));
+    connect(ftp, SIGNAL(commandFinished(int,bool)), this, SLOT(commandFinished(int,bool)));
+    ftp->connectToHost("ftp://ftp.bom.gov.au/anon/gen/radar/");
+    ftp->login();
+    ftp->list(); // this is async
+    //ftp->get();
+    ftp->close();
+    ftp->deleteLater();
 
     /*
     // synchronous method!
