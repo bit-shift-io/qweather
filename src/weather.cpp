@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QImage>
 #include <QEventLoop>
+#include <QFtp>
 
 
 Weather::Weather(QObject *parent) : QObject(parent)

@@ -57,15 +57,16 @@ ApplicationWindow {
         // main page layout
         id: scroll_view
         anchors.fill: parent
-
+        Layout.fillHeight: true
+        Layout.fillWidth: true
 
         ColumnLayout {
             spacing: 0
             anchors.fill: parent
             width: Math.max(implicitWidth, scroll_view.availableWidth)
-            Layout.fillHeight: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillWidth: true
+            Layout.fillHeight: true
 
             Today {
                 id: today
@@ -76,7 +77,7 @@ ApplicationWindow {
                 property variant weather_station: weather_item
             }
 
-            //GraphicForecast {}
+            // GraphicForecast {}
 
             Radar {
                 id: radar

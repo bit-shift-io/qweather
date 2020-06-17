@@ -6,27 +6,14 @@ import QtGraphicalEffects 1.0
 import QtCharts 2.0
 import 'Style'
 
-Item {
-    height: 200
-    width: parent.width
+ColumnLayout {
+    Layout.preferredHeight: parent.width
+    Layout.preferredWidth: parent.width
     Layout.fillWidth: true
+    Layout.alignment: Qt.AlignCenter
+    anchors.margins: Style.panel.margin
 
-    Rectangle {
-        id: background
-        color: Style.panel.color
-        radius: Style.panel.radius
-        anchors.fill: parent
-    }
-
-    DropShadow {
-        anchors.fill: background
-        horizontalOffset: 0
-        verticalOffset: 0
-        radius: Style.shadow.radius
-        samples: Style.shadow.samples
-        color: Style.shadow.color
-        source: background
-    }
+    SizeBox{}
 
     /*
     //![1]

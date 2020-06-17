@@ -8,21 +8,21 @@ RadarImage::RadarImage()
 }
 
 
-void RadarImage::paint(QPainter *painter)
+void RadarImage::paint(QPainter *xPainter)
 {
     if (mImage.isNull())
         return;
 
-    QImage scaled = mImage.scaled(width(), height());
-    painter->drawImage(0,0, scaled);
+    QImage scaled = mImage.scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    xPainter->drawImage(0,0, scaled);
 }
 
-void RadarImage::setImage(const QImage &image)
+void RadarImage::setImage(const QImage &xImage)
 {
-    mImage = image;
+    mImage = xImage;
     emit imageChanged();
-    setImplicitWidth(image.width());
-    setImplicitHeight(image.height());
+    setImplicitWidth(xImage.width());
+    setImplicitHeight(xImage.height());
     update();
 }
 
@@ -31,14 +31,14 @@ Weather *RadarImage::weather() const
     return mWeather;
 }
 
-void RadarImage::setWeather(Weather *weather)
+void RadarImage::setWeather(Weather *xWeather)
 {
     if (mWeather) {
-        // TODO: crash on windows?
+        // crash on windows?
         //mWeather->disconnect(this);
     }
 
-    mWeather = weather;
+    mWeather = xWeather;
 
     if (mWeather) {
         connect(mWeather, &Weather::resultRadarFinished, this, &RadarImage::updateRadar);

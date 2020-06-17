@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QQuickPaintedItem>
 #include <QImage>
+#include <QVector>
 
 class Weather;
 
@@ -17,11 +18,15 @@ class RadarImage : public QQuickPaintedItem
 
 public:
     RadarImage();
-    void paint(QPainter *painer);
-    void setImage(const QImage &image);
+    void paint(QPainter *xPainer);
+    void setImage(const QImage &xImage);
+    void setBackgroundImage(const QImage &xImage);
+    void setTopographyImage(const QImage &xImage);
+    void setLocationsImage(const QImage &xImage);
+    void setAnimationImage(const QVector<QImage> &xImages);
 
     Weather *weather() const;
-    void setWeather(Weather *weather);
+    void setWeather(Weather *xWeather);
     void updateRadar(QImage xResult);
 
 signals:
@@ -29,8 +34,11 @@ signals:
 
 private:
     QImage mImage;
+    QImage mBackgroundImage;
+    QImage mTopographyImage;
+    QImage mLocationImage;
+    QVector<QImage> mAnimationImages;
     Weather *mWeather;
-
 };
 
 #endif // RADARIMAGE_H
