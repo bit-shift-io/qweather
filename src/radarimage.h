@@ -5,8 +5,11 @@
 #include <QQuickPaintedItem>
 #include <QImage>
 #include <QVector>
+#include <QNetworkReply>
+
 
 class Weather;
+class QUrlInfo;
 
 // https://stackoverflow.com/questions/41162110/extend-qml-image-type-with-an-update-function
 class RadarImage : public QQuickPaintedItem
@@ -20,17 +23,21 @@ public:
     RadarImage();
     void paint(QPainter *xPainer);
     void setImage(const QImage &xImage);
-    void setBackgroundImage(const QImage &xImage);
-    void setTopographyImage(const QImage &xImage);
-    void setLocationsImage(const QImage &xImage);
-    void setAnimationImage(const QVector<QImage> &xImages);
 
     Weather *weather() const;
     void setWeather(Weather *xWeather);
-    void updateRadar(QImage xResult);
+    void updateRadar();
+    void replyRadarFinished(QNetworkReply *xNetworkReply);
 
 signals:
     void imageChanged();
+
+private slots:
+    void replyImageFinished(QNetworkReply *xNetworkReply);
+
+    // ftp commands
+    void ftpAddToList(const QUrlInfo &xUrlInfo);
+    void ftpCommandFinished(int xCommandId, bool xError);
 
 private:
     QImage mImage;

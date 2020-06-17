@@ -35,8 +35,6 @@ ApplicationWindow {
         onResultForecastFinished: {
             today.updateForecast(xResult);
         }
-        onResultRadarFinished: {
-        }
     }
 
 

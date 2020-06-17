@@ -5,10 +5,7 @@
 #include <QJsonArray>
 #include <QXmlStreamReader>
 #include <QDebug>
-#include <QImage>
-#include <QEventLoop>
 
-#include "src/qftp/qftp.h"
 #include "weather.h"
 #include "database.h"
 
@@ -24,28 +21,33 @@ Weather::~Weather()
 
 QString Weather::station() const
 {
-    return mWMO;
+    return mStationId;
 }
 
-void Weather::setStation(const QString &xUrl)
+void Weather::setStation(const QString &xStationId)
 {
     // get station data
     Database *database = Database::instance();
-    QString url = database->getObservationUrl(xUrl);
-    QString forecast_url = database->getForecastUrl(xUrl);
-    QString area_code = database->getAreaCode(xUrl);
-    QString radar_url = database->getRadarUrl(xUrl);
+    QString observation_url = database->getObservationUrl(xStationId);
+    QString forecast_url = database->getForecastUrl(xStationId);
+    QString area_code = database->getAreaCode(xStationId);
+    QString radar_id = database->getRadarId(xStationId);
 
     // assign url
-    if(mObservationUrl != url)
+    if(mStationId != xStationId)
     {
-        mWMO = xUrl;
-        mObservationUrl = url;
+        mStationId = xStationId;
+        mObservationUrl = observation_url;
         mAreaCode = area_code;
         mForecastUrl = forecast_url;
-        mRadarUrl = radar_url;
+        mRadarId = radar_id;
         emit stationChanged();
     }
+}
+
+QString Weather::getRadarId() const
+{
+    return mRadarId;
 }
 
 
@@ -63,44 +65,9 @@ void Weather::requestObservation()
 
 void Weather::requestRadar()
 {
-    QNetworkAccessManager *net = new QNetworkAccessManager(this);
-    QUrl u = QUrl(mRadarUrl + "background.png");
-    QNetworkRequest request;
-    request.setUrl(u);
-    request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
-
-    // async method
-    connect(net, &QNetworkAccessManager::finished, this, &Weather::replyRadarFinished);
-    net->get(request);
-
-    // ftp test
-    QFtp *ftp = new QFtp(this);
-    connect(ftp, SIGNAL(listInfo(const QUrlInfo &)), this, SLOT(addToList(const QUrlInfo &)));
-    connect(ftp, SIGNAL(commandFinished(int,bool)), this, SLOT(commandFinished(int,bool)));
-    ftp->connectToHost("ftp://ftp.bom.gov.au/anon/gen/radar/");
-    ftp->login();
-    ftp->list(); // this is async
-    //ftp->get();
-    ftp->close();
-    ftp->deleteLater();
-
-    /*
-    // synchronous method!
-    QNetworkReply* reply = net->get(request);
-    QEventLoop eventLoop;
-    connect(net,SIGNAL(finished()),&eventLoop,SLOT(quit()));
-    eventLoop.exec();
-
-    if (reply->error() == QNetworkReply::NoError)
-    {
-        QImageReader imageReader(reply);
-        imageReader.setAutoDetectImageFormat (false);
-        QImage pic = imageReader.read();
-        emit resultRadarFinished(pic);
-        //ui->label_2->setPixmap(QPixmap::fromImage(pic));
-
-     }
-     */
+    // pass the request to radar
+    // which is its own element in cpp
+    emit updateRadar();
 }
 
 void Weather::requestForecast()
@@ -155,23 +122,6 @@ void Weather::replyObservationFinished(QNetworkReply *xNetworkReply)
     emit resultObservationFinished(weather_data);
 }
 
-void Weather::replyRadarFinished(QNetworkReply *xNetworkReply)
-{
-    if(xNetworkReply->error() != QNetworkReply::NoError) {
-        qDebug() << "network error " << xNetworkReply->error() << " " << xNetworkReply->url().toString();
-        xNetworkReply->deleteLater();
-        return;
-    }
-
-    QString url = xNetworkReply->url().toString();
-    QByteArray data = xNetworkReply->readAll();
-    QImage *img = new QImage();
-    img->loadFromData(data);
-
-    xNetworkReply->deleteLater();
-    emit resultRadarFinished(*img);
-    return;
-}
 
 void Weather::replyForecastFinished(QNetworkReply *xNetworkReply)
 {
@@ -293,7 +243,6 @@ void Weather::replyForecastFinished(QNetworkReply *xNetworkReply)
                 }
             }
         }
-
 
     }
 

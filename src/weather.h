@@ -16,8 +16,11 @@ public:
     ~Weather();
 
     QString station() const;
-    void setStation(const QString &xUrl);
+    void setStation(const QString &xStationId);
 
+    QString getRadarId() const;
+
+    // these a public for now as they will not be altered
     QJsonObject mForecastData;
     QJsonObject mObservationData;
 
@@ -30,19 +33,18 @@ signals:
     void stationChanged();
     void resultObservationFinished(const QJsonObject &xResult);
     void resultForecastFinished(const QJsonObject &xResult);
-    void resultRadarFinished(const QImage &xResult);
+    void updateRadar();
 
 private slots:
     void replyForecastFinished(QNetworkReply *xNetworkReply);
     void replyObservationFinished(QNetworkReply *xNetworkReply);
-    void replyRadarFinished(QNetworkReply *xNetworkReply);
 
 private:
-    QString mWMO;
+    QString mStationId;
     QString mObservationUrl;
     QString mAreaCode;
     QString mForecastUrl;
-    QString mRadarUrl;
+    QString mRadarId;
 };
 
 #endif // Weather_H

@@ -45,7 +45,7 @@ public:
     QJsonArray getStationByWmo(QString xWmo);
     QString getObservationUrl(QString xWmo);
     QString getForecastUrl(QString xWmo);
-    QString getRadarUrl(QString xWmo);
+    QString getRadarId(QString xWmo);
     QString getAreaCode(QString xWmo);
     QString getIcon(int xIconCode, QString xDescription);
     float getDistance(QPointF xLonLatA, QPointF xLonLatB);

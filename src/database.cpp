@@ -88,12 +88,10 @@ QString Database::getForecastUrl(QString xWmo) {
     return url_string;
 }
 
-QString Database::getRadarUrl(QString xWmo)
+QString Database::getRadarId(QString xWmo)
 {
     QJsonArray station = getStationByWmo(xWmo);
-    QString radar_url = station[RADAR_ID].toString();
-    QString url_string = QString("http://www.bom.gov.au/products/radar_transparencies/%1.").arg(radar_url);
-    return url_string;
+    return station[RADAR_ID].toString();
 }
 
 Database *Database::instance()
