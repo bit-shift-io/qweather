@@ -22,32 +22,36 @@ class RadarImage : public QQuickPaintedItem
 public:
     RadarImage();
     void paint(QPainter *xPainer);
-    void setImage(const QImage &xImage);
+    void setBackgroundImage();
 
     Weather *weather() const;
     void setWeather(Weather *xWeather);
     void updateRadar();
     void requestImages();
+    void startTimer();
 
 signals:
     void imageChanged();
 
 private slots:
     void replyImageFinished(QNetworkReply *xNetworkReply);
-    //void replyRadarFinished(QNetworkReply *xNetworkReply);
+    void updateNext();
 
     // ftp commands
     void ftpAddToList(const QUrlInfo &xUrlInfo);
     void ftpCommandFinished(int xCommandId, bool xError);
 
 private:
-    QImage mImage;
+    QImage *mBackgroundImage = nullptr;
+    QImage *mTopographyImage = nullptr;
+    QImage *mLocationImage = nullptr;
     QVector<QString> *mFileList;
-    QVector<QString> *mBackgroundUrlList;
-    QVector<QImage> mBackgroundImages; // we want these in the custom order
-    QMap<QString, QImage> mAnimationImages; // use qmap over qvector, as it is sorted for us
+    QMap<QString, QImage*> mAnimationImages; // use qmap over qvector, as it is sorted for us
     Weather *mWeather;
     QFtp *mFtp;
+    QTimer *mTimer = nullptr;
+    int mFramePosition = -1;
+    QImage *mFrame = nullptr;
 };
 
 #endif // RADARIMAGE_H
