@@ -174,6 +174,8 @@ def database():
     print('forecast found: {}'.format(len(forecast_area_data)))
 
     # observation station data
+    #detailed_pattern = re.compile('(?<=places\/)(\w*)(?=\/)(?:\/KHEF\/\?location=|\/)(\w*)')
+    detailed_pattern = re.compile('(?<=places\/)(\w*)(?=\/)(?:\/)(\w*)')
     station_data = []
     for url in observation_data:
         page = requests.get(url)
@@ -233,17 +235,31 @@ def database():
 
                 radar_station = closest_radar_station[2]
 
+                # detailed forecast info
+                # http://www.bom.gov.au/places/[state]/[location]/forecast/detailed/
+                # http://www.bom.gov.au/places/sa/KHEF/?location=Yatala
+                search_url = 'http://www.bom.gov.au/places/search/?q={}%2C{}'.format(lat, lon)
+                r = str(requests.get(search_url).url)
+                match = re.findall(detailed_pattern, r)
+                '''
+                if ('location=' in r):
+                    
+                else:
+                    match = re.findall(detailed_pattern_2, r)
+                '''
+                detailed = '{}/{}'.format(match[0][0], match[0][1])
 
-                array = [id_wmo, id_state, forecast_url, aac, radar_station, lat, lon, state, name]
+                array = [id_wmo, id_state, forecast_url, aac, radar_station, lat, lon, state, name, detailed]
                 station_data.append(array)
                 print(array)
+
 
     # write json
     with open('database.json', 'w', encoding='utf-8') as f:
         f.writelines('{\n')
         f.writelines('  "stations" : [\n')
         for item in station_data:
-            f.writelines('      ["{}", "{}", "{}", "{}", "{}", {}, {}, "{}", "{}"],\n'.format(item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8]))
+            f.writelines('      ["{}", "{}", "{}", "{}", "{}", {}, {}, "{}", "{}", "{}"],\n'.format(item[0], item[1], item[2], item[3], item[4], item[5], item[6], item[7], item[8], item[9]))
         f.writelines('  ]\n')
         f.writelines('}\n')
         # to big to use json dump

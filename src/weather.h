@@ -28,16 +28,19 @@ public slots:
     void requestForecast();
     void requestObservation();
     void requestRadar();
+    void requestDetailedForecast();
 
 signals:
     void stationChanged();
     void resultObservationFinished(const QJsonObject &xResult);
     void resultForecastFinished(const QJsonObject &xResult);
+    void resultDetailedForecastFinished(const QJsonObject &xResult);
     void updateRadar();
 
 private slots:
     void replyForecastFinished(QNetworkReply *xNetworkReply);
     void replyObservationFinished(QNetworkReply *xNetworkReply);
+    void replyDetailedForecastFinished(QNetworkReply *xNetworkReply);
 
 private:
     QString mStationId;
@@ -45,6 +48,7 @@ private:
     QString mAreaCode;
     QString mForecastUrl;
     QString mRadarId;
+    QString mDetailedForecastUrl;
 };
 
 #endif // Weather_H

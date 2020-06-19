@@ -50,6 +50,7 @@ ApplicationWindow {
             weather_item.requestObservation();
             weather_item.requestForecast();
             weather_item.requestRadar();
+            weather_item.requestDetailedForecast();
         }
     }
 

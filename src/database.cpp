@@ -88,6 +88,14 @@ QString Database::getForecastUrl(const QString &xWmo) {
     return url_string;
 }
 
+QString Database::getDetailedUrl(const QString &xWmo)
+{
+    QJsonArray station = getStationByWmo(xWmo);
+    QString detailed_url = station[DETAILED_FORECAST].toString();
+    QString url_string = QString("http://www.bom.gov.au/places/%1/forecast/detailed/").arg(detailed_url);
+    return url_string;
+}
+
 QString Database::getRadarId(const QString &xWmo)
 {
     QJsonArray station = getStationByWmo(xWmo);

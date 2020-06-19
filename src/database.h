@@ -33,6 +33,7 @@ public:
         LONGDITUDE,
         STATE,
         NAME,
+        DETAILED_FORECAST,
         STATE_SIZE,
     };
 
@@ -45,6 +46,7 @@ public:
     QJsonArray getStationByWmo(const QString &xWmo);
     QString getObservationUrl(const QString &xWmo);
     QString getForecastUrl(const QString &xWmo);
+    QString getDetailedUrl(const QString &xWmo);
     QString getRadarId(const QString &xWmo);
     QString getAreaCode(const QString &xWmo);
     QString getIcon(int xIconCode, const QString &xDescription);
