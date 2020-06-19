@@ -24,34 +24,44 @@ void RadarImage::paint(QPainter *xPainter)
         xPainter->drawImage(0,0, mTopographyImage->scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
 
-
-    if (mFramePosition != -1) {
+    if (!mAnimationImages.isEmpty()) {
         // radar
-        QImage radar = mAnimationImages.values()[mFramePosition]->scaled(width(), height(), Qt::IgnoreAspectRatio, Qt::FastTransformation);
-        xPainter->drawImage(0,0, radar);
-    }
+        QImage *img = mAnimationImages[mFramePosition];
+        if (img != nullptr)
+            xPainter->drawImage(0,0, img->scaled(width(), height(), Qt::IgnoreAspectRatio, Qt::FastTransformation));
 
+        //qDebug() << "frame " << mFramePosition << " of " << mAnimationImages.size()-1;
+
+
+        if (mFramePosition >= mAnimationImages.size()-1 && mPauseCount == 0) {
+            // we hit the last frame
+            // set the pause count
+            mPauseCount = 4;
+            //qDebug() << "pause";
+        }
+        else if (mPauseCount > 0) {
+            // we are a repeat frame
+            //qDebug() << "repeat";
+            mPauseCount--;
+
+            if (mPauseCount == 0) {
+                // end pause
+                // reset animation
+                //qDebug() << "end";
+                mFramePosition = 0;
+            }
+        }
+        else {
+            // increment frame
+            mFramePosition++;
+        }
+
+    }
 
     if (mLocationImage != nullptr) {
         // locations
         xPainter->drawImage(0,0, mLocationImage->scaled(width(), height(), Qt::KeepAspectRatio, Qt::FastTransformation));
     }
-
-    //qDebug() << "paint " << mFramePosition;
-}
-
-void RadarImage::updateNext()
-{
-    if (!mAnimationImages.isEmpty()) {
-        // increment the counter
-        if (mFramePosition >= mAnimationImages.size()-1)
-            mFramePosition = 0;
-        else
-            mFramePosition++;
-    }
-
-    // draw super
-    update();
 }
 
 
@@ -84,8 +94,6 @@ void RadarImage::updateRadar()
     connect(mFtp, SIGNAL(listInfo(QUrlInfo)), this, SLOT(ftpAddToList(QUrlInfo)));
     connect(mFtp, SIGNAL(commandFinished(int, bool)), this, SLOT(ftpCommandFinished(int, bool)));
 
-    // TODO: fix qftp
-    //string[0] is depreciated
     mFtp->connectToHost("ftp.bom.gov.au");
     mFtp->login();
     mFtp->cd("/anon/gen/radar/");
@@ -115,6 +123,10 @@ void RadarImage::requestImages()
         }
     }
 
+    // match file list size
+    mAnimationImages = QVector<QImage*>(mFileList->size());
+    //qDebug() << mFileList->size();
+    //qDebug() << mAnimationImages.size();
     for (QString &item : *mFileList) {
         // get ftp images
         QString u = QString("ftp://ftp.bom.gov.au/anon/gen/radar/%1").arg(item);
@@ -135,10 +147,10 @@ void RadarImage::startTimer()
 {
     if (mTimer == nullptr) {
         mTimer = new QTimer(this);
-        connect(mTimer, SIGNAL(timeout()), this, SLOT(updateNext()));
+        connect(mTimer, SIGNAL(timeout()), this, SLOT(update()));
     }
 
-    mTimer->start(500);
+    mTimer->start(300);
 }
 
 
@@ -177,7 +189,11 @@ void RadarImage::replyImageFinished(QNetworkReply *xNetworkReply)
     } else if (url.contains("locations.png")) {
         mLocationImage = img;
     } else if (url.contains("ftp.bom.gov.au")) {
-        mAnimationImages.insert(file_name, img);
+        for (int i=0; i < mFileList->size(); i++){
+            if (mFileList->at(i).contains(file_name)){
+                mAnimationImages[i] = img;
+            }
+        }
     }
 
     return;

@@ -40,7 +40,9 @@ ApplicationWindow {
 
     Timer {
         // Refresh the observations every 5 minutes
-        interval: 300000
+        // 300000 = 5mins
+        // 900000 = 15mins
+        interval: 900000
         repeat: true
         triggeredOnStart: true
         running: true

@@ -28,14 +28,13 @@ public:
     void setWeather(Weather *xWeather);
     void updateRadar();
     void requestImages();
-    void startTimer();
 
 signals:
     void imageChanged();
 
 private slots:
     void replyImageFinished(QNetworkReply *xNetworkReply);
-    void updateNext();
+    void startTimer();
 
     // ftp commands
     void ftpAddToList(const QUrlInfo &xUrlInfo);
@@ -46,12 +45,12 @@ private:
     QImage *mTopographyImage = nullptr;
     QImage *mLocationImage = nullptr;
     QVector<QString> *mFileList;
-    QMap<QString, QImage*> mAnimationImages; // use qmap over qvector, as it is sorted for us
+    QVector<QImage*> mAnimationImages;
     Weather *mWeather;
     QFtp *mFtp;
     QTimer *mTimer = nullptr;
-    int mFramePosition = -1;
-    QImage *mFrame = nullptr;
+    int mFramePosition = 0;
+    int mPauseCount = 0;
 };
 
 #endif // RADARIMAGE_H
