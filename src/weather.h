@@ -11,6 +11,11 @@ class Weather : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString station READ station WRITE setStation NOTIFY stationChanged)
+
+    // 24hr time for detailed outlook/forecast
+    const QVector<QString> detailed_column_times = { "0030", "0330", "0630", "0930", "1230", "1530", "1830", "2130" };
+    const QVector<QString> detailed_row_labels = { "rain_50", "rain_25", "rain_10", "rain_chance", "air_temp", "feel_temp", "dew_point", "uv_index", "thunderstorms", "snow", "rain", "fog", "frost", "wind_speed", "wind_dir", "humidity", "forest_dry", "mix_height" };
+
 public:
     Weather(QObject *parent = 0);
     ~Weather();

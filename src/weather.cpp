@@ -148,6 +148,7 @@ void Weather::replyDetailedForecastFinished(QNetworkReply *xNetworkReply)
     QByteArray data = xNetworkReply->readAll();
     xNetworkReply->deleteLater();
     QJsonObject weather_data;
+    QJsonArray day_hour_data;
     //qDebug() << "download " << data.size() << "bytes";
     //qDebug() << QString(data);
     //qDebug() << url;
@@ -171,6 +172,9 @@ void Weather::replyDetailedForecastFinished(QNetworkReply *xNetworkReply)
     html.replace("&ndash;", "");
     html.replace("&deg;", "");
     html.replace("&trade;", "");
+    html.replace("&amp;", "");
+    html.replace(";", "");
+    html.replace("&", "");
 
     // add end tags
     //html.append("</body></html>");
@@ -186,11 +190,25 @@ void Weather::replyDetailedForecastFinished(QNetworkReply *xNetworkReply)
     QXmlStreamReader xml(html);
 
 
+    /*
+     * data should look like this...
+    {
+        "outlook": [
+            [{"date":"2020-10-02", "time(24hr)":"0930", "chance_of_rain":"60", "air_temp":"24.2" ....}],
+            [{"date":"2020-10-02", "time":"1230" ...}],
+            [{"date":"2020-10-04", ...}],
+        ]
+    }
+    */
+
+    int day_count = -1;
+    int row_count = 0;
+    int column_count = 0;
+    bool in_body = false;
 
     while(!xml.atEnd())
     {
         QXmlStreamReader::TokenType token = xml.readNext();
-        //qDebug() << QXmlStreamReader::TokenType(token);
 
         if (xml.hasError()) {
             qDebug() << xml.errorString();
@@ -201,40 +219,64 @@ void Weather::replyDetailedForecastFinished(QNetworkReply *xNetworkReply)
         }
 
         if(token == QXmlStreamReader::StartElement) {
-            //qDebug() << "start " << xml.name();
-
             if (xml.name()=="div") {
                 QString item_class = xml.attributes().value("class").toString();
                 if (item_class.contains("forecast-day")) {
-                    QString date = xml.attributes().value("id").toString();
-                    qDebug() << "forecast" << date;
+                    QString date = xml.attributes().value("id").toString().right(10);
+
+                    // populate dates and times for new day
+                    for (QString time : detailed_column_times) {
+                        QJsonObject column; // pointer for this??
+                        column.insert("date", date);
+                        column.insert("time", time);
+                        day_hour_data.append(column);
+                        //qDebug() << "forecast" << date << time;
+                    }
+
+                    // set day count
+                    day_count++;
+                    row_count = 0;
+                    qDebug() << "day" << day_count;
                 }
             }
 
-            if (xml.name()=="table") {
-                QString summary = xml.attributes().value("summary").toString();
-                qDebug() << summary;
-
+            if (xml.name()=="tbody") {
+                in_body = true;
+                qDebug() << "tbody";
             }
 
-            if (xml.name()=="tr") {
-                qDebug() << "row";
-            }
+            if (in_body) {
+                if (xml.name()=="th") {
+                    // head of row, reset counter
+                    //QString value = xml.readElementText();
+                    qDebug() << detailed_row_labels[row_count];
+                    column_count = 0;
+                }
 
-            if (xml.name()=="td") {
-                QString value = xml.readElementText();
-                if (xml.hasError())
-                    qDebug() << xml.errorString();
-                qDebug() << value;
+                if (xml.name()=="td") {
+                    QString value = xml.readElementText();
+                    if (xml.hasError())
+                        qDebug() << xml.errorString();
+                    qDebug() << detailed_column_times[column_count] << value;
+                    column_count++;
+                }
             }
         }
 
         if(token == QXmlStreamReader::EndElement) {
-            //qDebug() << "end " << xml.name();
+            if (in_body) {
+                if (xml.name()=="tr") {
+                    // end of row, increment counters
+                    row_count++;
+                    qDebug() << "end row";
+                }
 
-
+                if (xml.name()=="tbody") {
+                    qDebug() << "end tbody";
+                    in_body = false;
+                }
+            }
         }
-
 
     }
 
