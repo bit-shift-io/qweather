@@ -11,7 +11,8 @@
 #include "radarimage.h"
 
 #ifdef Q_OS_ANDROID
-#include "./3rdparty/kirigami/src/kirigamiplugin.h"
+#include <QtSvg>    //Because deployment sometimes just forgets to include this lib otherwise
+//#include "./3rdparty/kirigami/src/kirigamiplugin.h"
 #endif
 
 int main(int argc, char *argv[])
@@ -30,7 +31,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
 #ifdef Q_OS_ANDROID
-    KirigamiPlugin::getInstance().registerTypes();
+    //KirigamiPlugin::getInstance().registerTypes();
 #endif
 
     // used for settings

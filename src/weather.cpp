@@ -179,8 +179,7 @@ void Weather::replyDetailedForecastFinished(QNetworkReply *xNetworkReply)
     // add end tags
     //html.append("</body></html>");
 
-    //qPrintable(html);
-    qDebug().noquote() << html;
+    //qDebug().noquote() << html;
 
     // get database instance
     Database *database = Database::instance();
@@ -206,6 +205,7 @@ void Weather::replyDetailedForecastFinished(QNetworkReply *xNetworkReply)
     int column_count = 0;
     bool in_body = false;
 
+    /*
     while(!xml.atEnd())
     {
         QXmlStreamReader::TokenType token = xml.readNext();
@@ -279,7 +279,7 @@ void Weather::replyDetailedForecastFinished(QNetworkReply *xNetworkReply)
         }
 
     }
-
+    */
 
 
     emit resultDetailedForecastFinished(weather_data);

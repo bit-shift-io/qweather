@@ -1,5 +1,6 @@
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QDate>
 #include "forecastmodel.h"
 #include "weather.h"
 

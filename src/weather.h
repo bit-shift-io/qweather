@@ -3,8 +3,11 @@
 
 #include <QObject>
 #include <QJsonObject>
+#include <QString>
+#include <QVector>
 
 class QNetworkReply;
+
 
 
 class Weather : public QObject

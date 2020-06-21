@@ -1,10 +1,10 @@
 TEMPLATE = app
 
-QT += charts qml quick
+QT += charts qml quick svg
 
-android: {
-    include(3rdparty/kirigami/kirigami.pri)
-}
+#android: {
+#    include(3rdparty/kirigami/kirigami.pri)
+#}
 
 CONFIG += c++11
 
