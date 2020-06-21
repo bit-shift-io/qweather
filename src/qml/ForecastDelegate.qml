@@ -43,7 +43,8 @@ ItemDelegate {
                     id: day
                     text: model.day
                     color: Style.panel.font_color
-                    font.pointSize: Style.forecast.font_size_day
+                    font.pixelSize: Style.forecast.font_size_day
+                    font.weight: Style.forecast.font_weight_day
                     horizontalAlignment: Text.AlignLeft
                     Layout.fillWidth: true
                 }
@@ -59,6 +60,7 @@ ItemDelegate {
 
                 Label {
                     id: rain
+                    font.pixelSize: Style.forecast.font_size_description
                     text: model.rainProbability + "% chance " + model.rainRange + "mm "
                     visible: (model.rainRange !== "")
                     color: Style.forecast.color_rain
@@ -69,6 +71,7 @@ ItemDelegate {
                 Label {
                     id: description
                     text: model.description + " "
+                    font.pixelSize: Style.forecast.font_size_description
                     visible: (model.rainRange === "") // when rain is visible, hide this
                     color: Style.forecast.color_description
                     horizontalAlignment: Text.AlignRight
@@ -77,20 +80,20 @@ ItemDelegate {
 
                 Label {
                     id: temp_low
-                    text: model.temperatureMinimum + '°C'
+                    text: model.temperatureMinimum + '°'
                     color: Style.forecast.color_temp_low
-                    font.pointSize: Style.forecast.font_size_temp
-                    font.bold: true
+                    font.pixelSize: Style.forecast.font_size_temp
+                    font.weight: Style.forecast.font_weight_temp
                     horizontalAlignment: Text.AlignRight
                     Layout.fillWidth: false
                 }
 
                 Label {
                     id: temp_high
-                    text: model.temperatureMaximum + '°C'
+                    text: model.temperatureMaximum + '°'
                     color: Style.forecast.color_temp_high
-                    font.pointSize: Style.forecast.font_size_temp
-                    font.bold: true
+                    font.pixelSize: Style.forecast.font_size_temp
+                    font.weight: Style.forecast.font_weight_temp
                     horizontalAlignment: Text.AlignRight
                     Layout.fillWidth: false
                 }

@@ -64,7 +64,8 @@ Item {
 
             Label {
                 id: temp
-                font.pointSize: Style.today.font_size_temp
+                font.pixelSize: Style.today.font_size_temp
+                font.weight: Style.today.font_weight_temp
                 color: Style.today.font_color
                 text: ""
                 horizontalAlignment: Text.AlignLeft
@@ -74,6 +75,7 @@ Item {
 
             Label {
                 id: feel
+                font.pixelSize: Style.today.font_size
                 color: Style.today.font_color
                 text: ""
                 horizontalAlignment: Text.AlignLeft
@@ -91,7 +93,8 @@ Item {
                 id: place
                 text: ""
                 color: Style.today.font_color
-                font.pointSize: Style.today.font_size_place
+                font.weight: Style.today.font_weight_place
+                font.pixelSize: Style.today.font_size_place
                 horizontalAlignment: Text.AlignRight
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -100,6 +103,7 @@ Item {
 
             Label {
                 id: wind
+                font.pixelSize: Style.today.font_size
                 text: ""
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
@@ -109,6 +113,7 @@ Item {
 
             Label {
                 id: rain
+                font.pixelSize: Style.today.font_size
                 text: ""
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
@@ -118,6 +123,7 @@ Item {
 
             Label {
                 id: humid
+                font.pixelSize: Style.today.font_size
                 text: ""
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
@@ -127,6 +133,7 @@ Item {
 
             Label {
                 id: temperature
+                font.pixelSize: Style.today.font_size
                 text: ""
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
@@ -136,6 +143,7 @@ Item {
 
             Label {
                 id: summary
+                font.pixelSize: Style.today.font_size
                 text: ""
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
@@ -149,22 +157,26 @@ Item {
     
     function updateObservation(xData) {
         place.text = xData['name'];
-        temp.text = xData['air_temp'] + '°C';
-        feel.text = 'Feels like ' + xData['apparent_t'] + '°C';
-        wind.text = xData['wind_spd_kmh'] + 'kmh ' + xData['wind_spd_kmh'] + 'kt ' + xData['wind_dir'];
-        humid.text = xData['rel_hum'] + '% Humidity';
+        feel.text = 'Feels like ' + xData['apparent_t'] + '°';
+        wind.text = xData['wind_spd_kmh'] + 'kmh ' + xData['wind_spd_kt'] + 'kt ' + xData['wind_dir'];
+        humid.text = xData['rel_hum'] + '% Humid';
         rain.text = xData['rain_trace'] + 'mm Rain';
-        //image.source = 'qrc:/' + xData['cloud'] + '.svg';
+        temp.text = xData['air_temp'] + '°';
     }
 
     function updateForecast(xData) {
         var forecast = xData['forecast'][0];
         image.source = 'qrc:/' + forecast['forecast_icon'];
         summary.text = forecast['precis'];
-        if (forecast['air_temperature_minimum'])
-            temperature.text = forecast['air_temperature_minimum'] + ' ' + forecast['air_temperature_maximum'] + '°C Max';
+
+        var min_temp = forecast['air_temperature_minimum']
+        var max_temp = forecast['air_temperature_maximum']
+        if (min_temp && max_temp)
+            temperature.text = min_temp + ' ' + max_temp + '°C Max';
+        else if (max_temp)
+            temperature.text = max_temp + '°C Max';
         else
-            temperature.text = forecast['air_temperature_maximum'] + '°C Max';
+            temperature.text = temp.text;
     }
 
 }
