@@ -29,7 +29,7 @@ QtObject {
         property color color: '#464646'
         property color font_color: app.font_color
         property int radius: 0
-        property int margin: 4
+        property int margin: app.margin
         property int margin_internal: 4
     }
 

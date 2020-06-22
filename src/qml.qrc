@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/main.qml</file>
-        <file>qml/WeatherPage.qml</file>
         <file>qml/Today.qml</file>
         <file>qml/Forecast.qml</file>
         <file>qml/Radar.qml</file>
@@ -9,7 +8,6 @@
         <file>qml/ForecastDelegate.qml</file>
         <file>qml/Style/qmldir</file>
         <file>qml/Style/Style.qml</file>
-        <file>qml/util.js</file>
         <file>qml/Bounds.qml</file>
     </qresource>
 </RCC>

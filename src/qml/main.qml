@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.2
 //import org.kde.kirigami 2.4 as Kirigami
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Material 2.4
-import "util.js" as Util
 import Weather 1.0
 import Database 1.0
 import 'Style'
@@ -66,7 +65,7 @@ ApplicationWindow {
         ColumnLayout {
             spacing: 0
             anchors.fill: parent
-            width: Math.max(implicitWidth, scroll_view.availableWidth)
+            width: parent.width //Math.max(implicitWidth, scroll_view.availableWidth)
             Layout.fillWidth: true
             Layout.fillHeight: true
 
@@ -81,39 +80,12 @@ ApplicationWindow {
             }
 
             // GraphicForecast {}
-
+    /*
             Radar {
                 id: radar
                 property variant weather_station: weather_item
             }
-
+*/
         }
     }
-
 }
-
-/*
-Kirigami.ApplicationWindow {
-    id: window
-    visible: true
-    title: application.name
-    width: 350
-    height: 500
-
-    pageStack.initialPage: Qt.resolvedUrl("WeatherPage.qml")
-
-    globalDrawer: Kirigami.GlobalDrawer {
-        title: "Hello App"
-        titleIcon: "applications-graphics"
-        actions: [
-            Kirigami.Action {
-                text: "Add location"
-            },
-            Kirigami.Action {
-                text: "Remove location"
-            }
-            ]
-    }
-
-}
-*/
