@@ -7,8 +7,10 @@ import RadarImage 1.0
 
 Item {
     id: panel
-    Layout.preferredHeight: parent.width
-    Layout.preferredWidth: parent.width
+    implicitHeight: parent.width
+    width: parent.width
+    //Layout.preferredHeight: parent.width
+    //Layout.preferredWidth: parent.width
     Layout.fillWidth: true
     Layout.fillHeight: true
     Layout.alignment: Qt.AlignCenter
@@ -25,8 +27,6 @@ Item {
         Layout.alignment: Qt.AlignCenter
         anchors.fill: parent
         anchors.margins: Style.panel.margin
-
-        SizeBox{}
 
         Rectangle {
             id: background

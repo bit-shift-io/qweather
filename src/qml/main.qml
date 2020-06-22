@@ -58,6 +58,8 @@ ApplicationWindow {
         // main page layout
         id: scroll_view
         anchors.fill: parent
+        width: parent.width
+        height: parent.height
         Layout.fillHeight: true
         Layout.fillWidth: true
 
@@ -65,7 +67,6 @@ ApplicationWindow {
             spacing: 0
             anchors.fill: parent
             width: Math.max(implicitWidth, scroll_view.availableWidth)
-            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillWidth: true
             Layout.fillHeight: true
 
@@ -73,17 +74,18 @@ ApplicationWindow {
                 id: today
             }
 
+
             Forecast {
                 id:forecast
                 property variant weather_station: weather_item
             }
 
             // GraphicForecast {}
-
+            /*
             Radar {
                 id: radar
                 property variant weather_station: weather_item
-            }
+            }*/
 
         }
     }

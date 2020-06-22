@@ -10,6 +10,6 @@
         <file>qml/Style/qmldir</file>
         <file>qml/Style/Style.qml</file>
         <file>qml/util.js</file>
-        <file>qml/SizeBox.qml</file>
+        <file>qml/Bounds.qml</file>
     </qresource>
 </RCC>

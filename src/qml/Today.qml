@@ -4,40 +4,22 @@ import QtQuick.Layouts 1.2
 import QtGraphicalEffects 1.0
 import "Style"
 
-Item {
-    //height: 200
-    Layout.preferredHeight: 200
-    Layout.preferredWidth: parent.width
-    //width: parent.width
+Rectangle {
+    id: root
+    color: Style.today.color_day
+    height: root_layout.height
+    width: parent.width
     Layout.fillWidth: true
-    Layout.alignment: Qt.AlignCenter
-
-
-    Rectangle {
-        id: background
-        color: Style.today.color_day
-        anchors.fill: parent
-    }
-
-    /*
-    DropShadow {
-        anchors.fill: background
-        horizontalOffset: 0
-        verticalOffset: 0
-        radius: Style.shadow.radius
-        samples: Style.shadow.samples
-        color: Style.shadow.color
-        source: background
-    }*/
-
 
     RowLayout {
-        anchors.fill: parent
-        anchors.margins: Style.today.margin
+        id: root_layout
+        Layout.fillWidth: true
+        width: parent.width
 
         ColumnLayout {
             id: left_column
             Layout.alignment: Qt.AlignTop
+            Layout.margins: Style.today.margin
 
             Item {
                 Layout.alignment: Qt.AlignHCenter
@@ -69,6 +51,7 @@ Item {
                 color: Style.today.font_color
                 text: ""
                 horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignBottom
                 //Layout.fillWidth: true
                 Layout.fillHeight: true
             }
@@ -79,6 +62,7 @@ Item {
                 color: Style.today.font_color
                 text: ""
                 horizontalAlignment: Text.AlignLeft
+                verticalAlignment: Text.AlignBottom
                 //Layout.fillWidth: true
                 Layout.fillHeight: true
             }
@@ -88,6 +72,7 @@ Item {
             id: right_column
             Layout.alignment: Qt.AlignTop | Qt.AlignRight
             Layout.fillHeight: true
+            Layout.margins: Style.today.margin
 
             Label {
                 id: place
@@ -96,6 +81,7 @@ Item {
                 font.weight: Style.today.font_weight_place
                 font.pixelSize: Style.today.font_size_place
                 horizontalAlignment: Text.AlignRight
+                verticalAlignment: Text.AlignBottom
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
@@ -107,6 +93,7 @@ Item {
                 text: ""
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
+                verticalAlignment: Text.AlignBottom
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
@@ -117,6 +104,7 @@ Item {
                 text: ""
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
+                verticalAlignment: Text.AlignBottom
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
@@ -127,6 +115,7 @@ Item {
                 text: ""
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
+                verticalAlignment: Text.AlignBottom
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
@@ -137,6 +126,7 @@ Item {
                 text: ""
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
+                verticalAlignment: Text.AlignBottom
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
@@ -147,13 +137,14 @@ Item {
                 text: ""
                 color: Style.today.font_color
                 horizontalAlignment: Text.AlignRight
+                verticalAlignment: Text.AlignBottom
                 Layout.fillWidth: true
                 Layout.fillHeight: true
             }
 
         }
-
     }
+
     
     function updateObservation(xData) {
         place.text = xData['name'];
