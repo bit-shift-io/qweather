@@ -9,16 +9,9 @@ Item {
     id: panel
     implicitHeight: parent.width
     width: parent.width
-    //Layout.preferredHeight: parent.width
-    //Layout.preferredWidth: parent.width
     Layout.fillWidth: true
     Layout.fillHeight: true
     Layout.alignment: Qt.AlignCenter
-
-    onWidthChanged: {
-        // keep square
-        panel.height = panel.width
-    }
 
     Item {
         Layout.preferredWidth: parent.width

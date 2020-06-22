@@ -5,26 +5,22 @@ import QtQuick.Layouts 1.2
 import QtGraphicalEffects 1.0
 import  'Style'
 
-ItemDelegate {
-    id: forecast_delegate
-    width: parent.width
-    Layout.preferredWidth: parent.width
-    Layout.fillWidth: true
-    Layout.alignment: Qt.AlignCenter
 
-    Rectangle {
-        id: background
-        color: Style.forecast.color_background
-        radius: Style.forecast.radius_background
-        anchors.fill: parent
-    }
+Rectangle {
+    id: root
+    color: Style.forecast.color_background
+    radius: Style.forecast.radius_background
+    height: 30
+    width: parent.width
+    Layout.fillWidth: true
 
 
     RowLayout {
-        id: forecast_row
-        anchors.fill: parent
-        anchors.margins: 4
-        Layout.preferredWidth: parent.width
+        id: root_layout
+        Layout.fillWidth: true
+        //anchors.fill: parent
+        //anchors.margins: 4
+        //Layout.preferredWidth: parent.width
 
         ColumnLayout {
             id: day_column
@@ -35,8 +31,8 @@ ItemDelegate {
                 Image {
                     id: image
                     source: 'qrc:/' + model.icon
-                    sourceSize.width: forecast_row.height
-                    sourceSize.height: forecast_row.height
+                    sourceSize.width: day.height
+                    sourceSize.height: day.height
                 }
 
                 Label {
