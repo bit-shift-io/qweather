@@ -28,7 +28,7 @@ void RadarImage::paint(QPainter *xPainter)
         // radar
         QImage *img = mAnimationImages[mFramePosition];
         if (img != nullptr)
-            xPainter->drawImage(0,0, img->scaled(width(), height(), Qt::IgnoreAspectRatio, Qt::FastTransformation));
+            xPainter->drawImage(0,0, img->scaled(width(), height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 
         //qDebug() << "frame " << mFramePosition << " of " << mAnimationImages.size()-1;
 
@@ -60,7 +60,7 @@ void RadarImage::paint(QPainter *xPainter)
 
     if (mLocationImage != nullptr) {
         // locations
-        xPainter->drawImage(0,0, mLocationImage->scaled(width(), height(), Qt::KeepAspectRatio, Qt::FastTransformation));
+        xPainter->drawImage(0,0, mLocationImage->scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
 }
 

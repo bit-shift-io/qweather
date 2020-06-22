@@ -1,7 +1,6 @@
 import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.2
-//import org.kde.kirigami 2.4 as Kirigami
 import QtGraphicalEffects 1.0
 import QtCharts 2.0
 import 'Style'
@@ -13,7 +12,6 @@ ColumnLayout {
     Layout.alignment: Qt.AlignCenter
     anchors.margins: Style.panel.margin
 
-    SizeBox{}
 
     /*
     //![1]

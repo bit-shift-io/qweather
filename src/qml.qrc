@@ -9,5 +9,6 @@
         <file>qml/Style/qmldir</file>
         <file>qml/Style/Style.qml</file>
         <file>qml/Bounds.qml</file>
+        <file>qml/Spacer.qml</file>
     </qresource>
 </RCC>

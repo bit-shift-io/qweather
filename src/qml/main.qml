@@ -1,7 +1,6 @@
 import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.2
-//import org.kde.kirigami 2.4 as Kirigami
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Material 2.4
 import Weather 1.0
@@ -73,6 +72,7 @@ ApplicationWindow {
                 id: today
             }
 
+            Spacer {}
 
             Forecast {
                 id:forecast
@@ -80,12 +80,14 @@ ApplicationWindow {
             }
 
             // GraphicForecast {}
-    /*
+
+            Spacer {}
+
             Radar {
                 id: radar
                 property variant weather_station: weather_item
             }
-*/
+
         }
     }
 }

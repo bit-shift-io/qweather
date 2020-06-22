@@ -1,7 +1,6 @@
 import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.2
-//import org.kde.kirigami 2.4 as Kirigami
 import QtGraphicalEffects 1.0
 import  'Style'
 
@@ -10,7 +9,7 @@ Rectangle {
     id: root
     color: Style.forecast.color_background
     radius: Style.forecast.radius_background
-    height: 30
+    height: 35
     width: parent.width
     Layout.fillWidth: true
 
@@ -18,14 +17,15 @@ Rectangle {
     RowLayout {
         id: root_layout
         Layout.fillWidth: true
-        //anchors.fill: parent
-        //anchors.margins: 4
+        anchors.fill: parent
+        anchors.margins: Style.panel.margin_internal
         //Layout.preferredWidth: parent.width
 
         ColumnLayout {
             id: day_column
             Layout.alignment: Qt.AlignLeft
             Layout.fillWidth: false
+            Layout.margins: Style.panel.margin_internal
 
             RowLayout {
                 Image {
@@ -50,6 +50,7 @@ Rectangle {
         ColumnLayout {
             Layout.alignment: Qt.AlignRight
             Layout.fillWidth: false
+            Layout.margins: Style.panel.margin_internal
 
             RowLayout {
                 Layout.alignment: Qt.AlignRight

@@ -37,7 +37,7 @@ Rectangle {
                     anchors.fill: image
                     horizontalOffset: 4
                     verticalOffset: 4
-                    radius: 10
+                    radius: 8
                     samples: 10
                     color: Style.today.color_shadow
                     source: image
