@@ -163,11 +163,11 @@ Rectangle {
         var min_temp = forecast['air_temperature_minimum']
         var max_temp = forecast['air_temperature_maximum']
         if (min_temp && max_temp)
-            temperature.text = min_temp + ' ' + max_temp + '°C Max';
+            temperature.text = min_temp + ' ' + max_temp + '° Max';
         else if (max_temp)
-            temperature.text = max_temp + '°C Max';
+            temperature.text = max_temp + '° Max';
         else
-            temperature.text = temp.text;
+            temperature.text = temp.text + ' Max';
     }
 
 }

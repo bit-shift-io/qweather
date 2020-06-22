@@ -60,7 +60,7 @@ QtObject {
         property color color_description: app.font_color
         property int font_size_description: app.font_size
         property int font_size_temp: app.font_size * 1.2
-        property int font_size_day: app.font_size * 1.2
+        property int font_size_day: app.font_size
         property int font_weight_temp: Font.DemiBold
         property int font_weight_day: Font.Medium
         property color color_background: '#464646'

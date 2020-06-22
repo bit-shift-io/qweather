@@ -31,8 +31,8 @@ Rectangle {
                 Image {
                     id: image
                     source: 'qrc:/' + model.icon
-                    sourceSize.width: day.height
-                    sourceSize.height: day.height
+                    sourceSize.width: temp_high.height
+                    sourceSize.height: temp_high.height
                 }
 
                 Label {
@@ -77,7 +77,7 @@ Rectangle {
 
                 Label {
                     id: temp_low
-                    text: model.temperatureMinimum + '°'
+                    text: model.temperatureMinimum
                     color: Style.forecast.color_temp_low
                     font.pixelSize: Style.forecast.font_size_temp
                     font.weight: Style.forecast.font_weight_temp
@@ -87,7 +87,7 @@ Rectangle {
 
                 Label {
                     id: temp_high
-                    text: model.temperatureMaximum + '°'
+                    text: model.temperatureMaximum
                     color: Style.forecast.color_temp_high
                     font.pixelSize: Style.forecast.font_size_temp
                     font.weight: Style.forecast.font_weight_temp
