@@ -4,6 +4,7 @@
 #include <QDirIterator>
 #include <QDebug>
 #include <QQmlDebuggingEnabler>
+#include <QIcon>
 
 #include "database.h"
 #include "weather.h"
@@ -39,7 +40,7 @@ int main(int argc, char *argv[])
     app.setOrganizationDomain("bitshift");
     app.setApplicationName("Weather");
 
-    //app.setWindowIcon(QIcon("qrc:/bitshift.alarm.png"));
+    app.setWindowIcon(QIcon(":/bitshift.weather.png"));
 
     // add imports
     engine.addImportPath(".");
