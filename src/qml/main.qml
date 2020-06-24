@@ -25,25 +25,29 @@ ApplicationWindow {
 
     Drawer {
         id: drawer
-        width: 0.66 * window.width
-        height: window.height
+        width: 0.66 * root.width
+        height: root.height
         background: Rectangle {
-            Rectangle {
-                x: parent.width - 1
-                width: 1
-                height: parent.height
-                color: "#21be2b"
-            }
+            color: Style.drawer.color
         }
 
-        Label {
-            text: "Content goes here!"
-            anchors.centerIn: parent
+        ColumnLayout {
+            Button {
+                text: "Find location"
+                onClicked: {
+                    stack_view.push("SearchPage.qml", {}) // ("SearchPage.qml", {user_info: user_data})
+                    drawer.close()
+                }
+            }
+
+            Button {
+                text: "Refresh"
+            }
         }
     }
 
     StackView {
-        id: stackView
+        id: stack_view
         anchors.fill: parent
         initialItem: MainPage {}
     }

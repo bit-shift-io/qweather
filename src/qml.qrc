@@ -11,5 +11,6 @@
         <file>qml/Bounds.qml</file>
         <file>qml/Spacer.qml</file>
         <file>qml/MainPage.qml</file>
+        <file>qml/SearchPage.qml</file>
     </qresource>
 </RCC>

@@ -33,6 +33,10 @@ QtObject {
         property int margin_internal: 4
     }
 
+    property QtObject drawer: QtObject {
+        property color color: '#464646'
+    }
+
     property QtObject divider: QtObject {
         property color color: '#828282'
         property int radius: 2
