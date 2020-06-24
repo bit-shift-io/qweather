@@ -1,158 +1,92 @@
-
-import QtQuick 2.4
+import QtQuick 2.11
+import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.2
-import org.kde.kirigami 2.11 as Kirigami
-import QtQuick.Controls 2.0 as Controls
+import QtGraphicalEffects 1.0
+import QtQuick.Controls.Material 2.4
+import Weather 1.0
+import Database 1.0
+import 'Style'
 
+Page {
+    id: root
 
-Kirigami.ScrollablePage {
-    id: pageRoot
-
-    
-    supportsRefreshing: true
-    onRefreshingChanged: {
-        if (refreshing) {
-            refreshRequestTimer.running = true;
-        } else {
-            showPassiveNotification("Example refreshing completed")
+    Weather {
+        // weather object
+        id: weather_item
+        station: '94672'
+        onResultObservationFinished: {
+            today.updateObservation(xResult);
+        }
+        onResultForecastFinished: {
+            today.updateForecast(xResult);
         }
     }
 
-    implicitWidth: Kirigami.Units.gridUnit * 20
-    background: Rectangle {
-        color: Kirigami.Theme.backgroundColor
+
+    Timer {
+        // Refresh the observations every 5 minutes
+        // 300000 = 5mins
+        // 900000 = 15mins
+        interval: 900000
+        repeat: true
+        triggeredOnStart: true
+        running: true
+        onTriggered: {
+            weather_item.requestObservation();
+            weather_item.requestForecast();
+            weather_item.requestRadar();
+            weather_item.requestDetailedForecast();
+        }
     }
 
-    title: qsTr("Weather")
+    Rectangle {
+        id: background
+        color: Style.app.color
+        anchors.fill: parent
 
-    // pullback header
+        ScrollView {
+            // main page layout
+            id: scroll_view
+            anchors.fill: parent
+            width: parent.width
+            height: parent.height
+            Layout.fillHeight: true
+            Layout.fillWidth: true
 
-    ListView {
-        id: mainList
+            ColumnLayout {
+                spacing: 0
+                anchors.fill: parent
+                width: parent.width //Math.max(implicitWidth, scroll_view.availableWidth)
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-        //headerPositioning: ListView.OverlayHeader
-        headerPositioning: ListView.PullBackHeader
-        header: Kirigami.ItemViewHeader {
-            //backgroundImage.source: "../banner.jpg"
-            title: page.title
-        }
+                Today {
+                    id: today
 
-
-        // list items of page
-        model: 5
-        /*
-        delegate: Kirigami.BasicListItem {
-            id: listItem
-            label: "Item " + modelData
-        }*/
-
-        delegate: Kirigami.AbstractCard {
-            //NOTE: never put a Layout as contentItem as it will cause binding loops
-            //SEE: https://bugreports.qt.io/browse/QTBUG-66826
-            contentItem: Item {
-                implicitWidth: delegateLayout.implicitWidth
-                implicitHeight: delegateLayout.implicitHeight
-                GridLayout {
-                    id: delegateLayout
-                    anchors {
-                        left: parent.left
-                        top: parent.top
-                        right: parent.right
-                        //IMPORTANT: never put the bottom margin
-                    }
-                    rowSpacing: Kirigami.Units.largeSpacing
-                    columnSpacing: Kirigami.Units.largeSpacing
-                    columns: width > Kirigami.Units.gridUnit * 20 ? 4 : 2
-                    Kirigami.Icon {
-                        source: "applications-graphics"
-                        Layout.fillHeight: true
-                        Layout.maximumHeight: Kirigami.Units.iconSizes.huge
-                        Layout.preferredWidth: height
-                    }
-                    ColumnLayout {
-                        Kirigami.Heading {
-                            level: 2
-                            text: qsTr("Product ")+ modelData
-                        }
-                        Kirigami.Separator {
-                            Layout.fillWidth: true
-                        }
-                        Controls.Label {
-                            Layout.fillWidth: true
-                            wrapMode: Text.WordWrap
-                            text: qsTr("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam id risus id augue euismod accumsan.")
-                        }
-                    }
-                    Controls.Button {
-                        Layout.alignment: Qt.AlignRight|Qt.AlignVCenter
-                        Layout.columnSpan: 2 
-                        text: qsTr("Install")
-                        onClicked: showPassiveNotification("Install for Product " + modelData + " clicked");
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: { drawer.open() }
                     }
                 }
+
+                Spacer {}
+
+                Forecast {
+                    id:forecast
+                    property variant weather_station: weather_item
+                }
+
+                // GraphicForecast {}
+
+                Spacer {}
+
+                Radar {
+                    id: radar
+                    property variant weather_station: weather_item
+                }
+
             }
         }
     }
-
-    /*
-    // card list view
-    Kirigami.CardsListView {
-        id: view
-
-        headerPositioning: ListView.PullBackHeader
-        header: Kirigami.ItemViewHeader {
-            //backgroundImage.source: "../banner.jpg"
-            title: page.title
-        }
-
-        model: 100
-
-        delegate: Kirigami.AbstractCard {
-            //NOTE: never put a Layout as contentItem as it will cause binding loops
-            //SEE: https://bugreports.qt.io/browse/QTBUG-66826
-            contentItem: Item {
-                implicitWidth: delegateLayout.implicitWidth
-                implicitHeight: delegateLayout.implicitHeight
-                GridLayout {
-                    id: delegateLayout
-                    anchors {
-                        left: parent.left
-                        top: parent.top
-                        right: parent.right
-                        //IMPORTANT: never put the bottom margin
-                    }
-                    rowSpacing: Kirigami.Units.largeSpacing
-                    columnSpacing: Kirigami.Units.largeSpacing
-                    columns: width > Kirigami.Units.gridUnit * 20 ? 4 : 2
-                    Kirigami.Icon {
-                        source: "applications-graphics"
-                        Layout.fillHeight: true
-                        Layout.maximumHeight: Kirigami.Units.iconSizes.huge
-                        Layout.preferredWidth: height
-                    }
-                    ColumnLayout {
-                        Kirigami.Heading {
-                            level: 2
-                            text: qsTr("Product ")+ modelData
-                        }
-                        Kirigami.Separator {
-                            Layout.fillWidth: true
-                        }
-                        Controls.Label {
-                            Layout.fillWidth: true
-                            wrapMode: Text.WordWrap
-                            text: qsTr("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam id risus id augue euismod accumsan.")
-                        }
-                    }
-                    Controls.Button {
-                        Layout.alignment: Qt.AlignRight|Qt.AlignVCenter
-                        Layout.columnSpan: 2 
-                        text: qsTr("Install")
-                        onClicked: showPassiveNotification("Install for Product " + modelData + " clicked");
-                    }
-                }
-            }
-        }
-    }*/
 
 }

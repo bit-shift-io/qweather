@@ -23,71 +23,28 @@ ApplicationWindow {
     }
 
 
-    Weather {
-        // weather object
-        id: weather_item
-        station: '94672'
-        onResultObservationFinished: {
-            today.updateObservation(xResult);
+    Drawer {
+        id: drawer
+        width: 0.66 * window.width
+        height: window.height
+        background: Rectangle {
+            Rectangle {
+                x: parent.width - 1
+                width: 1
+                height: parent.height
+                color: "#21be2b"
+            }
         }
-        onResultForecastFinished: {
-            today.updateForecast(xResult);
-        }
-    }
 
-
-    Timer {
-        // Refresh the observations every 5 minutes
-        // 300000 = 5mins
-        // 900000 = 15mins
-        interval: 900000
-        repeat: true
-        triggeredOnStart: true
-        running: true
-        onTriggered: {
-            weather_item.requestObservation();
-            weather_item.requestForecast();
-            weather_item.requestRadar();
-            weather_item.requestDetailedForecast();
+        Label {
+            text: "Content goes here!"
+            anchors.centerIn: parent
         }
     }
 
-    ScrollView {
-        // main page layout
-        id: scroll_view
+    StackView {
+        id: stackView
         anchors.fill: parent
-        width: parent.width
-        height: parent.height
-        Layout.fillHeight: true
-        Layout.fillWidth: true
-
-        ColumnLayout {
-            spacing: 0
-            anchors.fill: parent
-            width: parent.width //Math.max(implicitWidth, scroll_view.availableWidth)
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            Today {
-                id: today
-            }
-
-            Spacer {}
-
-            Forecast {
-                id:forecast
-                property variant weather_station: weather_item
-            }
-
-            // GraphicForecast {}
-
-            Spacer {}
-
-            Radar {
-                id: radar
-                property variant weather_station: weather_item
-            }
-
-        }
+        initialItem: MainPage {}
     }
 }

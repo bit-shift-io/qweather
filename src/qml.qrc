@@ -10,5 +10,6 @@
         <file>qml/Style/Style.qml</file>
         <file>qml/Bounds.qml</file>
         <file>qml/Spacer.qml</file>
+        <file>qml/MainPage.qml</file>
     </qresource>
 </RCC>
