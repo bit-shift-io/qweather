@@ -7,6 +7,7 @@
 #include <QIcon>
 
 #include "database.h"
+#include "fileio.h"
 #include "weather.h"
 #include "forecastmodel.h"
 #include "radarimage.h"
@@ -22,6 +23,7 @@ int main(int argc, char *argv[])
 
     // register types
     qmlRegisterSingletonType<Database>("Database", 1, 0, "Database", &Database::qmlInstance);
+    qmlRegisterSingletonType<Database>("FileIO", 1, 0, "FileIO", &FileIO::qmlInstance);
     qmlRegisterType<Weather>("Weather", 1, 0, "Weather");
     qmlRegisterType<ForecastModel>("Forecast", 1, 0, "ForecastModel");
     qmlRegisterType<RadarImage>("RadarImage", 1, 0, "RadarImage");
@@ -64,6 +66,7 @@ int main(int argc, char *argv[])
 
     // get instance in C++
     Database *database = Database::instance();
+    FileIO *fileio = FileIO::instance();
 
     return app.exec();
 }

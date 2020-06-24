@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     src/database.cpp \
+    src/fileio.cpp \
     src/forecastmodel.cpp \
     src/main.cpp \
     src/qftp/qftp.cpp \
@@ -45,6 +46,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     src/database.h \
+    src/fileio.h \
     src/forecastmodel.h \
     src/qftp/qftp.h \
     src/qftp/qurlinfo.h \

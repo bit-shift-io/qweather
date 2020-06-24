@@ -1,5 +1,5 @@
-#ifndef Database_H
-#define Database_H
+#ifndef DATABASE_H
+#define DATABASE_H
 
 #include <QObject>
 #include <QJsonArray>
@@ -64,10 +64,10 @@ public slots:
     QJsonArray findStation(const QString &xQuery);
 
 signals:
-    //void resultFinished(const QJsonObject &xResult);
+
 
 private slots:
-    //void replyFinished(QNetworkReply *xNetworkReply);
+
 
 };
 

@@ -15,8 +15,8 @@ ApplicationWindow {
     visible: true
     color: Style.app.color
 
-    // todo: store this in settings
-    property var places: []
+    property string database_file: "weather.json" // store custom settings here
+    property var station_list: ["94672"] // todo: store this in settings
 
     Component.onCompleted: {
         //console.log("app load complete");
@@ -49,6 +49,8 @@ ApplicationWindow {
     StackView {
         id: stack_view
         anchors.fill: parent
-        initialItem: MainPage {}
+        initialItem: MainPage {
+            weather_station: station_list[0]
+        }
     }
 }

@@ -9,7 +9,7 @@ Rectangle {
     id: root
     color: Style.forecast.color_background
     radius: Style.forecast.radius_background
-    height: 35
+    implicitHeight: (image.height + (Style.panel.margin_internal * 4))
     width: parent.width
     Layout.fillWidth: true
 

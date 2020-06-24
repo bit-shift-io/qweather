@@ -1,5 +1,5 @@
-#ifndef Weather_H
-#define Weather_H
+#ifndef WEATHER_H
+#define WEATHER_H
 
 #include <QObject>
 #include <QJsonObject>

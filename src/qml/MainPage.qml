@@ -10,10 +10,12 @@ import 'Style'
 Page {
     id: root
 
+    property string weather_station: ""
+
     Weather {
         // weather object
         id: weather_item
-        station: '94672'
+        station: weather_station
         onResultObservationFinished: {
             today.updateObservation(xResult);
         }
