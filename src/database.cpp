@@ -38,6 +38,19 @@ Database::~Database()
 {
 }
 
+QJsonArray Database::getStationByName(const QString &xName)
+{
+    QJsonArray result;
+    foreach (const QJsonValue & value, station_data) {
+        QJsonArray station = value.toArray();
+        QString station_name = station[NAME].toString().toLower();
+        if (station_name.contains(xName)) {
+            result.append(station);
+        }
+    }
+    return result;
+}
+
 QString Database::getObservationUrl(const QString &xWmo) {
     QJsonArray station = getStationByWmo(xWmo);
     QString state_id = station[STATE_ID].toString();
@@ -49,6 +62,20 @@ QString Database::getObservationUrl(const QString &xWmo) {
 float Database::getDistance(const QPointF &xLonLatA, const QPointF &xLonLatB) {
     QLineF l(xLonLatA, xLonLatB);
     return l.length();
+}
+
+QJsonArray Database::findStation(const QString &xQuery)
+{
+    QString query = xQuery.toLower();
+
+    // search can be via several methods
+    // name, state, lon/lat
+    if (query.contains(",")) {
+
+    }
+
+    QJsonArray result = getStationByName(query);
+    return result;
 }
 
 QJsonArray Database::getStationByWmo(const QString &xWmo) {
