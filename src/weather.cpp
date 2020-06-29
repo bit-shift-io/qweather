@@ -5,6 +5,9 @@
 #include <QJsonArray>
 #include <QXmlStreamReader>
 #include <QDebug>
+#include <QStandardPaths>
+#include <QFile>
+#include <QDir>
 
 #include "weather.h"
 #include "database.h"
@@ -44,6 +47,7 @@ void Weather::setStation(const QString &xStationId)
         mRadarId = radar_id;
         mDetailedForecastUrl = detailed_forecast_url;
         emit stationChanged();
+        read(); // read cache
     }
 }
 
@@ -283,8 +287,65 @@ void Weather::replyDetailedForecastFinished(QNetworkReply *xNetworkReply)
 
 
     emit resultDetailedForecastFinished(weather_data);
+    write();
 }
 
+void Weather::read()
+{
+    QString cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory);
+    QString station_cache = QDir(cache_dir).filePath(mStationId);
+
+    if (mForecastData.isEmpty()) {
+        QString path = QDir(station_cache).filePath("forecast.json");
+        QFile file(path);
+        if (file.exists()) {
+            file.open(QFile::ReadOnly);
+            mForecastData = QJsonDocument().fromJson(file.readAll()).object();
+            file.close();
+            emit resultForecastFinished(mForecastData);
+            //qDebug() << QJsonDocument(mForecastData).toJson(QJsonDocument::Compact).toStdString().c_str();
+        }
+    }
+
+    if (mObservationData.isEmpty()) {
+        QString path = QDir(station_cache).filePath("observation.json");
+        QFile file(path);
+        if (file.exists()) {
+            file.open(QFile::ReadOnly);
+            mObservationData = QJsonDocument().fromJson(file.readAll()).object();
+            file.close();
+            emit resultObservationFinished(mObservationData);
+            //qDebug() << QJsonDocument(mObservationData).toJson(QJsonDocument::Compact).toStdString().c_str();
+        }
+    }
+}
+
+void Weather::write()
+{
+    QString cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory);
+    QString station_cache = QDir(cache_dir).filePath(mStationId);
+
+    // check directory exists
+    QDir dir;
+    if (!dir.exists(station_cache))
+        dir.mkpath(station_cache);
+
+    if (!mForecastData.isEmpty()) {
+        QString path = QDir(station_cache).filePath("forecast.json");
+        QFile file(path);
+        file.open(QFile::WriteOnly);
+        file.write(QJsonDocument(mForecastData).toJson(QJsonDocument::Compact));
+        file.close();
+    }
+
+    if (!mObservationData.isEmpty()) {
+        QString path = QDir(station_cache).filePath("observation.json");
+        QFile file(path);
+        file.open(QFile::WriteOnly);
+        file.write(QJsonDocument(mObservationData).toJson(QJsonDocument::Compact));
+        file.close();
+    }
+}
 
 void Weather::replyForecastFinished(QNetworkReply *xNetworkReply)
 {
@@ -402,6 +463,7 @@ void Weather::replyForecastFinished(QNetworkReply *xNetworkReply)
                     //qDebug() << QJsonDocument(result).toJson(QJsonDocument::Compact).toStdString().c_str();
                     mForecastData = result;
                     emit resultForecastFinished(result);
+                    write();
                     return;
                 }
             }

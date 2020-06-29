@@ -28,6 +28,7 @@ public:
 
     QString getRadarId() const;
 
+
     // these a public for now as they will not be altered
     QJsonObject mForecastData;
     QJsonObject mObservationData;
@@ -51,6 +52,8 @@ private slots:
     void replyDetailedForecastFinished(QNetworkReply *xNetworkReply);
 
 private:
+    void read();
+    void write();
     QString mStationId;
     QString mObservationUrl;
     QString mAreaCode;
