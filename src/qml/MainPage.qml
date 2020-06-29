@@ -98,7 +98,6 @@ Page {
                     id: radar
                     property variant weather_station: weather_item
                 }
-
             }
         }
     }
