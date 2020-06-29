@@ -70,20 +70,29 @@ Page {
                 id: search_result
                 width: parent.width
                 boundsBehavior: Flickable.DragOverBounds
+                //highlightRangeMode: ListView.NoHighlightRange
+                //snapMode: ListView.SnapToItem
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 clip: true
-                spacing: 10
+                spacing: 4
+                highlight: highlight
+
+                onCurrentItemChanged: {
+                      //Myselect(search_result.currentIndex)
+                      console.log("index changed see this " + currentIndex)
+                }
 
                 model:  ListModel {
                     id: search_model
                 }
+
                 delegate: Component {
                     id: search_delegate
 
                     Rectangle {
                         id: background
-                        color: Style.forecast.color_background
+                        color: ListView.isCurrentItem? 'red' : Style.forecast.color_background
                         radius: Style.forecast.radius_background
                         implicitHeight: root_layout.height
                         implicitWidth: parent.width
