@@ -54,6 +54,18 @@ Page {
             height: parent.height
             Layout.fillHeight: true
             Layout.fillWidth: true
+            //Flickable.boundsBehavior: Flickable.DragOverBounds
+            /*
+            onContentY: {
+
+            }*/
+            contentItem.onYChanged: {
+                console.log("scroll")
+            }
+            /*
+            Component.onCompleted {
+
+            }*/
 
             ColumnLayout {
                 spacing: 0
@@ -92,3 +104,9 @@ Page {
     }
 
 }
+
+/*##^##
+Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+##^##*/

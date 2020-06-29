@@ -15,18 +15,21 @@ Page {
         color: Style.app.color
         anchors.fill: parent
 
-        ColumnLayout{
+        ColumnLayout {
             id: root_layout
             anchors.fill: parent
-
 
             Item {
                 id: tool_bar
                 Layout.fillWidth: true
+                height: back_button.height
+
                 RowLayout {
+                    id: tool_row
                     anchors.fill: parent
 
                     Button {
+                        id: back_button
                         text: "Back"
                         font.pixelSize: Style.forecast.font_size_day
                         font.weight: Style.forecast.font_weight_day
@@ -62,7 +65,6 @@ Page {
                     }
                 }
             }
-
 
             ListView {
                 id: search_result
@@ -124,6 +126,7 @@ Page {
                     }
                 }
             }
+
         }
     }
 }

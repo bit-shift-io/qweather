@@ -170,6 +170,7 @@ void RadarImage::startTimer()
         connect(mTimer, SIGNAL(timeout()), this, SLOT(update()));
     }
 
+    mFramePosition = 0;
     update();
     mTimer->start(300);
 }
