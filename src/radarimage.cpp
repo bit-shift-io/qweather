@@ -1,6 +1,9 @@
 #include <QPainter>
 #include <QNetworkReply>
 #include <QTimer>
+#include <QStandardPaths>
+#include <QFile>
+#include <QDir>
 
 #include "radarimage.h"
 #include "weather.h"
@@ -100,6 +103,7 @@ void RadarImage::updateRadar()
     mFtp->list(); // this is async
 }
 
+
 void RadarImage::requestImages()
 {
     QNetworkAccessManager *net = new QNetworkAccessManager(this);
@@ -109,31 +113,47 @@ void RadarImage::requestImages()
         // one off images
         QString radar = mWeather->getRadarId();
 
-        // ordered list
-        QVector<QString> mBackgroundUrlList;
-        mBackgroundUrlList.append(QString("http://www.bom.gov.au/products/radar_transparencies/%1.background.png").arg(radar));
-        mBackgroundUrlList.append(QString("http://www.bom.gov.au/products/radar_transparencies/%1.topography.png").arg(radar));
-        mBackgroundUrlList.append(QString("http://www.bom.gov.au/products/radar_transparencies/%1.locations.png").arg(radar));
+        // first try and load from cache
+        mBackgroundImage = read(QString("%1.background.png").arg(radar));
+        mTopographyImage = read(QString("%1.topography.png").arg(radar));
+        mLocationImage = read(QString("%1.locations.png").arg(radar));
 
-        for (QString &url : mBackgroundUrlList) {
-            QNetworkRequest request;
-            request.setUrl(url);
-            request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
-            net->get(request);
+        if (mBackgroundImage == nullptr) {
+            // get from online source
+            QVector<QString> mBackgroundUrlList;
+            mBackgroundUrlList.append(QString("http://www.bom.gov.au/products/radar_transparencies/%1.background.png").arg(radar));
+            mBackgroundUrlList.append(QString("http://www.bom.gov.au/products/radar_transparencies/%1.topography.png").arg(radar));
+            mBackgroundUrlList.append(QString("http://www.bom.gov.au/products/radar_transparencies/%1.locations.png").arg(radar));
+
+            for (QString &url : mBackgroundUrlList) {
+                QNetworkRequest request;
+                request.setUrl(url);
+                request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
+                net->get(request);
+            }
         }
     }
 
+
     // match file list size
     mAnimationImages = QVector<QImage*>(mFileList->size());
-    //qDebug() << mFileList->size();
-    //qDebug() << mAnimationImages.size();
-    for (QString &item : *mFileList) {
-        // get ftp images
-        QString u = QString("ftp://ftp.bom.gov.au/anon/gen/radar/%1").arg(item);
-        QNetworkRequest request;
-        request.setUrl(u);
-        request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
-        net->get(request);
+
+    // TODO: use existing mAnimationImages?
+    for (int i=0; i < mFileList->size(); i++) {
+        QString item = mFileList->at(i);
+
+        // check cache
+        QImage* img = read(item);
+        if (img != nullptr) {
+            mAnimationImages[i] = img;
+        } else {
+            // get ftp images
+            QString u = QString("ftp://ftp.bom.gov.au/anon/gen/radar/%1").arg(item);
+            QNetworkRequest request;
+            request.setUrl(u);
+            request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
+            net->get(request);
+        }
     }
 
     // start the animation
@@ -150,6 +170,7 @@ void RadarImage::startTimer()
         connect(mTimer, SIGNAL(timeout()), this, SLOT(update()));
     }
 
+    update();
     mTimer->start(300);
 }
 
@@ -196,6 +217,7 @@ void RadarImage::replyImageFinished(QNetworkReply *xNetworkReply)
         }
     }
 
+    write(file_name, img);
     return;
 }
 
@@ -216,4 +238,33 @@ void RadarImage::ftpCommandFinished(int commandId, bool error)
         requestImages();
         return;
     }
+}
+
+QImage* RadarImage::read(const QString xFileName)
+{
+    QString cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory);
+    QString station_cache = QDir(cache_dir).filePath(mWeather->station());
+    QString path = QDir(station_cache).filePath(xFileName);
+    if (!QFile::exists(path))
+        return nullptr;
+
+    // load from file
+    QImage *img = new QImage();
+    img->load(path);
+
+    return img;
+}
+
+void RadarImage::write(const QString xFileName, QImage* xImage)
+{
+    QString cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory);
+    QString station_cache = QDir(cache_dir).filePath(mWeather->station());
+
+    // check directory exists
+    QDir dir;
+    if (!dir.exists(station_cache))
+        dir.mkpath(station_cache);
+
+    QString path = QDir(station_cache).filePath(xFileName);
+    xImage->save(path);
 }

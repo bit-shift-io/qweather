@@ -41,6 +41,9 @@ private slots:
     void ftpCommandFinished(int xCommandId, bool xError);
 
 private:
+    QImage* read(const QString xFileName);
+    void write(const QString xFileName, QImage* xImage);
+
     QImage *mBackgroundImage = nullptr;
     QImage *mTopographyImage = nullptr;
     QImage *mLocationImage = nullptr;
