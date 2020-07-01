@@ -58,8 +58,32 @@ bool FileIO::removeFile(const QString &xFilePath) const
 
 QString FileIO::getAppConfigLocation()
 {
-    QString dir = QStandardPaths::locate(QStandardPaths::AppConfigLocation, QString(), QStandardPaths::LocateDirectory);
-    return dir;
+    return QStandardPaths::locate(QStandardPaths::AppConfigLocation, QString(), QStandardPaths::LocateDirectory);
+}
+
+QString FileIO::getCacheLocation()
+{
+    return QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory);
+}
+
+bool FileIO::clearCache()
+{
+    QString cache_dir = getCacheLocation();
+    QDirIterator it(cache_dir, QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+    qint64 time_difference = 86400; // 1 day in seconds
+    qint64 current_time = QDateTime::currentDateTime().toSecsSinceEpoch() - time_difference;
+
+    while (it.hasNext()) {
+        QString file_path = it.next();
+        QFileInfo f(file_path);
+        //qint64 last_modified = f.lastModified().toSecsSinceEpoch();
+        qint64 last_read = f.lastRead().toSecsSinceEpoch();
+
+        if (last_read < current_time) {
+            // time stamp older than 1 day
+            removeFile(file_path);
+        }
+    }
 }
 
 

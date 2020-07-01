@@ -32,6 +32,7 @@ ApplicationWindow {
 
     Component.onCompleted: {
         load();
+        FileIO.clearCache();
     }
 
     function load() {

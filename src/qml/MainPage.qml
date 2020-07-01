@@ -26,7 +26,7 @@ Page {
 
 
     Timer {
-        // Refresh the observations every 5 minutes
+        // Refresh the observations every x minutes
         // 300000 = 5mins
         // 900000 = 15mins
         interval: 900000

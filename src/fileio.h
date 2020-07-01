@@ -27,6 +27,8 @@ public:
     Q_INVOKABLE bool fileExists(const QString &xFilePath) const;
     Q_INVOKABLE bool removeFile(const QString &xFilePath) const;
     Q_INVOKABLE QString getAppConfigLocation();
+    Q_INVOKABLE QString getCacheLocation();
+    Q_INVOKABLE bool clearCache();
 
 //signals:
 
