@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>qtquickcontrols2.conf</file>
         <file>qml/main.qml</file>
         <file>qml/Today.qml</file>
         <file>qml/Forecast.qml</file>
@@ -8,6 +9,7 @@
         <file>qml/ForecastDelegate.qml</file>
         <file>qml/Style/qmldir</file>
         <file>qml/Style/Style.qml</file>
+        <file>qml/Style/Button.qml</file>
         <file>qml/Bounds.qml</file>
         <file>qml/Spacer.qml</file>
         <file>qml/MainPage.qml</file>

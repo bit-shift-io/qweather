@@ -34,7 +34,7 @@ QtObject {
     }
 
     property QtObject drawer: QtObject {
-        property color color: '#464646'
+        property color color: app.color
     }
 
     property QtObject divider: QtObject {
@@ -73,5 +73,28 @@ QtObject {
         property int internal_margin: 4
     }
 
+    property QtObject search: QtObject {
+        property color color_background: '#464646'
+        property color color_highlight: '#646464'
+        property int radius_background: 0
+        property int list_spacing: 4
+        property int internal_margin: 4
+    }
+
+    property QtObject button: QtObject {
+        property int font_size: app.font_size
+        property int font_weight: Font.Normal
+        property color font_color: app.font_color
+        property color color_background: '#464646'
+        property color color_down: '#646464'
+
+        /*
+        property font font
+        font.bold: true
+        font.underline: false
+        font.pixelSize: 14
+        font.family: "arial"
+        */
+    }
 
 }

@@ -13,10 +13,10 @@ FileIO::~FileIO()
 }
 
 /** read text file **/
-QString FileIO::readText(const QString &t_filePath)
+QString FileIO::readText(const QString &xFilePath)
 {
     QString result;
-    QFile file(t_filePath);
+    QFile file(xFilePath);
     if(!file.exists()) {
         qWarning() << "Does not exits: " << file;
         return result;
@@ -29,25 +29,37 @@ QString FileIO::readText(const QString &t_filePath)
     return result;
 }
 
-void FileIO::writeText(const QString &t_filePath, const QString &text)
+void FileIO::writeText(const QString &xFilePath, const QString &xText)
 {
-    QFile file(t_filePath);
+    QFile file(xFilePath);
     if(file.open(QIODevice::WriteOnly)) {
         QTextStream stream(&file);
-        stream << text;
+        stream << xText;
     }
 }
 
-bool FileIO::fileExists(const QString &t_filePath) const
+bool FileIO::fileExists(const QString &xFilePath) const
 {
     bool result = false;
     QFile f;
-    f.setFileName(t_filePath);
+    f.setFileName(xFilePath);
     if(f.exists())
     {
         result = true;
     }
     return result;
+}
+
+bool FileIO::removeFile(const QString &xFilePath) const
+{
+    QFile file(xFilePath);
+    return file.remove();
+}
+
+QString FileIO::getAppConfigLocation()
+{
+    QString dir = QStandardPaths::locate(QStandardPaths::AppConfigLocation, QString(), QStandardPaths::LocateDirectory);
+    return dir;
 }
 
 

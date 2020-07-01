@@ -22,9 +22,11 @@ public:
     ~FileIO();
 
     // invokable functions
-    Q_INVOKABLE QString readText(const QString &t_filePath);
-    Q_INVOKABLE void writeText(const QString &t_filePath, const QString &text);
-    Q_INVOKABLE bool fileExists(const QString &t_filePath) const;
+    Q_INVOKABLE QString readText(const QString &xFilePath);
+    Q_INVOKABLE void writeText(const QString &xFilePath, const QString &xText);
+    Q_INVOKABLE bool fileExists(const QString &xFilePath) const;
+    Q_INVOKABLE bool removeFile(const QString &xFilePath) const;
+    Q_INVOKABLE QString getAppConfigLocation();
 
 //signals:
 

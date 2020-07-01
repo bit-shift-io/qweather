@@ -3,11 +3,12 @@ import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.2
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Material 2.4
+import Qt.labs.settings 1.0
 import Database 1.0
 import 'Style'
 
 Page {
-    id: root
+    id: root_search
     title: qsTr("Find Location")
 
     Rectangle {
@@ -16,7 +17,7 @@ Page {
         anchors.fill: parent
 
         ColumnLayout {
-            id: root_layout
+            id: column_layout
             anchors.fill: parent
 
             Item {
@@ -31,10 +32,14 @@ Page {
                     Button {
                         id: back_button
                         text: "Back"
-                        font.pixelSize: Style.forecast.font_size_day
-                        font.weight: Style.forecast.font_weight_day
                         onClicked: {
                             stack_view.pop()
+                            var index = search_result.currentIndex;
+                            if (index >= 0) {
+                                // set selected as active
+                                var wmo = search_model.get(index).wmo
+                                root.add_station(wmo)
+                            }
                         }
                     }
                     TextField {
@@ -45,10 +50,14 @@ Page {
                         cursorVisible: true
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        focus: true
+
                         //background: {}
                         onTextChanged: {
                             if (search_input.text.length < 2)
                                 return;
+
+                            search_result.currentIndex = -1;
 
                             var result = Database.findStation(search_input.text);
                             if (result.length === 0)
@@ -70,18 +79,12 @@ Page {
                 id: search_result
                 width: parent.width
                 boundsBehavior: Flickable.DragOverBounds
-                //highlightRangeMode: ListView.NoHighlightRange
                 //snapMode: ListView.SnapToItem
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 clip: true
-                spacing: 4
-                highlight: highlight
-
-                onCurrentItemChanged: {
-                      //Myselect(search_result.currentIndex)
-                      console.log("index changed see this " + currentIndex)
-                }
+                spacing: Style.search.list_spacing
+                currentIndex: -1 // no selected default
 
                 model:  ListModel {
                     id: search_model
@@ -92,13 +95,13 @@ Page {
 
                     Rectangle {
                         id: background
-                        color: ListView.isCurrentItem? 'red' : Style.forecast.color_background
+                        color: ListView.isCurrentItem? Style.search.color_highlight : Style.search.color_background
                         radius: Style.forecast.radius_background
-                        implicitHeight: root_layout.height
-                        implicitWidth: parent.width
+                        implicitHeight: row_layout.height
+                        implicitWidth: search_result.width
 
                         RowLayout {
-                            id: root_layout
+                            id: row_layout
                             Layout.fillWidth: true
                             width: parent.width
 
@@ -132,10 +135,16 @@ Page {
                                 }
                             }
                         }
+
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                search_result.currentIndex = index;
+                            }
+                        }
                     }
                 }
             }
-
         }
     }
 }
