@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += charts qml quick svg
+QT += charts qml quick svg androidextras
 
 #android: {
 #    include(3rdparty/kirigami/kirigami.pri)

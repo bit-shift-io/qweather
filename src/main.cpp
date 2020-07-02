@@ -13,6 +13,7 @@
 #include "radarimage.h"
 
 #ifdef Q_OS_ANDROID
+#include <QtAndroidExtras>
 #include <QtSvg>    //Because deployment sometimes just forgets to include this lib otherwise
 //#include "./3rdparty/kirigami/src/kirigamiplugin.h"
 #endif
@@ -56,6 +57,8 @@ int main(int argc, char *argv[])
     if (engine.rootObjects().isEmpty())
         return -1;
 
+
+
     // debug, print qrc resources
     if (false) {
         QDirIterator it(":/", QDirIterator::Subdirectories);
@@ -67,6 +70,11 @@ int main(int argc, char *argv[])
     // get instance in C++
     Database *database = Database::instance();
     FileIO *fileio = FileIO::instance();
+
+#ifdef Q_OS_ANDROID
+    // hide splash screen
+    QtAndroid::hideSplashScreen(); // optional fade duration in ms
+#endif
 
     return app.exec();
 }
