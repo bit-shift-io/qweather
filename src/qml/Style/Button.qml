@@ -3,8 +3,8 @@ import QtQuick.Templates 2.1 as T
 
 T.Button {
     id: control
-
-    font: Style.button.font
+    font.pixelSize: Style.app.font_size
+    font.weight: Style.app.font_weight
 
     implicitWidth: Math.max(background ? background.implicitWidth : 0,
                                          contentItem.implicitWidth + leftPadding + rightPadding)
@@ -48,7 +48,7 @@ T.Button {
 
         font: control.font
         opacity: enabled ? 1.0 : 0.3
-        color: Style.button.font_color
+        color: Style.app.font_color
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight

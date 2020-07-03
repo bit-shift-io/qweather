@@ -45,8 +45,6 @@ Page {
                     TextField {
                         id: search_input
                         placeholderText: qsTr("Location, Sate or Lon Lat")
-                        font.pixelSize: Style.search.font_size_day
-                        font.weight: Style.search.font_weight_day
                         cursorVisible: true
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -114,9 +112,6 @@ Page {
 
                                 Label {
                                     text: model.name
-                                    color: Style.panel.font_color
-                                    font.pixelSize: Style.search.font_size_day
-                                    font.weight: Style.search.font_weight_day
                                 }
                             }
 
@@ -129,9 +124,6 @@ Page {
 
                                 Label {
                                     text:  model.state
-                                    color: Style.panel.font_color
-                                    font.pixelSize: Style.search.font_size
-                                    font.weight: Style.search.font_weight
                                 }
                             }
                         }

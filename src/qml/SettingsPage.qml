@@ -1,21 +1,12 @@
 import QtQuick 2.11
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.2
-import QtGraphicalEffects 1.0
-import QtQuick.Controls.Material 2.4
-import Qt.labs.settings 1.0
-import Database 1.0
+import QSettings 1.0
 import 'Style'
 
 Page {
     id: root_settings
     title: qsTr("Settings")
-
-    Settings {
-        id: settings
-        property alias font_size: font_scale_spin.value
-        property alias radar_enabled: radar_check.checked
-    }
 
     header: Rectangle {
         id: tool_bar
@@ -55,9 +46,6 @@ Page {
 
                 Label {
                     text: 'Font Scale'
-                    color: Style.settings.font_color
-                    font.pixelSize: Style.settings.font_size
-                    font.weight: Style.settings.font_weight
                     horizontalAlignment: Text.AlignLeft
                     verticalAlignment: Text.AlignHCenter
                     anchors.fill: parent
@@ -66,12 +54,16 @@ Page {
 
                 SpinBox {
                     id: font_scale_spin
-                    value: 100
+                    value: QSettings.value('font_scale', 100)
                     from: 50
                     to: 200
                     Layout.alignment: Qt.AlignRight
                     anchors.right: parent.right
                     anchors.margins: Style.settings.margin
+                    onValueChanged: {
+                        Style.font_scale = value / 100;
+                        QSettings.setValue('font_scale', value);
+                    }
                 }
             }
 
@@ -79,15 +71,11 @@ Page {
             Rectangle {
                 id: radar_enabled
                 color: Style.search.color_background
-                radius: Style.panel.radius_background
                 implicitHeight: radar_check.height
                 implicitWidth: content.width
 
                 Label {
                     text: 'Radar Enabled'
-                    color: Style.settings.font_color
-                    font.pixelSize: Style.settings.font_size
-                    font.weight: Style.settings.font_weight
                     horizontalAlignment: Text.AlignLeft
                     verticalAlignment: Text.AlignHCenter
                     anchors.fill: parent
@@ -96,10 +84,11 @@ Page {
 
                 CheckBox {
                     id: radar_check
-                    checked: true
                     Layout.alignment: Qt.AlignRight
                     anchors.right: parent.right
                     anchors.margins: Style.settings.margin
+                    checked: String(QSettings.value('radar_enabled', true)) === "true" // value returns string
+                    onCheckedChanged: QSettings.setValue('radar_enabled', checked)
                 }
             }
 

@@ -16,5 +16,6 @@
         <file>qml/SearchPage.qml</file>
         <file>qml/SettingsPage.qml</file>
         <file>qml/NavigationPage.qml</file>
+        <file>qml/Style/Label.qml</file>
     </qresource>
 </RCC>

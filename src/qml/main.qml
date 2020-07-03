@@ -8,6 +8,7 @@ import Qt.labs.platform 1.1 // for standard paths
 import FileIO 1.0
 import Weather 1.0
 import Database 1.0
+import QSettings 1.0
 import 'Style'
 
 ApplicationWindow {
@@ -18,8 +19,6 @@ ApplicationWindow {
     visible: true
     color: Style.app.color
 
-    property int database_version: 1
-    property string database_file: (FileIO.getAppConfigLocation() + 'database.json')
     property var station_list: ["94672"]
 
     Settings {
@@ -36,23 +35,11 @@ ApplicationWindow {
     }
 
     function load() {
-        if (!FileIO.fileExists(database_file))
-            return;
-
-        var json = JSON.parse(FileIO.readText(database_file));
-
-        if (json.version !== database_version) {
-            console.log('database version mismatch');
-            FileIO.removeFile(database_file);
-        }
-        station_list = json.station_list;
+        station_list = QSettings.value('station_list', ["94672"]);
     }
 
     function save() {
-        var data = {};
-        data['version'] = database_version;
-        data['station_list'] = station_list;
-        FileIO.writeText(database_file, JSON.stringify(data))
+        QSettings.setValue('station_list', root.station_list);
     }
 
     function add_station(x_wmo) {

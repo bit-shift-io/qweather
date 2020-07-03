@@ -1,6 +1,7 @@
 TEMPLATE = app
 
-QT += charts qml quick svg androidextras
+QT += charts qml quick svg 
+# androidextras
 
 #android: {
 #    include(3rdparty/kirigami/kirigami.pri)
@@ -16,6 +17,7 @@ SOURCES += \
     src/qftp/qftp.cpp \
     src/qftp/qurlinfo.cpp \
     src/radarimage.cpp \
+    src/settings.cpp \
     src/weather.cpp
 
 RESOURCES += \
@@ -51,6 +53,7 @@ HEADERS += \
     src/qftp/qftp.h \
     src/qftp/qurlinfo.h \
     src/radarimage.h \
+    src/settings.h \
     src/weather.h
 
 SUBDIRS += \

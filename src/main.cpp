@@ -11,6 +11,7 @@
 #include "weather.h"
 #include "forecastmodel.h"
 #include "radarimage.h"
+#include "settings.h"
 
 #ifdef Q_OS_ANDROID
 #include <QtAndroidExtras>
@@ -22,28 +23,35 @@ int main(int argc, char *argv[])
 {
     QQmlDebuggingEnabler enabler;
 
-    // register types
-    qmlRegisterSingletonType<Database>("Database", 1, 0, "Database", &Database::qmlInstance);
-    qmlRegisterSingletonType<Database>("FileIO", 1, 0, "FileIO", &FileIO::qmlInstance);
-    qmlRegisterType<Weather>("Weather", 1, 0, "Weather");
-    qmlRegisterType<ForecastModel>("Forecast", 1, 0, "ForecastModel");
-    qmlRegisterType<RadarImage>("RadarImage", 1, 0, "RadarImage");
-
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
-
     QQmlApplicationEngine engine;
-
-#ifdef Q_OS_ANDROID
-    //KirigamiPlugin::getInstance().registerTypes();
-#endif
 
     // used for settings
     app.setOrganizationName("bitshift");
     app.setOrganizationDomain("bitshift");
     app.setApplicationName("Weather");
-
     app.setWindowIcon(QIcon(":/bitshift.weather.png"));
+
+#ifdef Q_OS_ANDROID
+    //KirigamiPlugin::getInstance().registerTypes();
+#endif
+
+    // get instance in C++
+    //Settings *settings = Settings::instance();
+    //Database *database = Database::instance();
+    //FileIO *fileio = FileIO::instance();
+
+    // register types
+    qmlRegisterSingletonType<Database>("Database", 1, 0, "Database", &Database::qmlInstance);
+    qmlRegisterSingletonType<Database>("FileIO", 1, 0, "FileIO", &FileIO::qmlInstance);
+    qmlRegisterSingletonType<Settings>("QSettings", 1, 0, "QSettings", &Settings::qmlInstance);
+
+    qmlRegisterType<Weather>("Weather", 1, 0, "Weather");
+    qmlRegisterType<ForecastModel>("Forecast", 1, 0, "ForecastModel");
+    qmlRegisterType<RadarImage>("RadarImage", 1, 0, "RadarImage");
+
+
 
     // add imports
     engine.addImportPath(".");
@@ -67,9 +75,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    // get instance in C++
-    Database *database = Database::instance();
-    FileIO *fileio = FileIO::instance();
 
 #ifdef Q_OS_ANDROID
     // hide splash screen
