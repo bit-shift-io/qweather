@@ -5,6 +5,7 @@
 #include <QJsonObject>
 #include <QString>
 #include <QVector>
+#include "src/qftp/qftp.h"
 
 class QNetworkReply;
 
@@ -14,6 +15,7 @@ class Weather : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString station READ station WRITE setStation NOTIFY stationChanged)
+    Q_PROPERTY(bool radarEnabled READ radarEnabled WRITE setRadarEnabled NOTIFY radarEnabledChanged)
 
     // 24hr time for detailed outlook/forecast
     const QVector<QString> detailed_column_times = { "0030", "0330", "0630", "0930", "1230", "1530", "1830", "2130" };
@@ -26,12 +28,16 @@ public:
     QString station() const;
     void setStation(const QString &xStationId);
 
+    bool radarEnabled() const;
+    void setRadarEnabled(const bool &xRadar);
     QString getRadarId() const;
+    QVector<QImage *> *getRadarImages();
 
-
-    // these a public for now as they will not be altered
+    //QJsonObject getForecast() const { return mForecastData; };
+    //QJsonObject getObservations() const { return mObservationData; };
     QJsonObject mForecastData;
     QJsonObject mObservationData;
+
 
 public slots:
     void requestForecast();
@@ -41,25 +47,49 @@ public slots:
 
 signals:
     void stationChanged();
+    void radarEnabledChanged();
     void resultObservationFinished(const QJsonObject &xResult);
     void resultForecastFinished(const QJsonObject &xResult);
     void resultDetailedForecastFinished(const QJsonObject &xResult);
-    void updateRadar();
+    void resultRadarFinished();
 
 private slots:
     void replyForecastFinished(QNetworkReply *xNetworkReply);
     void replyObservationFinished(QNetworkReply *xNetworkReply);
     void replyDetailedForecastFinished(QNetworkReply *xNetworkReply);
+    void replyRadarImageFinished(QNetworkReply *xNetworkReply);
+    void requestRadarImages();
+
+    // ftp commands for radar
+    void ftpAddToList(const QUrlInfo &xUrlInfo);
+    void ftpCommandFinished(int xCommandId, bool xError);
 
 private:
     void read();
     void write();
+
     QString mStationId;
     QString mObservationUrl;
     QString mAreaCode;
     QString mForecastUrl;
-    QString mRadarId;
     QString mDetailedForecastUrl;
+
+    // radar
+
+    QImage* read(const QString xFileName);
+    void write(const QString xFileName, QImage* xImage);
+    void renderRadarImages();
+
+    QString mRadarId;
+    bool mRadarEnabled;
+    int mRadarImageRequests;
+    QVector<QImage*> mRadarFrames;
+    QVector<QImage*> mRadarImages; // should be QVector<QImage> *mRadarImages;
+    QVector<QString> *mRadarFileList;
+    QImage *mRadarBackground = nullptr;
+    QImage *mRadarTopography = nullptr;
+    QImage *mRadarLocation = nullptr;
+    QFtp *mFtp;
 };
 
 #endif // Weather_H

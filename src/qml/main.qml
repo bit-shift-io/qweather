@@ -19,6 +19,7 @@ ApplicationWindow {
     visible: true
     color: Style.app.color
 
+    property bool radar_enabled: QSettings.valueBool('radar_enabled', true)
     property var station_list: ["94672"]
 
     Settings {
@@ -30,6 +31,7 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
+        console.log('main.qml')
         load();
         //FileIO.clearCache();
     }

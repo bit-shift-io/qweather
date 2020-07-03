@@ -5,8 +5,7 @@
 #include <QQuickPaintedItem>
 #include <QImage>
 #include <QMap>
-#include <QNetworkReply>
-#include "src/qftp/qftp.h"
+
 
 class Weather;
 class QUrlInfo;
@@ -22,38 +21,28 @@ class RadarImage : public QQuickPaintedItem
 public:
     RadarImage();
     void paint(QPainter *xPainer);
-    void setBackgroundImage();
+    void updateImages();
 
     Weather *weather() const;
     void setWeather(Weather *xWeather);
-    void updateRadar();
-    void requestImages();
 
 signals:
-    void imageChanged();
+    //void imageChanged();
 
 private slots:
-    void replyImageFinished(QNetworkReply *xNetworkReply);
     void startTimer();
-
-    // ftp commands
-    void ftpAddToList(const QUrlInfo &xUrlInfo);
-    void ftpCommandFinished(int xCommandId, bool xError);
+    void nextFrame();
 
 private:
-    QImage* read(const QString xFileName);
-    void write(const QString xFileName, QImage* xImage);
+    void pauseTimer();
 
-    QImage *mBackgroundImage = nullptr;
-    QImage *mTopographyImage = nullptr;
-    QImage *mLocationImage = nullptr;
-    QVector<QString> *mFileList;
-    QVector<QImage*> mAnimationImages;
+    QVector<QImage*> *mRadarImages;
     Weather *mWeather;
-    QFtp *mFtp;
+    QImage *mActiveFrame;
     QTimer *mTimer = nullptr;
     int mFramePosition = 0;
     int mPauseCount = 0;
+
 };
 
 #endif // RADARIMAGE_H

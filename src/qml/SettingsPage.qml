@@ -25,6 +25,10 @@ Page {
                     stack_view.pop()
                 }
             }
+            Label {
+                text: root_settings.title
+                horizontalAlignment: Text.AlignHCenter
+            }
         }
     }
 
@@ -87,8 +91,11 @@ Page {
                     Layout.alignment: Qt.AlignRight
                     anchors.right: parent.right
                     anchors.margins: Style.settings.margin
-                    checked: String(QSettings.value('radar_enabled', true)) === "true" // value returns string
-                    onCheckedChanged: QSettings.setValue('radar_enabled', checked)
+                    checked: root.radar_enabled
+                    onCheckedChanged: {
+                        root.radar_enabled = checked;
+                        QSettings.setValue('radar_enabled', checked)
+                    }
                 }
             }
 

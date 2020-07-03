@@ -3,19 +3,22 @@ import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.2
 import QtGraphicalEffects 1.0
 import QtQuick.Controls.Material 2.4
+import QSettings 1.0
 import Weather 1.0
 import Database 1.0
 import 'Style'
 
 Page {
-    id: root
+    id: root_main_page
 
     property string weather_station: ""
+
 
     Weather {
         // weather object
         id: weather_item
         station: weather_station
+        radarEnabled: root.radar_enabled
         onResultObservationFinished: {
             today.updateObservation(xResult);
         }
@@ -96,6 +99,7 @@ Page {
 
                 Radar {
                     id: radar
+                    visible: root.radar_enabled
                     property variant weather_station: weather_item
                 }
             }

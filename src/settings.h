@@ -29,7 +29,8 @@ public:
     static QObject *qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine);
 
     Q_INVOKABLE inline void setValue(const QString &key, const QVariant &value) { QSettings::setValue(key, value); }
-    Q_INVOKABLE inline QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const { QSettings::value(key, defaultValue); return QSettings::value(key, defaultValue); }
+    Q_INVOKABLE inline QVariant value(const QString &key, const QVariant &defaultValue = QVariant()) const { return QSettings::value(key, defaultValue); }
+    Q_INVOKABLE inline bool valueBool(const QString &key, const QVariant &defaultValue = QVariant()) const { return QSettings::value(key, defaultValue).toBool(); }
 
 private:
     static Settings* m_pThis;

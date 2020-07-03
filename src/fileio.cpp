@@ -84,6 +84,7 @@ bool FileIO::clearCache()
             removeFile(file_path);
         }
     }
+    return true;
 }
 
 
