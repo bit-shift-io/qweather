@@ -14,5 +14,7 @@
         <file>qml/Spacer.qml</file>
         <file>qml/MainPage.qml</file>
         <file>qml/SearchPage.qml</file>
+        <file>qml/SettingsPage.qml</file>
+        <file>qml/NavigationPage.qml</file>
     </qresource>
 </RCC>

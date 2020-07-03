@@ -45,8 +45,8 @@ Page {
                     TextField {
                         id: search_input
                         placeholderText: qsTr("Location, Sate or Lon Lat")
-                        font.pixelSize: Style.forecast.font_size_day
-                        font.weight: Style.forecast.font_weight_day
+                        font.pixelSize: Style.search.font_size_day
+                        font.weight: Style.search.font_weight_day
                         cursorVisible: true
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -96,7 +96,7 @@ Page {
                     Rectangle {
                         id: background
                         color: ListView.isCurrentItem? Style.search.color_highlight : Style.search.color_background
-                        radius: Style.forecast.radius_background
+                        radius: Style.search.radius_background
                         implicitHeight: row_layout.height
                         implicitWidth: search_result.width
 
@@ -115,8 +115,8 @@ Page {
                                 Label {
                                     text: model.name
                                     color: Style.panel.font_color
-                                    font.pixelSize: Style.forecast.font_size_day
-                                    font.weight: Style.forecast.font_weight_day
+                                    font.pixelSize: Style.search.font_size_day
+                                    font.weight: Style.search.font_weight_day
                                 }
                             }
 
@@ -130,8 +130,8 @@ Page {
                                 Label {
                                     text:  model.state
                                     color: Style.panel.font_color
-                                    font.pixelSize: Style.forecast.font_size_day
-                                    font.weight: Style.forecast.font_weight_day
+                                    font.pixelSize: Style.search.font_size
+                                    font.weight: Style.search.font_weight
                                 }
                             }
                         }

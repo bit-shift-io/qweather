@@ -84,28 +84,7 @@ ApplicationWindow {
             color: Style.drawer.color
         }
 
-        ColumnLayout {
-            id: column_layout
-            width: parent.width
-
-            Button {
-                text: "Search"
-                implicitWidth: parent.width
-                onClicked: {
-                    stack_view.push("SearchPage.qml")
-                    drawer.close()
-                }
-            }
-
-            Button {
-                text: "Pop"
-                implicitWidth: parent.width
-                onClicked: {
-                    stack_view.pop()
-                    drawer.close()
-                }
-            }
-        }
+        NavigationPage {}
     }
 
     StackView {
