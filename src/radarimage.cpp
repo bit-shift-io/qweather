@@ -20,10 +20,10 @@ void RadarImage::paint(QPainter *xPainter)
 
 void RadarImage::nextFrame()
 {
-    mActiveFrame = mRadarImages->at(mFramePosition);
+    mActiveFrame = &mRadarImages.at(mFramePosition);
     mFramePosition++;
 
-    if (mFramePosition == mRadarImages->size())
+    if (mFramePosition == mRadarImages.size())
         pauseTimer();
 
     // super
@@ -32,7 +32,7 @@ void RadarImage::nextFrame()
 
 void RadarImage::updateImages()
 {
-    mRadarImages = mWeather->getRadarImages();
+    mRadarImages = mWeather->copyRadarImages();
     startTimer();
 }
 

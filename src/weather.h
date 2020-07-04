@@ -5,6 +5,7 @@
 #include <QJsonObject>
 #include <QString>
 #include <QVector>
+#include <QImage>
 #include "src/qftp/qftp.h"
 
 class QNetworkReply;
@@ -31,7 +32,7 @@ public:
     bool radarEnabled() const;
     void setRadarEnabled(const bool &xRadar);
     QString getRadarId() const;
-    QVector<QImage *> *getRadarImages();
+    QVector<QImage> copyRadarImages();
 
     //QJsonObject getForecast() const { return mForecastData; };
     //QJsonObject getObservations() const { return mObservationData; };
@@ -76,20 +77,22 @@ private:
 
     // radar
 
-    QImage* read(const QString xFileName);
-    void write(const QString xFileName, QImage* xImage);
+    QImage read(const QString xFileName);
+    void write(const QString xFileName, QImage &xImage);
     void renderRadarImages();
 
     QString mRadarId;
     bool mRadarEnabled;
     int mRadarImageRequests;
-    QVector<QImage*> mRadarFrames;
-    QVector<QImage*> mRadarImages; // should be QVector<QImage> *mRadarImages;
-    QVector<QString> *mRadarFileList;
-    QImage *mRadarBackground = nullptr;
-    QImage *mRadarTopography = nullptr;
-    QImage *mRadarLocation = nullptr;
+    QVector<QImage> mRadarFrames;
+    QVector<QImage> mRadarImages;
+    QVector<QString> mRadarFileList;
+    QImage mRadarBackground;
+    QImage mRadarTopography;
+    QImage mRadarLocation;
     QFtp *mFtp;
+    void destroyRadarImages();
+    void destroyRadarFrames();
 };
 
 #endif // Weather_H

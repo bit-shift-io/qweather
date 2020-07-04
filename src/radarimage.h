@@ -36,9 +36,9 @@ private slots:
 private:
     void pauseTimer();
 
-    QVector<QImage*> *mRadarImages;
+    QVector<QImage> mRadarImages;
     Weather *mWeather;
-    QImage *mActiveFrame;
+    const QImage *mActiveFrame;
     QTimer *mTimer = nullptr;
     int mFramePosition = 0;
     int mPauseCount = 0;

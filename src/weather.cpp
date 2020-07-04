@@ -21,7 +21,8 @@ Weather::Weather(QObject *parent) : QObject(parent)
 
 Weather::~Weather()
 {
-    //mNetworkAccessManager->deleteLater();
+    destroyRadarImages();
+    destroyRadarFrames();
 }
 
 QString Weather::station() const
@@ -71,9 +72,13 @@ QString Weather::getRadarId() const
     return mRadarId;
 }
 
-QVector<QImage *> *Weather::getRadarImages()
+QVector<QImage> Weather::copyRadarImages()
 {
-    return &mRadarImages;
+    QVector<QImage> copy;
+    for (int i=0; i < mRadarImages.size(); i++){
+        copy.append(mRadarImages[i].copy());
+    }
+    return copy;
 }
 
 
@@ -95,7 +100,7 @@ void Weather::ftpAddToList(const QUrlInfo &xUrlInfo)
 {
     if (xUrlInfo.name().startsWith(mRadarId) && xUrlInfo.name().endsWith(".png")) {
         //qDebug() << xUrlInfo.name() << " - " << xUrlInfo.size() << " bytes";
-        mRadarFileList->append(xUrlInfo.name());
+        mRadarFileList.append(xUrlInfo.name());
     }
 }
 
@@ -111,23 +116,24 @@ void Weather::ftpCommandFinished(int commandId, bool error)
 }
 
 
-QImage* Weather::read(const QString xFileName)
+QImage Weather::read(const QString xFileName)
 {
+    QImage img;
+
     QString cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory);
     QString station_cache = QDir(cache_dir).filePath(mStationId);
     QString path = QDir(station_cache).filePath(xFileName);
     if (!QFile::exists(path))
-        return nullptr;
+        return img;
 
     // load from file
-    QImage *img = new QImage();
-    img->load(path);
+    img.load(path);
 
     return img;
 }
 
 
-void Weather::write(const QString xFileName, QImage* xImage)
+void Weather::write(const QString xFileName, QImage &xImage)
 {
     QString cache_dir = QStandardPaths::locate(QStandardPaths::CacheLocation, QString(), QStandardPaths::LocateDirectory);
     QString station_cache = QDir(cache_dir).filePath(mStationId);
@@ -138,28 +144,40 @@ void Weather::write(const QString xFileName, QImage* xImage)
         dir.mkpath(station_cache);
 
     QString path = QDir(station_cache).filePath(xFileName);
-    xImage->save(path);
+    xImage.save(path);
 }
+
+
+void Weather::destroyRadarImages()
+{
+    mRadarImages.clear();
+}
+
+void Weather::destroyRadarFrames()
+{
+    mRadarFrames.clear();
+}
+
 
 void Weather::renderRadarImages()
 {
-    if (mRadarBackground == nullptr)
+    if (mRadarBackground.isNull())
         return;
 
-    mRadarImages = QVector<QImage*>(mRadarFileList->size());
+    destroyRadarImages();
+    mRadarImages = QVector<QImage>(mRadarFileList.size());
 
-    for (int i=0; i < mRadarFileList->size(); i++){
-        QImage surface(mRadarBackground->copy());
+    for (int i=0; i < mRadarFrames.size(); i++){
+        QImage surface(mRadarBackground);
         QPainter painter(&surface);
         painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
-        painter.drawImage(0,0, mRadarTopography->copy());
-        painter.drawImage(0,0, mRadarFrames[i]->copy());
-        painter.drawImage(0,0, mRadarLocation->copy());
+        painter.drawImage(0,0, mRadarTopography);
+        painter.drawImage(0,0, mRadarFrames[i]);
+        painter.drawImage(0,0, mRadarLocation);
         painter.end();
-        mRadarImages[i] = &surface;
+        mRadarImages[i] = surface;
     }
 
-    // TODO something bung here! need to fix the pointers/references correctly
     emit resultRadarFinished();
 }
 
@@ -180,13 +198,13 @@ void Weather::replyRadarImageFinished(QNetworkReply *xNetworkReply)
     xNetworkReply->deleteLater();
 
     // image from data
-    QImage *img = new QImage();
-    img->loadFromData(data);
+    QImage img;
+    img.loadFromData(data);
 
     // check image is in correct format
     // so we can blend them together
-    if (img->format() == QImage::Format_Indexed8) {
-        *img = img->convertToFormat(QImage::Format_ARGB32);
+    if (img.format() == QImage::Format_Indexed8) {
+        img = img.convertToFormat(QImage::Format_ARGB32);
     }
 
     if (url.contains("background.png")) {
@@ -199,8 +217,8 @@ void Weather::replyRadarImageFinished(QNetworkReply *xNetworkReply)
         mRadarImageRequests--;
         mRadarLocation = img;
     } else if (url.contains("ftp.bom.gov.au")) {
-        for (int i=0; i < mRadarFileList->size(); i++){
-            if (mRadarFileList->at(i).contains(file_name)){
+        for (int i=0; i < mRadarFileList.size(); i++){
+            if (mRadarFileList.at(i).contains(file_name)){
                 mRadarImageRequests--;
                 mRadarFrames[i] = img;
             }
@@ -229,11 +247,11 @@ void Weather::requestRadar()
     QNetworkAccessManager *net = new QNetworkAccessManager(this);
     connect(net, &QNetworkAccessManager::finished, this, &Weather::replyRadarImageFinished);
 
-    if (mRadarBackground == nullptr) {
+    if (mRadarBackground.isNull()) {
         // first try and load from cache
         mRadarBackground = read(QString("%1.background.png").arg(mRadarId));
 
-        if (mRadarBackground == nullptr) {
+        if (mRadarBackground.isNull()) {
             mRadarImageRequests++;
             QNetworkRequest request;
             request.setUrl(QString("http://www.bom.gov.au/products/radar_transparencies/%1.background.png").arg(mRadarId));
@@ -241,11 +259,11 @@ void Weather::requestRadar()
         }
     }
 
-    if (mRadarTopography == nullptr) {
+    if (mRadarTopography.isNull()) {
         // first try and load from cache
         mRadarTopography = read(QString("%1.topography.png").arg(mRadarId));
 
-        if (mRadarTopography == nullptr) {
+        if (mRadarTopography.isNull()) {
             mRadarImageRequests++;
             QNetworkRequest request;
             request.setUrl(QString("http://www.bom.gov.au/products/radar_transparencies/%1.topography.png").arg(mRadarId));
@@ -253,11 +271,11 @@ void Weather::requestRadar()
         }
     }
 
-    if (mRadarLocation == nullptr) {
+    if (mRadarLocation.isNull()) {
         // first try and load from cache
         mRadarLocation = read(QString("%1.locations.png").arg(mRadarId));
 
-        if (mRadarLocation == nullptr) {
+        if (mRadarLocation.isNull()) {
             mRadarImageRequests++;
             QNetworkRequest request;
             request.setUrl(QString("http://www.bom.gov.au/products/radar_transparencies/%1.locations.png").arg(mRadarId));
@@ -267,7 +285,7 @@ void Weather::requestRadar()
 
 
     // radar images from the ftp
-    mRadarFileList = new QVector<QString>;
+    mRadarFileList.clear();
 
     // ftp listing
     mFtp = new QFtp(this);
@@ -288,16 +306,16 @@ void Weather::requestRadarImages()
     connect(net, &QNetworkAccessManager::finished, this, &Weather::replyRadarImageFinished);
 
     // match file list size
-    mRadarFrames = QVector<QImage*>(mRadarFileList->size());
-
+    destroyRadarFrames();
+    mRadarFrames = QVector<QImage>(mRadarFileList.size());
 
     // TODO: use existing mAnimationImages?
-    for (int i=0; i < mRadarFileList->size(); i++) {
-        QString item = mRadarFileList->at(i);
+    for (int i=0; i < mRadarFileList.size(); i++) {
+        QString item = mRadarFileList.at(i);
 
         // check cache
-        QImage* img = read(item);
-        if (img != nullptr) {
+        QImage img = read(item);
+        if (!img.isNull()) {
             mRadarFrames[i] = img;
         } else {
             // get ftp images
