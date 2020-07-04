@@ -38,11 +38,10 @@ private:
 
     QVector<QImage> mRadarImages;
     Weather *mWeather;
-    const QImage *mActiveFrame;
+    int mActiveFramePosition;
     QTimer *mTimer = nullptr;
     int mFramePosition = 0;
-    int mPauseCount = 0;
-
+    bool mUpdateNextPause = false;
 };
 
 #endif // RADARIMAGE_H

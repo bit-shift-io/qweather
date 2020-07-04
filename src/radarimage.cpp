@@ -12,27 +12,34 @@ RadarImage::RadarImage()
 
 void RadarImage::paint(QPainter *xPainter)
 {
-    if (mActiveFrame == nullptr)
+    if (mActiveFramePosition >= mRadarImages.size()) {
+        //qDebug() << "frame pos to large!" << mActiveFramePosition;
         return;
+    }
 
-    xPainter->drawImage(0,0, mActiveFrame->scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    //qDebug() << mActiveFramePosition;
+
+    xPainter->drawImage(0,0, mRadarImages.at(mActiveFramePosition).scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void RadarImage::nextFrame()
 {
-    mActiveFrame = &mRadarImages.at(mFramePosition);
-    mFramePosition++;
+    // this needs to be its own seperate value as paint is done in its own thread
+    mActiveFramePosition = mFramePosition;
 
-    if (mFramePosition == mRadarImages.size())
+    if (mFramePosition >= mRadarImages.size()-1) {
         pauseTimer();
+    }
 
     // super
     update();
+
+    mFramePosition++;
 }
 
 void RadarImage::updateImages()
 {
-    mRadarImages = mWeather->copyRadarImages();
+    mUpdateNextPause = true;
     startTimer();
 }
 
@@ -77,6 +84,13 @@ void RadarImage::pauseTimer()
 
     mTimer->stop();
     QTimer::singleShot(4000, this, &RadarImage::startTimer);
+
+    if (mUpdateNextPause) {
+        //qDebug() << "paused, updating images";
+        mUpdateNextPause = false;
+        mRadarImages = mWeather->copyRadarImages();
+    }
+
 }
 
 
