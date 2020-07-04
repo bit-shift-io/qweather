@@ -17,8 +17,11 @@ void RadarImage::paint(QPainter *xPainter)
         return;
     }
 
+    // TODO: looks low res on android... why?
     //qDebug() << mActiveFramePosition;
-
+    //QRect view = xPainter->viewport();
+    //qreal w = width();
+    //qreal h = height();
     xPainter->drawImage(0,0, mRadarImages.at(mActiveFramePosition).scaled(width(), height(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
@@ -73,9 +76,17 @@ void RadarImage::startTimer()
     }
 
     mFramePosition = 0;
+
+    if (mUpdateNextPause) {
+        //qDebug() << "paused, updating images";
+        mUpdateNextPause = false;
+        mRadarImages = mWeather->copyRadarImages();
+    }
+
     nextFrame();
     mTimer->start(300);
 }
+
 
 void RadarImage::pauseTimer()
 {
@@ -84,14 +95,4 @@ void RadarImage::pauseTimer()
 
     mTimer->stop();
     QTimer::singleShot(4000, this, &RadarImage::startTimer);
-
-    if (mUpdateNextPause) {
-        //qDebug() << "paused, updating images";
-        mUpdateNextPause = false;
-        mRadarImages = mWeather->copyRadarImages();
-    }
-
 }
-
-
-
