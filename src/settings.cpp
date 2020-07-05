@@ -1,18 +1,10 @@
 #include "settings.h"
 
-Settings* Settings::m_pThis = nullptr;
-
-
-Settings::~Settings()
-{
-    m_pThis = nullptr;
-}
 
 Settings *Settings::instance()
 {
-    if (m_pThis == nullptr) // avoid creation of new instances
-        m_pThis = new Settings;
-    return m_pThis;
+    static Settings* instance = new Settings();
+    return instance;
 }
 
 QObject *Settings::qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine)

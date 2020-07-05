@@ -1,18 +1,10 @@
 #include "fileio.h"
 
-FileIO* FileIO::m_pThis = nullptr;
-
-FileIO::FileIO(QObject *parent) : QObject(parent)
+FileIO::FileIO(QObject *parent)
+    : QObject(parent)
 {
-
 }
 
-FileIO::~FileIO()
-{
-    m_pThis = nullptr;
-}
-
-/** read text file **/
 QString FileIO::readText(const QString &xFilePath)
 {
     QString result;
@@ -90,9 +82,8 @@ bool FileIO::clearCache()
 
 FileIO *FileIO::instance()
 {
-    if (m_pThis == nullptr) // avoid creation of new instances
-        m_pThis = new FileIO;
-    return m_pThis;
+    static FileIO* instance = new FileIO;
+    return instance;
 }
 
 QObject *FileIO::qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine)

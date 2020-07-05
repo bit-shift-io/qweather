@@ -15,11 +15,10 @@ class FileIO : public QObject
     Q_OBJECT
 
 public:
+    FileIO(const FileIO&) = delete; // disable copy for singleton
+
     static FileIO *instance();
     static QObject *qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine);
-
-    explicit FileIO(QObject *parent = 0);
-    ~FileIO();
 
     // invokable functions
     Q_INVOKABLE QString readText(const QString &xFilePath);
@@ -35,7 +34,8 @@ public:
 //public slots:
 
 private:
-    static FileIO* m_pThis;
+    explicit FileIO(QObject *parent = 0);
+
 
 };
 

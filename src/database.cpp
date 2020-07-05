@@ -9,7 +9,6 @@
 #include <QPointF>
 #include <QLineF>
 
-Database* Database::m_pThis = nullptr;
 
 Database::Database(QObject *parent)
     : QObject(parent)
@@ -35,10 +34,6 @@ Database::Database(QObject *parent)
     //qDebug() << "stations " << station_data.size();
 }
 
-Database::~Database()
-{
-    m_pThis = nullptr;
-}
 
 QJsonArray Database::getStationByName(const QString &xName)
 {
@@ -133,9 +128,8 @@ QString Database::getRadarId(const QString &xWmo)
 
 Database *Database::instance()
 {
-    if (m_pThis == nullptr) // avoid creation of new instances
-        m_pThis = new Database;
-    return m_pThis;
+    static Database* instance = new Database;
+    return instance;
 }
 
 QObject *Database::qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine) {

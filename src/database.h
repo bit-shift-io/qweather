@@ -39,11 +39,10 @@ public:
 
     Q_ENUMS(station) // expost enum to qml
 
+    Database(const Database&) = delete; // disable copy for singleton
+
     static Database *instance();
     static QObject *qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine);
-
-    Database(QObject *parent = 0);
-    ~Database();
 
     QJsonArray getStationByName(const QString &xName);
     QJsonArray getStationByWmo(const QString &xWmo);
@@ -56,7 +55,7 @@ public:
     float getDistance(const QPointF &xLonLatA, const QPointF &xLonLatB);
 
 private:
-    static Database* m_pThis;
+    Database(QObject *parent = 0); // private for singleton
     QJsonArray station_data;
     QJsonArray icon_data;
 

@@ -13,18 +13,7 @@ class Settings : public QSettings
     Q_OBJECT
 
 public:
-    /*
-    explicit Settings(QObject *parent = 0) : QSettings(QSettings::IniFormat,
-    QSettings::UserScope,
-    QCoreApplication::instance()->organizationName(),
-    QCoreApplication::instance()->applicationName(),
-    parent) {}*/
-
-    explicit Settings(QObject *parent = 0) : QSettings(QSettings::UserScope,
-        QCoreApplication::instance()->organizationName(),
-        QCoreApplication::instance()->applicationName(),
-        parent) {}
-    ~Settings();
+    Settings(const Settings&) = delete; // disable copy for singleton
 
     static Settings *instance();
     static QObject *qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine);
@@ -34,7 +23,10 @@ public:
     Q_INVOKABLE inline bool valueBool(const QString &key, const QVariant &defaultValue = QVariant()) const { return QSettings::value(key, defaultValue).toBool(); }
 
 private:
-    static Settings* m_pThis;
+    explicit Settings(QObject *parent = 0) : QSettings(QSettings::UserScope,
+        QCoreApplication::instance()->organizationName(),
+        QCoreApplication::instance()->applicationName(),
+        parent) {} // private for singleton
 
 };
 
