@@ -20,6 +20,7 @@ class RadarImage : public QQuickPaintedItem
 
 public:
     RadarImage();
+    ~RadarImage();
     void paint(QPainter *xPainer);
     void updateImages();
 
@@ -38,7 +39,7 @@ private:
 
     QVector<QImage> mRadarImages;
     Weather *mWeather;
-    int mActiveFramePosition;
+    int mActiveFramePosition = 0;
     QTimer *mTimer = nullptr;
     int mFramePosition = 0;
     bool mUpdateNextPause = false;

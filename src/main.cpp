@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
     qmlRegisterType<RadarImage>("RadarImage", 1, 0, "RadarImage");
 
 
-
     // add imports
     engine.addImportPath(".");
     engine.addImportPath("./lib");

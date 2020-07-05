@@ -9,7 +9,7 @@
 #include "src/qftp/qftp.h"
 
 class QNetworkReply;
-
+class QNetworkAccessManager;
 
 
 class Weather : public QObject
@@ -82,7 +82,7 @@ private:
     void renderRadarImages();
 
     QString mRadarId;
-    bool mRadarEnabled;
+    bool mRadarEnabled = true;
     int mRadarImageRequests;
     QVector<QImage> mRadarFrames;
     QVector<QImage> mRadarImages;
@@ -93,6 +93,12 @@ private:
     QFtp *mFtp;
     void destroyRadarImages();
     void destroyRadarFrames();
+
+    // network managers
+    QNetworkAccessManager *mNetObservations;
+    QNetworkAccessManager *mNetForecast;
+    QNetworkAccessManager *mNetRadar;
+    QNetworkAccessManager *mNetDetailedForecast;
 };
 
 #endif // Weather_H

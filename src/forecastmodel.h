@@ -17,6 +17,7 @@ class ForecastModel : public QAbstractListModel
 
 public:
     explicit ForecastModel(QObject *parent = nullptr);
+    ~ForecastModel();
 
     // list of accesable properties/roles/map/bindings
     enum {

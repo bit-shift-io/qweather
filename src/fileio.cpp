@@ -9,7 +9,7 @@ FileIO::FileIO(QObject *parent) : QObject(parent)
 
 FileIO::~FileIO()
 {
-
+    m_pThis = nullptr;
 }
 
 /** read text file **/

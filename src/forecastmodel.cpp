@@ -5,8 +5,11 @@
 #include "weather.h"
 
 ForecastModel::ForecastModel(QObject *parent)
-    : QAbstractListModel(parent),
-      mWeather(nullptr) // initialize list
+    : QAbstractListModel(parent), mWeather(nullptr) // initialize list
+{
+}
+
+ForecastModel::~ForecastModel()
 {
 }
 

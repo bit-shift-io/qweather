@@ -11,7 +11,8 @@
 
 Database* Database::m_pThis = nullptr;
 
-Database::Database(QObject *parent) : QObject(parent)
+Database::Database(QObject *parent)
+    : QObject(parent)
 {
     QFile file(":/database.json");
     file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -36,6 +37,7 @@ Database::Database(QObject *parent) : QObject(parent)
 
 Database::~Database()
 {
+    m_pThis = nullptr;
 }
 
 QJsonArray Database::getStationByName(const QString &xName)

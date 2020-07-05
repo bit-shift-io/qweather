@@ -24,6 +24,7 @@ public:
         QCoreApplication::instance()->organizationName(),
         QCoreApplication::instance()->applicationName(),
         parent) {}
+    ~Settings();
 
     static Settings *instance();
     static QObject *qmlInstance(QQmlEngine *engine, QJSEngine *scriptEngine);

@@ -3,6 +3,11 @@
 Settings* Settings::m_pThis = nullptr;
 
 
+Settings::~Settings()
+{
+    m_pThis = nullptr;
+}
+
 Settings *Settings::instance()
 {
     if (m_pThis == nullptr) // avoid creation of new instances

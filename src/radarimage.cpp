@@ -9,6 +9,10 @@ RadarImage::RadarImage()
 
 }
 
+RadarImage::~RadarImage()
+{
+}
+
 
 void RadarImage::paint(QPainter *xPainter)
 {

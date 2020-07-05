@@ -1,6 +1,0 @@
-https://doc.qt.io/qt-5/qtcharts-qmlweather-example.html
-https://code.qt.io/cgit/qt/qtcharts.git/tree/examples/charts/qmlweather/qml/qmlweather/main.qml?h=5.15
-
-https://github.com/qt-labs/weather-app/tree/master/src
-
-https://github.com/thepaffy/QML-Weather-App-Example

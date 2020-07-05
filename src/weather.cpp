@@ -15,14 +15,24 @@
 #include "database.h"
 
 
-Weather::Weather(QObject *parent) : QObject(parent)
+Weather::Weather(QObject *parent)
+    : QObject(parent), mNetObservations(new QNetworkAccessManager(this)), mNetForecast(new QNetworkAccessManager(this)), mNetRadar(new QNetworkAccessManager(this)), mNetDetailedForecast(new QNetworkAccessManager(this))
 {
+    connect(mNetObservations, &QNetworkAccessManager::finished, this, &Weather::replyObservationFinished);
+    connect(mNetForecast, &QNetworkAccessManager::finished, this, &Weather::replyForecastFinished);
+    connect(mNetRadar, &QNetworkAccessManager::finished, this, &Weather::replyRadarImageFinished);
+    connect(mNetDetailedForecast, &QNetworkAccessManager::finished, this, &Weather::replyDetailedForecastFinished);
 }
 
 Weather::~Weather()
 {
     destroyRadarImages();
     destroyRadarFrames();
+    //mFtp->deleteLater(); // already deleted
+    mNetObservations->deleteLater();
+    mNetForecast->deleteLater();
+    mNetRadar->deleteLater();
+    mNetDetailedForecast->deleteLater();
 }
 
 QString Weather::station() const
@@ -89,9 +99,7 @@ void Weather::requestObservation()
     request.setUrl(u);
     request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
 
-    QNetworkAccessManager *net = new QNetworkAccessManager(this);
-    connect(net, &QNetworkAccessManager::finished, this, &Weather::replyObservationFinished);
-    net->get(request);
+    mNetObservations->get(request);
 }
 
 
@@ -107,6 +115,11 @@ void Weather::ftpAddToList(const QUrlInfo &xUrlInfo)
 
 void Weather::ftpCommandFinished(int commandId, bool error)
 {
+    if (error) {
+        qDebug() << mFtp->errorString();
+        qDebug() << commandId;
+    }
+
     if (mFtp->currentCommand() == QFtp::List) {
         mFtp->close();
         mFtp->deleteLater();
@@ -243,10 +256,6 @@ void Weather::requestRadar()
     // some are in cache
     mRadarImageRequests = 0;
 
-    // request the static radar images
-    QNetworkAccessManager *net = new QNetworkAccessManager(this);
-    connect(net, &QNetworkAccessManager::finished, this, &Weather::replyRadarImageFinished);
-
     if (mRadarBackground.isNull()) {
         // first try and load from cache
         mRadarBackground = read(QString("%1.background.png").arg(mRadarId));
@@ -255,7 +264,7 @@ void Weather::requestRadar()
             mRadarImageRequests++;
             QNetworkRequest request;
             request.setUrl(QString("http://www.bom.gov.au/products/radar_transparencies/%1.background.png").arg(mRadarId));
-            net->get(request);
+            mNetRadar->get(request);
         }
     }
 
@@ -267,7 +276,7 @@ void Weather::requestRadar()
             mRadarImageRequests++;
             QNetworkRequest request;
             request.setUrl(QString("http://www.bom.gov.au/products/radar_transparencies/%1.topography.png").arg(mRadarId));
-            net->get(request);
+            mNetRadar->get(request);
         }
     }
 
@@ -279,7 +288,7 @@ void Weather::requestRadar()
             mRadarImageRequests++;
             QNetworkRequest request;
             request.setUrl(QString("http://www.bom.gov.au/products/radar_transparencies/%1.locations.png").arg(mRadarId));
-            net->get(request);
+            mNetRadar->get(request);
         }
     }
 
@@ -302,9 +311,6 @@ void Weather::requestRadar()
 void Weather::requestRadarImages()
 {
     // we now have our file listing, lets request the images
-    QNetworkAccessManager *net = new QNetworkAccessManager(this);
-    connect(net, &QNetworkAccessManager::finished, this, &Weather::replyRadarImageFinished);
-
     // match file list size
     destroyRadarFrames();
     mRadarFrames = QVector<QImage>(mRadarFileList.size());
@@ -324,7 +330,7 @@ void Weather::requestRadarImages()
             QNetworkRequest request;
             request.setUrl(u);
             request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
-            net->get(request);
+            mNetRadar->get(request);
         }
     }
 
@@ -344,9 +350,7 @@ void Weather::requestDetailedForecast()
     request.setUrl(u);
     request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
 
-    QNetworkAccessManager *net = new QNetworkAccessManager(this);
-    connect(net, &QNetworkAccessManager::finished, this, &Weather::replyDetailedForecastFinished);
-    net->get(request);
+    mNetDetailedForecast->get(request);
 }
 
 void Weather::requestForecast()
@@ -356,9 +360,7 @@ void Weather::requestForecast()
     request.setUrl(u);
     request.setRawHeader( "User-Agent" , "Mozilla Firefox" );
 
-    QNetworkAccessManager *net = new QNetworkAccessManager(this);
-    connect(net, &QNetworkAccessManager::finished, this, &Weather::replyForecastFinished);
-    net->get(request);
+    mNetForecast->get(request);
 }
 
 void Weather::replyObservationFinished(QNetworkReply *xNetworkReply)
