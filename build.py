@@ -28,6 +28,7 @@ def main():
     menu['4'] = ['Run mobile', 'run_mobile']
     menu['5'] = ['Debug (GDB)', 'debug']
     menu['d'] = ['Generate database', 'database']
+    menu['p'] = ['pkgbuild', 'pkgbuild']
     menu['0'] = ['Requirements', 'requirements']
 
     print('\n********************')
@@ -46,6 +47,14 @@ def main():
         eval(selection)
 
     main()
+    return
+
+
+def pkgbuild():
+    log('create .srcinfo')
+    run('makepkg --printsrcinfo > .SRCINFO')
+    log('install')
+    run('makepkg -f')
     return
 
 
