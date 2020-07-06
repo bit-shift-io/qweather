@@ -19,3 +19,6 @@ wget http://download.qt.io/official_releases/qt/5.12/5.12.9/qt-opensource-linux-
 
 When installing android tools, will warn no space on device, exec the following:  
 sudo mount -o remount,size=8G /tmp/
+
+# screenshots
+![ScreenShot](screenshots/main_windows.png)
