@@ -1,56 +1,125 @@
 project(qweather)
+project(PROJECT_NAME LANGUAGES CXX)
 
-cmake_minimum_required(VERSION 2.8.12)
-set(KF5_MIN_VERSION "5.18.0")
 set(QT_MIN_VERSION "5.5.0")
 
+cmake_minimum_required(VERSION 3.5)
 
-################# Disallow in-source build #################
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
-   message(FATAL_ERROR "This application requires an out of source build. Please create a separate build directory.")
-endif()
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
-
-# Make CPack available to easy generate binary packages
-include(CPack)
-include(FeatureSummary)
-
-################# set KDE specific information #################
-
-find_package(ECM 0.0.8 REQUIRED NO_MODULE)
-
-# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
-
-include(ECMSetupVersion)
-include(ECMGenerateHeaders)
-include(KDEInstallDirs)
-include(KDECMakeSettings)
-include(ECMPoQmTools)
-include(KDECompilerSettings NO_POLICY_SCOPE)
-
-set(KF5_VERSION "5.22.0")
-
-find_package(Qt5 ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONENTS Core Quick Test Gui Svg QuickControls2)
-
-find_package(KF5Kirigami2 ${KF5_DEP_VERSION} "5.22.0")
-
-################# Enable C++11 features for clang and gcc #################
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(UNIX)
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x")
+  # Enable C++11 features for clang and gcc
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x")
 endif()
 
-################# now find all used packages #################
+################# Debug Flags #################
 
-set (QT_MIN_VERSION "5.6.0")
+# enable debug via cmd
+# cmake -DDEFINE_DEBUG=ON -DCMAKE_INSTALL_PREFIX=/usr ..
 
-find_package(PkgConfig)
-#########################################################################
+option(DEFINE_DEBUG
+  "Build using debug"
+  OFF)
 
-add_subdirectory(src)
+if(DEFINE_DEBUG)
+  message("Adding Debug flag...")
+  add_definitions(-DDEBUG)
+  set(CMAKE_BUILD_TYPE Debug)
+  message("Build type is " ${CMAKE_BUILD_TYPE})
+endif()
 
-install(PROGRAMS bitshift.weather.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+# debug, enable debugging
+# https://doc.qt.io/qt-5/qtquick-debugging.html#qml-debugging-infrastructure
 
-feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES FATAL_ON_MISSING_REQUIRED_PACKAGES)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DQT_QML_DEBUG ")
+    message(STATUS "debug enabled")
+endif()
+
+################# Configure paths #################
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>) # /lib
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>) # /lib
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/$<CONFIG>) # /bin
+
+################# Android #################
+
+# QtCreator supports the following variables for Android, which are identical to qmake Android variables.
+# Check http://doc.qt.io/qt-5/deployment-android.html for more information.
+# They need to be set before the find_package(Qt5 ...) call.
+
+#if(ANDROID)
+#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+#    if (ANDROID_ABI STREQUAL "armeabi-v7a")
+#        set(ANDROID_EXTRA_LIBS
+#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libcrypto.so
+#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libssl.so)
+#    endif()
+#endif()
+
+################# QT components #################
+
+# widgets for systray qapplication
+# graphical effects for drop shadow
+# charts for charts
+find_package(Qt5 COMPONENTS REQUIRED Core Quick Svg)
+
+################# Files #################
+
+set(SOURCES
+    src/main.cpp
+    src/database.cpp
+    src/fileio.cpp
+    src/forecastmodel.cpp
+    src/qftp/qftp.cpp
+    src/qftp/qurlinfo.cpp
+    src/radarimage.cpp
+    src/settings.cpp
+    src/weather.cpp
+)
+
+set(HEADERS
+    src/database.h
+    src/fileio.h
+    src/forecastmodel.h
+    src/qftp/qftp.h
+    src/qftp/qurlinfo.h
+    src/radarimage.h
+    src/settings.h
+    src/weather.h
+)
+
+set(RESOURCES
+    src/qml.qrc
+    res/res.qrc
+)
+
+################# Target #################
+
+qt5_add_resources(RCC_SOURCES ${RESOURCES})
+
+if(ANDROID)
+  add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS} ${RCC_SOURCES})
+else()
+  add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${RCC_SOURCES})
+endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Core Qt5::Quick)
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "qweather")
+
+################# Install #################
+
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+
+if(UNIX)
+  install(FILES bitshift.weather.desktop DESTINATION share/applications ) # /usr/share?
+  install(FILES res/bitshift.weather.svg DESTINATION share/pixmaps ) # /usr/share?
+endif()

@@ -304,7 +304,7 @@ def build_debug():
     run('''
     mkdir -p build
     cd build
-    cmake .. -DCMAKE_BUILD_TYPE=Debug
+    cmake .. -DDEFINE_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug
     make
     cd ..
     ''')
@@ -315,9 +315,9 @@ def build_release():
     run('''
     mkdir -p build
     cd build
-    cmake .. -DKDE_INSTALL_USE_QT_SYS_PATHS=ON -DCMAKE_BUILD_TYPE=Release
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
     make
-    cd ..
+    sudo make install
     ''')
     return
 
