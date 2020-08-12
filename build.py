@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
 import os
@@ -17,6 +17,7 @@ config = {
         'bin': os.path.abspath('./build/src/qweather'),
         'build': os.path.abspath('./build/'),
     },
+    'cmake_args': '-DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.15.0'
 }
 
 
@@ -313,10 +314,10 @@ def build_debug():
     run('''
     mkdir -p build
     cd build
-    cmake .. -DDEFINE_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug
+    cmake .. {0} -DDEFINE_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug 
     make
     cd ..
-    ''')
+    '''.format(config['cmake_args']))
     return
     
 
@@ -324,17 +325,21 @@ def build_release():
     run('''
     mkdir -p build
     cd build
-    cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
+    cmake .. {0} -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release
     make
     sudo make install
-    ''')
+    '''.format(config['cmake_args']))
     return
 
 
 def requirements():
-    run('''
-    yay -S --noconfirm --needed cmake extra-cmake-modules gdb
-    ''')
+    if sys.platform.startswith('darwin'):
+        run('brew install cmake')
+        run('brew install qt5')
+    
+    if sys.platform.startswith('linux'):
+        run('yay -S --noconfirm --needed cmake extra-cmake-modules gdb')
+
     return
 
 

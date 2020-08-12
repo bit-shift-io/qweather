@@ -1,3 +1,4 @@
 build/
 *.user
 .SRCINFO
+.DS_Store
